@@ -21,26 +21,6 @@
 #include "status.h"
 #include "util.h"
 
-void rex_dump_header (struct rex_header *header)
-{
-
-    printf ("═══════════════════════════════════════════\n");
-    printf ("version                %20d\n", header->version);
-    printf ("nr_datablocks          %20d\n", header->nr_datablocks);
-    printf ("start_addr             %20d\n", header->start_addr);
-    printf ("sz_all_datablocks      %20llu\n", header->sz_all_datablocks);
-    printf ("═══════════════════════════════════════════\n");
-}
-
-void rex_dump_block_header (struct rex_block_header *header)
-{
-    printf ("id                     %20llu\n", header->id);
-    printf ("type                   %20s\n", rex_data_types[header->type]);
-    printf ("version                %20d\n", header->version);
-    printf ("sz                     %20d\n", header->sz);
-    printf ("═══════════════════════════════════════════\n");
-}
-
 int rex_read_header (FILE *fp, struct rex_header *header)
 {
     assert (fp);

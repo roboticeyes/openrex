@@ -1,55 +1,53 @@
-# librex
+# OpenREX makefile
 .POSIX:
 
 include config.mk
 
-APPNAME=rex
+BIN = rex-info
 
 SRCDIR   = src
 OBJDIR   = obj
 BINDIR   = bin
+TOOLSDIR = tools
 
 SOURCES       := $(wildcard $(SRCDIR)/*.c)
-
+TOOLS_SOURCES := $(wildcard $(TOOLSDIR)/*.c)
 INCLUDES      := $(wildcard $(SRCDIR)/*.h)
 OBJECTS       := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+TOOLS_OBJS    := $(TOOLS_SOURCES:$(TOOLSDIR)/%.c=$(OBJDIR)/%.o)
 
-all: options ${APPNAME}
+rex-info: options $(OBJECTS) $(TOOLS_OBJS) $(OBJDIR)/rex-info.o
+	$(CC) -o $(BINDIR)/$@ $(OBJECTS) $(OBJDIR)/rex-info.o $(LDFLAGS)
 
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+all: $(BIN)
+
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c config.mk config.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/$(APPNAME).o: $(APPNAME).c
+$(TOOLS_OBJS): $(OBJDIR)/%.o : $(TOOLSDIR)/%.c config.mk config.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 options:
-	@echo ${APPNAME} build options:
-	@echo Building for architecture: $(arch)
+	@echo Build options:
 	@echo "CFLAGS  = $(CFLAGS)"
 	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "CC      = $(CC)"
 	mkdir -p $(OBJDIR)
-	mkdir -p $(OBJDIR)/db
 	mkdir -p $(BINDIR)
 
-config.h:
-	cp src/config.def.h src/config.h
-
-$(OBJECTS): config.h config.mk
-
-${APPNAME}: $(OBJECTS) $(OBJDIR)/$(APPNAME).o
-	$(CC) -o $(BINDIR)/$@ $(OBJECTS) $(OBJDIR)/$(APPNAME).o $(LDFLAGS)
+config.h: src/config.def.h
+	test -f src/config.h || cp src/config.def.h src/config.h
 
 clean:
 	rm -rf ${BINDIR} ${OBJDIR}
 	@echo "Cleanup complete!"
 
-install: $(BINDIR)/$(APPNAME)
+install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp -f $(BINDIR)/$(APPNAME) $(DESTDIR)$(PREFIX)/bin
-	chmod 755 $(DESTDIR)$(PREFIX)/bin/$(APPNAME)
+	cp -f $(BINDIR)/$(BIN)) $(DESTDIR)$(PREFIX)/bin
+	for f in $(BIN); do chmod 755 "$(DESTDIR)$(PREFIX)/bin/$$f"; done
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/$(APPNAME)
+	for f in $(BIN); do rm -f "$(DESTDIR)$(PREFIX)/bin/$$f"; done
 
 .PHONY: all options clean install uninstall

@@ -51,16 +51,17 @@ static const char *rex_data_types[] =
     "UnityPackage"
 };
 
-int rex_read_header (FILE *fp, struct rex_header *header);
-void rex_dump_header (struct rex_header *header);
-
 /*
- * Read a data block header from the current file position
+ * Reads the REX header from an open file pointer
+ */
+int rex_read_header (FILE *fp, struct rex_header *header);
+/*
+ * Reads a data block header from the current file position
  */
 int rex_read_data_block_header (FILE *fp, struct rex_block_header *header);
 
 /*
- * Read the data block from the current file position with the given size len
+ * Reads the data block from the current file position with the given size len
  */
 int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len);
 

@@ -19,6 +19,6 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 
-static char *app_name              = "REX";
+static char *rex_name              = "REX";
 
 #pragma GCC diagnostic pop
