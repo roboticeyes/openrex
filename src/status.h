@@ -19,8 +19,10 @@
 #define REX_NOT_IMPLEMENTED                     1
 #define REX_MISSING_PARAMETER                   2
 
-#define REX_ERROR_FILE_READ                     10
-#define REX_ERROR_WRONG_MAGIC                   11
+#define REX_ERROR_FILE_OPEN                     10
+#define REX_ERROR_FILE_READ                     11
+#define REX_ERROR_FILE_WRITE                    12
+#define REX_ERROR_WRONG_MAGIC                   13
 
 #define REX_SYSTEM_ERROR                        500
 #define REX_ERROR_MEMORY                        501

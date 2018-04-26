@@ -46,8 +46,6 @@ void rex_dump_block_header (struct rex_block_header *header)
     printf ("═══════════════════════════════════════════\n");
 }
 
-
-
 int main (int argc, char **argv)
 {
     printf ("═══════════════════════════════════════════\n");
