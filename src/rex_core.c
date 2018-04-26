@@ -26,15 +26,15 @@ struct rex_header rex_create_header()
 {
     struct rex_header header =
     {
-    .version = REX_FILE_VERSION,
-    .crc = 0,
-    .nr_datablocks = 0,
-    .start_addr = 0,
-    .sz_all_datablocks = 0,
+        .version = REX_FILE_VERSION,
+        .crc = 0,
+        .nr_datablocks = 0,
+        .start_addr = 0,
+        .sz_all_datablocks = 0,
     };
 
     memcpy (header.magic, REX_FILE_MAGIC, sizeof (REX_FILE_MAGIC));
-    memset(header.reserved, 0, 42);
+    memset (header.reserved, 0, 42);
     return header;
 }
 
@@ -110,9 +110,7 @@ int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *
     uint32_t nr_tex_coords = (mesh->tex_coords) ? mesh->nr_vertices : 0;
     uint32_t nr_colors = (mesh->colors) ? mesh->nr_vertices : 0;
 
-    long fpos_start = ftell (fp);
-
-    uint64_t ofs_vtx = fpos_start + REX_BLOCK_HEADER_SIZE + REX_MESH_HEADER_SIZE;
+    uint64_t ofs_vtx = REX_MESH_HEADER_SIZE; // start vertex block relative to mesh header start
     uint64_t ofs_nor = ofs_vtx + mesh->nr_vertices * sizeof (float) * 3;
     uint64_t ofs_tex = ofs_nor + nr_normals * sizeof (float) * 3;
     uint64_t ofs_col = ofs_tex + nr_tex_coords * sizeof (float) * 2;
@@ -172,3 +170,25 @@ int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *
     header->sz_all_datablocks += total_sz + REX_BLOCK_HEADER_SIZE;
     return REX_OK;
 }
+
+int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id)
+{
+    // write block header
+    struct rex_block_header block_header =
+    {
+        .type = 5,
+        .version = 1,
+        .sz = sizeof (*mat),
+        .id = id
+    };
+
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+    if (fwrite (mat, sizeof (*mat), 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+
+    header->nr_datablocks += 1;
+    header->sz_all_datablocks += sizeof (*mat);
+    return REX_OK;
+}
+

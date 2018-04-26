@@ -22,4 +22,4 @@
 #define REX_MESH_HEADER_SIZE            128
 #define REX_MESH_NAME_MAX_SIZE          74
 
-#define REX_NO_MATERIAL                 0x7fffffffffffffffL
+#define REX_NOT_SET                     0x7fffffffffffffffL

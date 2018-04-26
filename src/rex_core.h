@@ -66,6 +66,24 @@ struct rex_mesh_header
     uint16_t size;           // size of the following string name
     char name[74];           // the mesh name (user-readable)
 };
+
+struct rex_material_standard
+{
+    float    ka_red;       // RED component for ambient color
+    float    ka_green;     // GREEN component for ambient color
+    float    ka_blue;      // BLUE component for ambient color
+    uint64_t ka_textureId; // dataId of the referenced texture for ambient component
+    float    kd_red;       // RED component for diffuse color
+    float    kd_green;     // GREEN component for diffuse color
+    float    kd_blue;      // BLUE component for diffuse color
+    uint64_t kd_textureId; // dataId of the referenced texture for diffuse component
+    float    ks_red;       // RED component for specular color
+    float    ks_green;     // GREEN component for specular color
+    float    ks_blue;      // BLUE component for specular color
+    uint64_t ks_textureId; // dataId of the referenced texture for specular component
+    float    ns;           // specular exponent
+    float    alpha;        // alpha between 0..1, 1 means full opaque
+};
 #pragma pack ()
 
 /*
@@ -74,7 +92,8 @@ struct rex_mesh_header
  * are vertex-aligned. This means that only one index is referring to all information.
  * However, it is valid to have normals, tex_coords, and colors being NULL.
  */
-struct rex_mesh {
+struct rex_mesh
+{
     uint64_t id;
     uint32_t nr_vertices;
     uint32_t nr_triangles;
@@ -123,6 +142,11 @@ int rex_read_data_block_header (FILE *fp, struct rex_block_header *header);
 int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len);
 
 /*
- * Writes a complete mesh block to the give file pointer
+ * Writes a complete mesh block to the given file pointer
  */
 int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id, const char *name);
+
+/*
+ * Writes a mesh material block to the given file pointer
+ */
+int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);

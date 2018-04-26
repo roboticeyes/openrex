@@ -87,22 +87,48 @@ int main (int argc, char **argv)
     struct rex_header header = rex_create_header();
     rex_write_header (fp, &header);
 
+    // write material
+    struct rex_material_standard mat =
+    {
+        .ka_red = 1,
+        .ka_green = 0,
+        .ka_blue = 0,
+        .ka_textureId = REX_NOT_SET,
+        .kd_red = 1,
+        .kd_green = 0,
+        .kd_blue = 0,
+        .kd_textureId = REX_NOT_SET,
+        .ks_red = 1,
+        .ks_green = 0,
+        .ks_blue = 0,
+        .ks_textureId = REX_NOT_SET,
+        .ns = 0,
+        .alpha = 1
+    };
+
+    if (rex_write_material_block (fp, &header, &mat, 0))
+    {
+        warn ("Error during file read %d\n", errno);
+        fclose (fp);
+        return -1;
+    }
+
     struct rex_mesh mesh =
     {
-        .id = 0,
+        .id = 1,
         .nr_vertices = LEN (vertices),
         .nr_triangles = LEN (triangles),
-        .positions = &(vertices[0].x),
+        .positions = & (vertices[0].x),
         .normals = NULL,
         .tex_coords = NULL,
         .colors = NULL,
-        .triangles = &(triangles[0].v1)
+        .triangles = & (triangles[0].v1)
     };
 
-    if (rex_write_mesh_block (fp, &header, &mesh, REX_NO_MATERIAL, "test"))
+    if (rex_write_mesh_block (fp, &header, &mesh, 0, "test"))
     {
-        warn("Error during file read %d\n", errno);
-        fclose(fp);
+        warn ("Error during file read %d\n", errno);
+        fclose (fp);
         return -1;
     }
     rex_write_header (fp, &header);
