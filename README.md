@@ -5,7 +5,7 @@ for the Robotic Eyes REX platform.
 
 This repository contains
 
-* the complete specification
+* the [complete specification](doc/rex-spec-v1.md)
 * native reader/writer
 * tools for working with REX files
 
