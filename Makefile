@@ -3,7 +3,7 @@
 
 include config.mk
 
-BIN = rex-info
+BIN = rex-info rex-gencube
 
 SRCDIR   = src
 OBJDIR   = obj
@@ -18,6 +18,8 @@ TOOLS_OBJS    := $(TOOLS_SOURCES:$(TOOLSDIR)/%.c=$(OBJDIR)/%.o)
 
 rex-info: options $(OBJECTS) $(TOOLS_OBJS) $(OBJDIR)/rex-info.o
 	$(CC) -o $(BINDIR)/$@ $(OBJECTS) $(OBJDIR)/rex-info.o $(LDFLAGS)
+rex-gencube: options $(OBJECTS) $(TOOLS_OBJS) $(OBJDIR)/rex-gencube.o
+	$(CC) -o $(BINDIR)/$@ $(OBJECTS) $(OBJDIR)/$@.o $(LDFLAGS)
 
 all: $(BIN)
 

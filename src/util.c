@@ -36,9 +36,7 @@ static void verr (const char *fmt, va_list ap)
         perror (NULL);
     }
     else
-    {
         fputc ('\n', stderr);
-    }
 }
 
 void warn (const char *fmt, ...)
