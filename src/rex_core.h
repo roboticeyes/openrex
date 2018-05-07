@@ -30,6 +30,16 @@ struct rex_header
     char reserved[42];
 };
 
+struct rex_csb
+{
+    uint32_t srid;
+    uint16_t sz;
+    char name[4]; // restricted to 4 bytes here
+    float offset_x;
+    float offset_y;
+    float offset_z;
+};
+
 struct rex_block_header
 {
     uint16_t type;
@@ -37,7 +47,62 @@ struct rex_block_header
     uint32_t sz;  // data block size w/o header
     uint64_t id;
 };
+
+struct rex_mesh_header
+{
+    uint16_t lod;            // level of detail for the given geometry
+    uint16_t maxLod;         // maximal level of detail for given geometry
+    uint32_t nrOfVtxCoords;  // number of vertex coordinates
+    uint32_t nrOfNorCoords;  // number of normal coordinates (can be zero)
+    uint32_t nrOfTexCoords;  // number of texture coordinates (can be zero)
+    uint32_t nrOfVtxColors;  // number of vertex colors (can be zero)
+    uint32_t nrTriangles;    // number of triangles
+    uint32_t startVtxCoords; // start vertex coordinate block (relative to mesh block start)
+    uint32_t startNorCoords; // start vertex normals block (relative to mesh block start)
+    uint32_t startTexCoords; // start of texture coordinate block (relative to mesh block start)
+    uint32_t startVtxColors; // start of colors block (relative to mesh block start)
+    uint32_t startTriangles; // start triangle block for vertices (relative to mesh block start)
+    uint64_t materialId;     // id which refers to the corresponding material block in this file
+    uint16_t size;           // size of the following string name
+    char name[74];           // the mesh name (user-readable)
+};
+
+struct rex_material_standard
+{
+    float    ka_red;       // RED component for ambient color
+    float    ka_green;     // GREEN component for ambient color
+    float    ka_blue;      // BLUE component for ambient color
+    uint64_t ka_textureId; // dataId of the referenced texture for ambient component
+    float    kd_red;       // RED component for diffuse color
+    float    kd_green;     // GREEN component for diffuse color
+    float    kd_blue;      // BLUE component for diffuse color
+    uint64_t kd_textureId; // dataId of the referenced texture for diffuse component
+    float    ks_red;       // RED component for specular color
+    float    ks_green;     // GREEN component for specular color
+    float    ks_blue;      // BLUE component for specular color
+    uint64_t ks_textureId; // dataId of the referenced texture for specular component
+    float    ns;           // specular exponent
+    float    alpha;        // alpha between 0..1, 1 means full opaque
+};
 #pragma pack ()
+
+/*
+ * A help structure which allows to set all the required information about a
+ * REX mesh. Please make sure that positions, normals, tex_coords, and colors
+ * are vertex-aligned. This means that only one index is referring to all information.
+ * However, it is valid to have normals, tex_coords, and colors being NULL.
+ */
+struct rex_mesh
+{
+    uint64_t id;
+    uint32_t nr_vertices;
+    uint32_t nr_triangles;
+    float *positions;
+    float *normals;
+    float *tex_coords;
+    float *colors;
+    uint32_t *triangles;
+};
 
 static const char *rex_data_types[] =
 {
@@ -51,10 +116,21 @@ static const char *rex_data_types[] =
     "UnityPackage"
 };
 
+/**
+ * Creates a valid REX header block
+ */
+struct rex_header rex_create_header();
+
 /*
  * Reads the REX header from an open file pointer
  */
 int rex_read_header (FILE *fp, struct rex_header *header);
+
+/*
+ * Write the REX header to an open file pointer
+ */
+int rex_write_header (FILE *fp, struct rex_header *header);
+
 /*
  * Reads a data block header from the current file position
  */
@@ -65,3 +141,12 @@ int rex_read_data_block_header (FILE *fp, struct rex_block_header *header);
  */
 int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len);
 
+/*
+ * Writes a complete mesh block to the given file pointer
+ */
+int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id, const char *name);
+
+/*
+ * Writes a mesh material block to the given file pointer
+ */
+int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);

@@ -1,0 +1,3 @@
+option ( STATICLIBS "Build static libraries" ON )
+option ( TOOLS "Build tools" ON )
+option ( DOCUMENTATION "Build documentation with Doxygen" OFF )

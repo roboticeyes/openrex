@@ -21,9 +21,9 @@
 #include "rex_core.h"
 #include "util.h"
 
-void usage(const char* exec)
+void usage (const char *exec)
 {
-    die("usage: %s filename.rex\n", exec);
+    die ("usage: %s filename.rex\n", exec);
 }
 
 void rex_dump_header (struct rex_header *header)
@@ -53,18 +53,14 @@ int main (int argc, char **argv)
     printf ("═══════════════════════════════════════════\n\n");
 
     if (argc < 2)
-    {
-        usage(argv[0]);
-    }
+        usage (argv[0]);
 
     struct rex_header header;
 
     FILE *fp = fopen (argv[1], "rb");
 
     if (!fp)
-    {
-        die("Cannot open REX file %s\n", argv[1]);
-    }
+        die ("Cannot open REX file %s\n", argv[1]);
     rex_read_header (fp, &header);
     rex_dump_header (&header);
 

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.*
  */
-#include <stdint.h>
+#pragma once
 
-/* Make sure that we do not raise any warnings for unused variables here */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
+#define REX_FILE_MAGIC                  "REX1"
+#define REX_FILE_VERSION                1
 
-static char *rex_name              = "REX";
+#define REX_BLOCK_HEADER_SIZE           16
+#define REX_MESH_HEADER_SIZE            128
+#define REX_MESH_NAME_MAX_SIZE          74
 
-#pragma GCC diagnostic pop
+#define REX_NOT_SET                     0x7fffffffffffffffL
