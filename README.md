@@ -17,6 +17,9 @@ and a possiblity to work with Makefiles (i.e. make).
 ## Build
 
 ```
-make clean
+mkdir build
+cd build
+cmake ..
 make
+make install
 ```
