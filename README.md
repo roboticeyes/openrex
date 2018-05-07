@@ -39,7 +39,7 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [x] Write material block
 
 * [ ] Read image block
-* [ ] Write image block
+* [x] Write image block
 * [ ] Read lineset block
 * [ ] Write lineset block
 * [ ] Read vertex block
