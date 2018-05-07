@@ -22,7 +22,7 @@
 #include "util.h"
 #include "global.h"
 
-struct rex_header rex_create_header(void)
+struct rex_header rex_create_header (void)
 {
     struct rex_header header =
     {
@@ -189,6 +189,32 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
 
     header->nr_datablocks += 1;
     header->sz_all_datablocks += sizeof (*mat);
+    return REX_OK;
+}
+
+int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id)
+{
+    uint64_t total_sz = sizeof (uint32_t) + size;
+    uint32_t image_type = type;
+
+    // write block header
+    struct rex_block_header block_header =
+    {
+        .type = 4,
+        .version = 1,
+        .sz = total_sz,
+        .id = id
+    };
+
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+    if (fwrite (&image_type, sizeof (uint32_t), 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+    if (fwrite (img, size, 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+
+    header->nr_datablocks += 1;
+    header->sz_all_datablocks += total_sz;
     return REX_OK;
 }
 

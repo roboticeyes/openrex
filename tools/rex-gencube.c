@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "config.h"
 
@@ -29,6 +30,11 @@ struct vertex
     float x;
     float y;
     float z;
+};
+struct texel
+{
+    float s;
+    float t;
 };
 struct triangle
 {
@@ -50,6 +56,18 @@ struct vertex vertices[] =
     {1, 1, 0}
 };
 
+struct texel texels[] =
+{
+    {0, 0},
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {0, 0},
+    {0, 0},
+    {0, 0},
+    {0, 0}
+};
+
 struct triangle triangles[] =
 {
     {0, 1, 3},
@@ -68,7 +86,7 @@ struct triangle triangles[] =
 
 void usage (const char *exec)
 {
-    die ("usage: %s filename.rex\n", exec);
+    die ("usage: %s texturefile.png filename.rex\n", exec);
 }
 
 int main (int argc, char **argv)
@@ -77,15 +95,35 @@ int main (int argc, char **argv)
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 2)
+    if (argc < 3)
         usage (argv[0]);
 
-    FILE *fp = fopen (argv[1], "wb");
+    FILE *fp = fopen (argv[2], "wb");
     if (!fp)
-        die ("Cannot open REX file %s for writing\n", argv[1]);
+        die ("Cannot open REX file %s for writing\n", argv[2]);
 
     struct rex_header header = rex_create_header();
     rex_write_header (fp, &header);
+
+    // write texture file
+    FILE *t = fopen (argv[1], "rb");
+    if (!t)
+        die ("Cannot open texture file %s\n", argv[1]);
+    fseek (t, 0, SEEK_END);
+    uint64_t sz = ftell (t);
+    fseek (t, 0, SEEK_SET);
+    uint8_t *img = malloc (sz);
+    if (fread (img, sz, 1, t) != 1)
+        die ("Cannot read image content");
+    fclose (t);
+
+    if (rex_write_image_bock (fp, &header, img, sz, Png, 0))
+    {
+        warn ("Error during file write %d\n", errno);
+        free (img);
+        fclose (fp);
+        return -1;
+    }
 
     // write material
     struct rex_material_standard mat =
@@ -93,39 +131,39 @@ int main (int argc, char **argv)
         .ka_red = 1,
         .ka_green = 0,
         .ka_blue = 0,
-        .ka_textureId = REX_NOT_SET,
+        .ka_textureId = 0,
         .kd_red = 1,
         .kd_green = 0,
         .kd_blue = 0,
-        .kd_textureId = REX_NOT_SET,
+        .kd_textureId = 0,
         .ks_red = 1,
         .ks_green = 0,
         .ks_blue = 0,
-        .ks_textureId = REX_NOT_SET,
+        .ks_textureId = 0,
         .ns = 0,
         .alpha = 1
     };
 
-    if (rex_write_material_block (fp, &header, &mat, 0))
+    if (rex_write_material_block (fp, &header, &mat, 1))
     {
-        warn ("Error during file read %d\n", errno);
+        warn ("Error during file write %d\n", errno);
         fclose (fp);
         return -1;
     }
 
     struct rex_mesh mesh =
     {
-        .id = 1,
+        .id = 2,
         .nr_vertices = LEN (vertices),
         .nr_triangles = LEN (triangles),
         .positions = & (vertices[0].x),
         .normals = NULL,
-        .tex_coords = NULL,
+        .tex_coords = & (texels[0].s),
         .colors = NULL,
         .triangles = & (triangles[0].v1)
     };
 
-    if (rex_write_mesh_block (fp, &header, &mesh, 0, "test"))
+    if (rex_write_mesh_block (fp, &header, &mesh, 1 /* material_id */, "test"))
     {
         warn ("Error during file read %d\n", errno);
         fclose (fp);
@@ -134,6 +172,7 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     fclose (fp);
+    free (img);
     return 0;
 }
 

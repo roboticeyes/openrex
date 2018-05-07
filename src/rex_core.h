@@ -84,7 +84,6 @@ struct rex_material_standard
     float    ns;           // specular exponent
     float    alpha;        // alpha between 0..1, 1 means full opaque
 };
-#pragma pack ()
 
 /*
  * A help structure which allows to set all the required information about a
@@ -104,6 +103,18 @@ struct rex_mesh
     uint32_t *triangles;
 };
 
+#pragma pack ()
+
+/**
+ * This is a list of supported image types
+ */
+enum rex_image_type
+{
+    Raw24 = 0,
+    Jpeg = 1,
+    Png = 2
+};
+
 static const char *rex_data_types[] =
 {
     "LineSet",
@@ -119,7 +130,7 @@ static const char *rex_data_types[] =
 /**
  * Creates a valid REX header block
  */
-struct rex_header rex_create_header(void);
+struct rex_header rex_create_header (void);
 
 /*
  * Reads the REX header from an open file pointer
@@ -150,3 +161,14 @@ int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *
  * Writes a mesh material block to the given file pointer
  */
 int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);
+
+/**
+ * Writes a image block which can be used as mesh texture
+ * \param fp file pointer
+ * \param header rex header
+ * \param img the image raw data in memory
+ * \param size the size of the binary image in bytes
+ * \param type the image type/compression
+ * \param id the data id for this block
+ */
+int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
