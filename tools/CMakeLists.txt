@@ -10,8 +10,8 @@ add_executable(rex-gencube rex-gencube.c)
 
 
 # Linkage
-target_link_libraries(rex-info openrex)
-target_link_libraries(rex-gencube openrex)
+target_link_libraries(rex-info openrex-static)
+target_link_libraries(rex-gencube openrex-static)
 
 # Source includes
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)

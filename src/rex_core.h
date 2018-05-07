@@ -119,7 +119,7 @@ static const char *rex_data_types[] =
 /**
  * Creates a valid REX header block
  */
-struct rex_header rex_create_header();
+struct rex_header rex_create_header(void);
 
 /*
  * Reads the REX header from an open file pointer

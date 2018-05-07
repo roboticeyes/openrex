@@ -8,6 +8,7 @@
 *.elf
 bin/*
 build/*
+.vs/*
 
 # Linker output
 *.ilk

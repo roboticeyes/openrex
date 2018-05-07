@@ -22,7 +22,7 @@
 #include "util.h"
 #include "global.h"
 
-struct rex_header rex_create_header()
+struct rex_header rex_create_header(void)
 {
     struct rex_header header =
     {
