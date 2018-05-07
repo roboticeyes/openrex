@@ -21,7 +21,7 @@ install( TARGETS openrex
 
 if (STATICLIBS)
   add_library(openrex-static STATIC ${c_sources})
-  set_target_properties(openrex-static PROPERTIES OUTPUT_NAME "openrex")
+  set_target_properties(openrex-static PROPERTIES OUTPUT_NAME "openrex-static")
   set_target_properties(openrex-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
   install ( TARGETS openrex-static
             ARCHIVE DESTINATION lib${LIB_SUFFIX}

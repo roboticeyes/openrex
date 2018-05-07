@@ -16,9 +16,13 @@
 #include <stdint.h>
 
 /* Make sure that we do not raise any warnings for unused variables here */
+#ifndef WIN32
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 
 static char *rex_name              = "REX";
 
+#ifndef WIN32
 #pragma GCC diagnostic pop
+#endif
