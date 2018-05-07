@@ -106,21 +106,21 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     // write texture file
-    FILE *t = fopen(argv[1], "rb");
+    FILE *t = fopen (argv[1], "rb");
     if (!t)
         die ("Cannot open texture file %s\n", argv[1]);
-    fseek(t, 0, SEEK_END);
-    uint64_t sz = ftell(t);
-    fseek(t, 0, SEEK_SET);
-    uint8_t *img = malloc(sz);
-    if (fread(img, sz, 1, t) != 1)
-        die("Cannot read image content");
-    fclose(t);
+    fseek (t, 0, SEEK_END);
+    uint64_t sz = ftell (t);
+    fseek (t, 0, SEEK_SET);
+    uint8_t *img = malloc (sz);
+    if (fread (img, sz, 1, t) != 1)
+        die ("Cannot read image content");
+    fclose (t);
 
     if (rex_write_image_bock (fp, &header, img, sz, Png, 0))
     {
         warn ("Error during file write %d\n", errno);
-        free(img);
+        free (img);
         fclose (fp);
         return -1;
     }
@@ -172,7 +172,7 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     fclose (fp);
-    free(img);
+    free (img);
     return 0;
 }
 

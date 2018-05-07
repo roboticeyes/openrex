@@ -108,7 +108,8 @@ struct rex_mesh
 /**
  * This is a list of supported image types
  */
-enum rex_image_type {
+enum rex_image_type
+{
     Raw24 = 0,
     Jpeg = 1,
     Png = 2
@@ -129,7 +130,7 @@ static const char *rex_data_types[] =
 /**
  * Creates a valid REX header block
  */
-struct rex_header rex_create_header(void);
+struct rex_header rex_create_header (void);
 
 /*
  * Reads the REX header from an open file pointer
@@ -170,4 +171,4 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
  * \param type the image type/compression
  * \param id the data id for this block
  */
-int rex_write_image_bock(FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
+int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
