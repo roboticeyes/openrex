@@ -50,7 +50,3 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [ ] Write peoplesimulation block
 * [ ] Read unitypackage block
 * [ ] Write unitypackage block
-
-# Attribution
-
-OpenREX includes `stb_image.h` for simple image IO handling. Thanks to http://nothings.org/stb.
