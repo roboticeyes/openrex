@@ -23,3 +23,25 @@ cmake ..
 make
 make install
 ```
+
+## Implementation status
+
+* [x] Read file header
+* [x] Write file header
+* [ ] Read mesh block
+* [x] Write mesh block
+* [ ] Read material block
+* [x] Write material block
+
+* [ ] Read image block
+* [ ] Write image block
+* [ ] Read lineset block
+* [ ] Write lineset block
+* [ ] Read vertex block
+* [ ] Write vertex block
+* [ ] Read text block
+* [ ] Write text block
+* [ ] Read peoplesimulation block
+* [ ] Write peoplesimulation block
+* [ ] Read unitypackage block
+* [ ] Write unitypackage block
