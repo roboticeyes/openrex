@@ -98,7 +98,7 @@ int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len)
         warn ("Block is not allocated");
         return REX_ERROR_MEMORY;
     }
-    if (fread (block, sizeof (u_int8_t), len, fp) != len)
+    if (fread (block, sizeof (uint8_t), len, fp) != len)
         return REX_ERROR_FILE_READ;
 
     return REX_OK;

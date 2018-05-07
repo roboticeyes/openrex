@@ -24,6 +24,11 @@ make
 make install
 ```
 
+### Windows build
+
+With Visual Studio 2017 you should be able to use the CMakeLists file directly.
+See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T138
+
 ## Implementation status
 
 * [x] Read file header

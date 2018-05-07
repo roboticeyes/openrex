@@ -17,7 +17,6 @@ build/*
 # Precompiled Headers
 *.gch
 *.pch
-src/config.h
 
 # Libraries
 *.lib
