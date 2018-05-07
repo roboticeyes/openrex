@@ -1,4 +1,6 @@
-# OpenREX
+<p align="center">
+<img src="doc/openrex.png" />
+</p>
 
 OpenREX provides the specification for a binary file format which is used
 for the Robotic Eyes REX platform.
