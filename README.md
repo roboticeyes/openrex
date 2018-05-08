@@ -2,19 +2,18 @@
 <img src="doc/openrex.png" />
 </p>
 
-OpenREX provides the specification for a binary file format which is used
-for the Robotic Eyes REX platform.
+OpenREX provides the specification for a binary file format which is used for the Robotic Eyes REX platform.
 
 This repository contains
 
 * the [complete specification](doc/rex-spec-v1.md)
-* native reader/writer
+* native reader/writer (in progress, contribution welcome!)
 * tools for working with REX files
 
 # Development
 
-In order to compile the code, you need at least a C99 compiler (e.g. gcc, clang)
-and a possiblity to work with Makefiles (i.e. make).
+In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and 
+`cmake` installed on your system. The code should work for Linux, MacOS, and Windows.
 
 ## Build
 
