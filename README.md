@@ -33,6 +33,7 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 
 ## Implementation status
 
+### Prio 1
 * [x] Read file header
 * [x] Write file header
 * [x] Read mesh block
@@ -41,7 +42,8 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [x] Write material block
 * [ ] Read image block
 * [x] Write image block
-*
+
+### Prio 2
 * [ ] Read lineset block
 * [ ] Write lineset block
 * [ ] Read vertex block
