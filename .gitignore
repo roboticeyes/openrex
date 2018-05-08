@@ -44,3 +44,4 @@ build/*
 *.su
 *.idb
 *.pdb
+*.swp

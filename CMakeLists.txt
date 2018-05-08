@@ -15,7 +15,7 @@ endif("${CMAKE_BUILD_TYPE}" STREQUAL "")
 set(CMAKE_COLOR_MAKEFILE ON)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-add_definitions(-pedantic -std=c99 -Wall -DVERSION=\"${VERSION}\")
+add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -DVERSION=\"${VERSION}\")
 
 include(CMakeOptions.txt)
 

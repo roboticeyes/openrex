@@ -22,3 +22,11 @@
 
 void warn (const char *, ...);
 void die (const char *, ...);
+
+#define FP_CHECK(fp) \
+if (!fp) \
+{ \
+    warn ("File pointer is not valid"); \
+    return REX_ERROR_FILE_OPEN; \
+}
+

@@ -94,6 +94,7 @@ struct rex_material_standard
 struct rex_mesh
 {
     uint64_t id;
+    char *name;
     uint32_t nr_vertices;
     uint32_t nr_triangles;
     float *positions;
@@ -101,6 +102,26 @@ struct rex_mesh
     float *tex_coords;
     float *colors;
     uint32_t *triangles;
+};
+
+struct rex_position
+{
+    float x;
+    float y;
+    float z;
+};
+
+struct rex_texel
+{
+    float s;
+    float t;
+};
+
+struct rex_triangle
+{
+    uint32_t v1;
+    uint32_t v2;
+    uint32_t v3;
 };
 
 #pragma pack ()
@@ -113,18 +134,6 @@ enum rex_image_type
     Raw24 = 0,
     Jpeg = 1,
     Png = 2
-};
-
-static const char *rex_data_types[] =
-{
-    "LineSet",
-    "Text",
-    "Vertex",
-    "Mesh",
-    "Image",
-    "MaterialStandard",
-    "PeopleSimulation",
-    "UnityPackage"
 };
 
 /**
@@ -152,10 +161,19 @@ int rex_read_data_block_header (FILE *fp, struct rex_block_header *header);
  */
 int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len);
 
+/**
+ * Reads a complete mesh data block. The fp must point to the beginning of
+ * the block. The mesh header and the mesh itself will be returned. Please
+ * note that memory will be allocated for the mesh data which needs to be
+ * deallocated by the caller. block_size is the total size of the block. After
+ * reading, fp will be set to the end of the block.
+*/
+int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *header, struct rex_mesh *mesh);
+
 /*
  * Writes a complete mesh block to the given file pointer
  */
-int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id, const char *name);
+int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id);
 
 /*
  * Writes a mesh material block to the given file pointer
@@ -172,3 +190,7 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
  * \param id the data id for this block
  */
 int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
+
+
+void rex_mesh_init(struct rex_mesh * mesh);
+void rex_mesh_free(struct rex_mesh * mesh);
