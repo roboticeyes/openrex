@@ -24,27 +24,7 @@
 #include "util.h"
 #include "global.h"
 
-#pragma pack (1)
-struct vertex
-{
-    float x;
-    float y;
-    float z;
-};
-struct texel
-{
-    float s;
-    float t;
-};
-struct triangle
-{
-    uint32_t v1;
-    uint32_t v2;
-    uint32_t v3;
-};
-#pragma pack ()
-
-struct vertex vertices[] =
+struct rex_position vertices[] =
 {
     {0, 0, 0},
     {0, 0, 1},
@@ -56,7 +36,7 @@ struct vertex vertices[] =
     {1, 1, 0}
 };
 
-struct texel texels[] =
+struct rex_texel texels[] =
 {
     {0, 0},
     {1, 0},
@@ -68,7 +48,7 @@ struct texel texels[] =
     {0, 0}
 };
 
-struct triangle triangles[] =
+struct rex_triangle triangles[] =
 {
     {0, 1, 3},
     {7, 6, 4},
@@ -154,6 +134,7 @@ int main (int argc, char **argv)
     struct rex_mesh mesh =
     {
         .id = 2,
+        .name = "test",
         .nr_vertices = LEN (vertices),
         .nr_triangles = LEN (triangles),
         .positions = & (vertices[0].x),
@@ -163,7 +144,7 @@ int main (int argc, char **argv)
         .triangles = & (triangles[0].v1)
     };
 
-    if (rex_write_mesh_block (fp, &header, &mesh, 1 /* material_id */, "test"))
+    if (rex_write_mesh_block (fp, &header, &mesh, 1 /* material_id */))
     {
         warn ("Error during file read %d\n", errno);
         fclose (fp);

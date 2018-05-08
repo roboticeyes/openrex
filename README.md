@@ -35,13 +35,13 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 
 * [x] Read file header
 * [x] Write file header
-* [ ] Read mesh block
+* [x] Read mesh block
 * [x] Write mesh block
 * [ ] Read material block
 * [x] Write material block
-
 * [ ] Read image block
 * [x] Write image block
+*
 * [ ] Read lineset block
 * [ ] Write lineset block
 * [ ] Read vertex block
