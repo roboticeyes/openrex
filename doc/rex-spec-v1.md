@@ -167,6 +167,9 @@ mesh block must be added.
 | 2                | string size    | uint16_t | size of the following string name                                |
 | 74               | name           | string   | name of the mesh (this is user-readable)                         |
 
+It is assumed that the mesh data is vertex-oriented, so that additional properties such as color, normals, or
+texture information is equally sized to the nrOfVtxCoords. If not available the number should/can be 0.
+
 The mesh references a separate material block which is identified by the materialId (dataId of the material block).
 Each DataMesh can only have one material block. This is similar to the `usemtl` in the OBJ file format. **If the
 materialId is `INT64_MAX` (`Long.MAX_VALUE` in Java), then no material is available.**
