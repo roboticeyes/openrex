@@ -306,6 +306,30 @@ int rex_read_material_block (FILE *fp, long block_size, struct rex_material_stan
     return REX_OK;
 }
 
+int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint8_t *data, uint64_t *data_size)
+{
+    FP_CHECK (fp)
+
+    long block_end = ftell (fp) + block_size;
+
+    if (fread (compression, sizeof (uint32_t), 1, fp) != 1)
+    {
+        fseek (fp, block_end, SEEK_SET);
+        return REX_ERROR_FILE_READ;
+    }
+
+    *data_size = block_size - sizeof (uint32_t);
+    data = malloc (*data_size);
+    if (fread (data, *data_size, 1, fp) != 1)
+    {
+        fseek (fp, block_end, SEEK_SET);
+        return REX_ERROR_FILE_READ;
+    }
+
+    return REX_OK;
+}
+
+
 void rex_mesh_init (struct rex_mesh *mesh)
 {
     if (!mesh)
