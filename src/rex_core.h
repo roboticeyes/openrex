@@ -176,6 +176,11 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
 int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id);
 
 /*
+ * Reads a mesh material block to the given file pointer
+ */
+int rex_read_material_block (FILE *fp, long block_size, struct rex_material_standard *mat);
+
+/*
  * Writes a mesh material block to the given file pointer
  */
 int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);

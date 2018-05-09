@@ -22,9 +22,10 @@
 #include "status.h"
 #include "util.h"
 
-struct rex_header rex_create_header(void)
+struct rex_header rex_create_header (void)
 {
-    struct rex_header header = {
+    struct rex_header header =
+    {
         .version = REX_FILE_VERSION,
         .crc = 0,
         .nr_datablocks = 0,
@@ -32,164 +33,178 @@ struct rex_header rex_create_header(void)
         .sz_all_datablocks = 0,
     };
 
-    memcpy(header.magic, REX_FILE_MAGIC, sizeof(REX_FILE_MAGIC));
-    memset(header.reserved, 0, 42);
+    memcpy (header.magic, REX_FILE_MAGIC, sizeof (REX_FILE_MAGIC));
+    memset (header.reserved, 0, 42);
     return header;
 }
 
-int rex_read_header(FILE* fp, struct rex_header* header)
+int rex_read_header (FILE *fp, struct rex_header *header)
 {
-    FP_CHECK(fp);
-    rewind(fp);
-    if (fread(header, sizeof(*header), 1, fp) != 1)
+    FP_CHECK (fp);
+    rewind (fp);
+    if (fread (header, sizeof (*header), 1, fp) != 1)
         return REX_ERROR_FILE_READ;
 
-    if (strncmp(header->magic, "REX1", 4) != 0)
+    if (strncmp (header->magic, "REX1", 4) != 0)
         return REX_ERROR_WRONG_MAGIC;
 
     // NOTE: we skip the coordinate system block because it is not used
     // the file pointer is set to beginning of data block
-    fseek(fp, header->start_addr, SEEK_SET);
+    fseek (fp, header->start_addr, SEEK_SET);
 
     return REX_OK;
 }
 
-int rex_write_header(FILE* fp, struct rex_header* header)
+int rex_write_header (FILE *fp, struct rex_header *header)
 {
-    FP_CHECK(fp)
-    rewind(fp);
+    FP_CHECK (fp)
+    rewind (fp);
 
     // write dummy coordinate system block
     struct rex_csb csb = { .srid = 0, .sz = 4, .name = "EPSG", .offset_x = 0, .offset_y = 0, .offset_z = 0 };
 
-    header->start_addr = sizeof(struct rex_header) + sizeof(csb);
+    header->start_addr = sizeof (struct rex_header) + sizeof (csb);
 
-    if (fwrite(header, sizeof(*header), 1, fp) != 1)
+    if (fwrite (header, sizeof (*header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
 
-    assert(ftell(fp) == 64);
+    assert (ftell (fp) == 64);
 
-    if (fwrite(&csb, sizeof(csb), 1, fp) != 1)
+    if (fwrite (&csb, sizeof (csb), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     return REX_OK;
 }
 
-int rex_read_data_block_header(FILE* fp, struct rex_block_header* header)
+int rex_read_data_block_header (FILE *fp, struct rex_block_header *header)
 {
-    FP_CHECK(fp)
+    FP_CHECK (fp)
 
-    if (fread(header, sizeof(*header), 1, fp) != 1)
+    if (fread (header, sizeof (*header), 1, fp) != 1)
         return REX_ERROR_FILE_READ;
 
     return REX_OK;
 }
 
-int rex_read_data_block(FILE* fp, uint8_t* block, uint32_t len)
+int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len)
 {
-    FP_CHECK(fp)
+    FP_CHECK (fp)
 
-    if (!block) {
-        warn("Block is not allocated");
+    if (!block)
+    {
+        warn ("Block is not allocated");
         return REX_ERROR_MEMORY;
     }
-    if (fread(block, sizeof(uint8_t), len, fp) != len)
+    if (fread (block, sizeof (uint8_t), len, fp) != len)
         return REX_ERROR_FILE_READ;
 
     return REX_OK;
 }
 
-int rex_read_mesh_block(FILE* fp, long block_size, struct rex_mesh_header* header, struct rex_mesh* mesh)
+int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *header, struct rex_mesh *mesh)
 {
-    FP_CHECK(fp)
+    FP_CHECK (fp)
 
-    if (!mesh) {
-        warn("Mesh data structure not allocated");
+    if (!mesh)
+    {
+        warn ("Mesh data structure not allocated");
         return REX_ERROR_MEMORY;
     }
 
-    rex_mesh_init(mesh);
+    rex_mesh_init (mesh);
 
-    long block_end = ftell(fp) + block_size;
+    long block_end = ftell (fp) + block_size;
 
     // read mesh header
-    if (fread(header, sizeof(struct rex_mesh_header), 1, fp) != 1) {
-        fseek(fp, block_end, SEEK_SET);
+    if (fread (header, sizeof (struct rex_mesh_header), 1, fp) != 1)
+    {
+        fseek (fp, block_end, SEEK_SET);
         return REX_ERROR_FILE_READ;
     }
 
     mesh->nr_triangles = header->nrTriangles;
     mesh->nr_vertices = header->nrOfVtxCoords;
-    mesh->name = strdup(header->name);
+    mesh->name = strdup (header->name);
 
     // read positions
-    if (mesh->nr_vertices) {
-        mesh->positions = malloc(mesh->nr_vertices * sizeof(struct rex_position));
-        if (fread(mesh->positions, sizeof(struct rex_position), mesh->nr_vertices, fp) != mesh->nr_vertices) {
-            free(mesh->positions);
-            fseek(fp, block_end, SEEK_SET);
+    if (mesh->nr_vertices)
+    {
+        mesh->positions = malloc (mesh->nr_vertices * sizeof (struct rex_position));
+        if (fread (mesh->positions, sizeof (struct rex_position), mesh->nr_vertices, fp) != mesh->nr_vertices)
+        {
+            free (mesh->positions);
+            fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
 
     // read normals
-    if (header->nrOfNorCoords) {
-        mesh->normals = malloc(header->nrOfNorCoords * sizeof(struct rex_position));
-        if (fread(mesh->normals, sizeof(struct rex_position), header->nrOfNorCoords, fp) != header->nrOfNorCoords) {
-            free(mesh->normals);
-            fseek(fp, block_end, SEEK_SET);
+    if (header->nrOfNorCoords)
+    {
+        mesh->normals = malloc (header->nrOfNorCoords * sizeof (struct rex_position));
+        if (fread (mesh->normals, sizeof (struct rex_position), header->nrOfNorCoords, fp) != header->nrOfNorCoords)
+        {
+            free (mesh->normals);
+            fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
 
     // read texture coords
-    if (header->nrOfTexCoords) {
-        mesh->tex_coords = malloc(header->nrOfTexCoords * sizeof(struct rex_texel));
-        if (fread(mesh->tex_coords, sizeof(struct rex_texel), header->nrOfTexCoords, fp) != header->nrOfTexCoords) {
-            free(mesh->tex_coords);
-            fseek(fp, block_end, SEEK_SET);
+    if (header->nrOfTexCoords)
+    {
+        mesh->tex_coords = malloc (header->nrOfTexCoords * sizeof (struct rex_texel));
+        if (fread (mesh->tex_coords, sizeof (struct rex_texel), header->nrOfTexCoords, fp) != header->nrOfTexCoords)
+        {
+            free (mesh->tex_coords);
+            fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
 
     // read colors
-    if (header->nrOfVtxColors) {
-        mesh->colors = malloc(header->nrOfVtxColors * sizeof(struct rex_position));
-        if (fread(mesh->colors, sizeof(struct rex_position), header->nrOfVtxColors, fp) != header->nrOfVtxColors) {
-            free(mesh->colors);
-            fseek(fp, block_end, SEEK_SET);
+    if (header->nrOfVtxColors)
+    {
+        mesh->colors = malloc (header->nrOfVtxColors * sizeof (struct rex_position));
+        if (fread (mesh->colors, sizeof (struct rex_position), header->nrOfVtxColors, fp) != header->nrOfVtxColors)
+        {
+            free (mesh->colors);
+            fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
 
     // read triangles
-    if (mesh->nr_triangles) {
-        mesh->triangles = malloc(mesh->nr_triangles * sizeof(struct rex_triangle));
-        if (fread(mesh->triangles, sizeof(struct rex_triangle), mesh->nr_triangles, fp) != mesh->nr_triangles) {
-            free(mesh->triangles);
-            fseek(fp, block_end, SEEK_SET);
+    if (mesh->nr_triangles)
+    {
+        mesh->triangles = malloc (mesh->nr_triangles * sizeof (struct rex_triangle));
+        if (fread (mesh->triangles, sizeof (struct rex_triangle), mesh->nr_triangles, fp) != mesh->nr_triangles)
+        {
+            free (mesh->triangles);
+            fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
 
-    fseek(fp, block_end, SEEK_SET);
+    fseek (fp, block_end, SEEK_SET);
     return REX_OK;
 }
 
-int rex_write_mesh_block(
-    FILE* fp, struct rex_header* header, struct rex_mesh* mesh, uint64_t material_id)
+int rex_write_mesh_block (
+    FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id)
 {
     uint32_t nr_normals = (mesh->normals) ? mesh->nr_vertices : 0;
     uint32_t nr_tex_coords = (mesh->tex_coords) ? mesh->nr_vertices : 0;
     uint32_t nr_colors = (mesh->colors) ? mesh->nr_vertices : 0;
 
     uint64_t ofs_vtx = REX_MESH_HEADER_SIZE; // start vertex block relative to mesh header start
-    uint64_t ofs_nor = ofs_vtx + mesh->nr_vertices * sizeof(float) * 3;
-    uint64_t ofs_tex = ofs_nor + nr_normals * sizeof(float) * 3;
-    uint64_t ofs_col = ofs_tex + nr_tex_coords * sizeof(float) * 2;
-    uint64_t ofs_tri = ofs_col + nr_colors * sizeof(float) * 3;
+    uint64_t ofs_nor = ofs_vtx + mesh->nr_vertices * sizeof (float) * 3;
+    uint64_t ofs_tex = ofs_nor + nr_normals * sizeof (float) * 3;
+    uint64_t ofs_col = ofs_tex + nr_tex_coords * sizeof (float) * 2;
+    uint64_t ofs_tri = ofs_col + nr_colors * sizeof (float) * 3;
 
     // create mesh block
-    struct rex_mesh_header mesh_header = {
+    struct rex_mesh_header mesh_header =
+    {
         .lod = 0,
         .maxLod = 0,
         .nrOfVtxCoords = mesh->nr_vertices,
@@ -205,28 +220,28 @@ int rex_write_mesh_block(
         .materialId = material_id
     };
 
-    strncpy(mesh_header.name, mesh->name, REX_MESH_NAME_MAX_SIZE-1);
-    mesh_header.size = strlen(mesh_header.name);
+    strncpy (mesh_header.name, mesh->name, REX_MESH_NAME_MAX_SIZE - 1);
+    mesh_header.size = strlen (mesh_header.name);
 
-    long total_sz = REX_MESH_HEADER_SIZE + mesh->nr_vertices * sizeof(float) * 3 + nr_normals * sizeof(float) * 3
-        + nr_tex_coords * sizeof(float) * 2 + nr_colors * sizeof(float) * 3 + mesh->nr_triangles * sizeof(uint32_t) * 3;
+    long total_sz = REX_MESH_HEADER_SIZE + mesh->nr_vertices * sizeof (float) * 3 + nr_normals * sizeof (float) * 3
+                    + nr_tex_coords * sizeof (float) * 2 + nr_colors * sizeof (float) * 3 + mesh->nr_triangles * sizeof (uint32_t) * 3;
 
     // write block header
     struct rex_block_header block_header = { .type = 3, .version = 1, .sz = total_sz, .id = mesh->id };
 
-    if (fwrite(&block_header, sizeof(block_header), 1, fp) != 1)
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(&mesh_header, sizeof(mesh_header), 1, fp) != 1)
+    if (fwrite (&mesh_header, sizeof (mesh_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mesh->positions, sizeof(float) * 3, mesh->nr_vertices, fp) != mesh->nr_vertices)
+    if (fwrite (mesh->positions, sizeof (float) * 3, mesh->nr_vertices, fp) != mesh->nr_vertices)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mesh->normals, sizeof(float) * 3, nr_normals, fp) != nr_normals)
+    if (fwrite (mesh->normals, sizeof (float) * 3, nr_normals, fp) != nr_normals)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mesh->tex_coords, sizeof(float) * 2, nr_tex_coords, fp) != nr_tex_coords)
+    if (fwrite (mesh->tex_coords, sizeof (float) * 2, nr_tex_coords, fp) != nr_tex_coords)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mesh->colors, sizeof(float) * 3, nr_colors, fp) != nr_colors)
+    if (fwrite (mesh->colors, sizeof (float) * 3, nr_colors, fp) != nr_colors)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mesh->triangles, sizeof(uint32_t) * 3, mesh->nr_triangles, fp) != mesh->nr_triangles)
+    if (fwrite (mesh->triangles, sizeof (uint32_t) * 3, mesh->nr_triangles, fp) != mesh->nr_triangles)
         return REX_ERROR_FILE_WRITE;
 
     header->nr_datablocks += 1;
@@ -234,35 +249,35 @@ int rex_write_mesh_block(
     return REX_OK;
 }
 
-int rex_write_material_block(FILE* fp, struct rex_header* header, struct rex_material_standard* mat, uint64_t id)
+int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id)
 {
     // write block header
-    struct rex_block_header block_header = { .type = 5, .version = 1, .sz = sizeof(*mat), .id = id };
+    struct rex_block_header block_header = { .type = 5, .version = 1, .sz = sizeof (*mat), .id = id };
 
-    if (fwrite(&block_header, sizeof(block_header), 1, fp) != 1)
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(mat, sizeof(*mat), 1, fp) != 1)
+    if (fwrite (mat, sizeof (*mat), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
 
     header->nr_datablocks += 1;
-    header->sz_all_datablocks += sizeof(*mat);
+    header->sz_all_datablocks += sizeof (*mat);
     return REX_OK;
 }
 
-int rex_write_image_bock(
-    FILE* fp, struct rex_header* header, uint8_t* img, uint64_t size, enum rex_image_type type, uint64_t id)
+int rex_write_image_bock (
+    FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id)
 {
-    uint64_t total_sz = sizeof(uint32_t) + size;
+    uint64_t total_sz = sizeof (uint32_t) + size;
     uint32_t image_type = type;
 
     // write block header
     struct rex_block_header block_header = { .type = 4, .version = 1, .sz = total_sz, .id = id };
 
-    if (fwrite(&block_header, sizeof(block_header), 1, fp) != 1)
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(&image_type, sizeof(uint32_t), 1, fp) != 1)
+    if (fwrite (&image_type, sizeof (uint32_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite(img, size, 1, fp) != 1)
+    if (fwrite (img, size, 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
 
     header->nr_datablocks += 1;
@@ -270,7 +285,28 @@ int rex_write_image_bock(
     return REX_OK;
 }
 
-void rex_mesh_init(struct rex_mesh* mesh)
+int rex_read_material_block (FILE *fp, long block_size, struct rex_material_standard *mat)
+{
+    FP_CHECK (fp)
+
+    if (!mat)
+    {
+        warn ("Material data structure not allocated");
+        return REX_ERROR_MEMORY;
+    }
+
+    long block_end = ftell (fp) + block_size;
+
+    if (fread (mat, sizeof (struct rex_material_standard), 1, fp) != 1)
+    {
+        fseek (fp, block_end, SEEK_SET);
+        return REX_ERROR_FILE_READ;
+    }
+
+    return REX_OK;
+}
+
+void rex_mesh_init (struct rex_mesh *mesh)
 {
     if (!mesh)
         return;
@@ -286,28 +322,22 @@ void rex_mesh_init(struct rex_mesh* mesh)
     mesh->triangles = 0;
 }
 
-void rex_mesh_free(struct rex_mesh* mesh)
+void rex_mesh_free (struct rex_mesh *mesh)
 {
     if (!mesh)
         return;
 
-    if (mesh->name) {
-        free(mesh->name);
-    }
-    if (mesh->positions) {
-        free(mesh->positions);
-    }
-    if (mesh->normals) {
-        free(mesh->normals);
-    }
-    if (mesh->tex_coords) {
-        free(mesh->tex_coords);
-    }
-    if (mesh->colors) {
-        free(mesh->colors);
-    }
-    if (mesh->triangles) {
-        free(mesh->triangles);
-    }
-    rex_mesh_init(mesh);
+    if (mesh->name)
+        free (mesh->name);
+    if (mesh->positions)
+        free (mesh->positions);
+    if (mesh->normals)
+        free (mesh->normals);
+    if (mesh->tex_coords)
+        free (mesh->tex_coords);
+    if (mesh->colors)
+        free (mesh->colors);
+    if (mesh->triangles)
+        free (mesh->triangles);
+    rex_mesh_init (mesh);
 }
