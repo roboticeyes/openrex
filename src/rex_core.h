@@ -176,7 +176,7 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
 int rex_write_mesh_block (FILE *fp, struct rex_header *header, struct rex_mesh *mesh, uint64_t material_id);
 
 /*
- * Reads a mesh material block to the given file pointer
+ * Reads a mesh material block from the given file pointer
  */
 int rex_read_material_block (FILE *fp, long block_size, struct rex_material_standard *mat);
 
@@ -196,6 +196,11 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
  */
 int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
 
+/*
+ * Reads a image block from the given file pointer. This call will allocate memory
+ * for the image. The caller is responsible to free this memory!
+ */
+int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint8_t *data, uint64_t *data_size);
 
 void rex_mesh_init(struct rex_mesh * mesh);
 void rex_mesh_free(struct rex_mesh * mesh);

@@ -32,6 +32,8 @@ enum rex_block_enums
 static const char *rex_data_types[]
     = { "LineSet", "Text", "Vertex", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
 
+static const char *rex_image_types[] = { "Raw", "Jpg", "Png" };
+
 void usage (const char *exec)
 {
     die ("usage: %s filename.rex\n", exec);
@@ -128,6 +130,16 @@ int main (int argc, char **argv)
             struct rex_material_standard mat;
             rex_read_material_block (fp, block_header.sz, &mat);
             rex_dump_material_block (&mat);
+        }
+        else if (block_header.type == Image)
+        {
+            uint8_t *data = 0;
+            uint64_t data_size;
+            uint32_t compression;
+            rex_read_image_block (fp, block_header.sz, &compression, data, &data_size);
+            printf ("compression %31s\n", rex_image_types[compression]);
+            printf ("image size  %31ld\n", data_size);
+            free (data);
         }
         else fseek (fp, block_header.sz, SEEK_CUR);
 

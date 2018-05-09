@@ -27,6 +27,15 @@ make
 make install
 ```
 
+## Source code formatting
+
+Please use `astyle` to format your code with the following settings:
+
+```
+--style=allman --indent=spaces=4 --align-pointer=name --align-reference=name --indent-switches --indent-cases --pad-oper --pad-paren-out --pad-header --unpad-paren --indent-namespaces --remove-braces --convert-tabs --mode=c
+
+```
+
 ### Windows build
 
 With Visual Studio 2017 you should be able to use the CMakeLists file directly.
@@ -41,7 +50,7 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [x] Write mesh block
 * [x] Read material block
 * [x] Write material block
-* [ ] Read image block
+* [x] Read image block
 * [x] Write image block
 
 ### Prio 2
@@ -55,3 +64,21 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [ ] Write peoplesimulation block
 * [ ] Read unitypackage block
 * [ ] Write unitypackage block
+
+## Contribution/Ideas
+
+Your contribution is welcome. Here are some ideas:
+
+* rex-view: SDL2-based OpenGL viewer of REX files
+* Extend rex-info to support filtering (e.g. only show meshes, or materials)
+* Save images from REX to files
+
+### Guidelines/Pre-requisite(s)
+
+* Keep it simple and follow the UNIX philosophy
+* You should be able to write robust C code
+* Make sure to format the code according to our style (see above)
+* Check your code for memory leaks using `valgrind`
+* Your code should run under Windows/Linux/Mac
+
+
