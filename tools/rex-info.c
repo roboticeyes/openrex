@@ -19,21 +19,18 @@
 
 #include "config.h"
 
+#include "global.h"
 #include "rex_core.h"
 #include "status.h"
 #include "util.h"
 
-static const char *rex_data_types[] =
+enum rex_block_enums
 {
-    "LineSet",
-    "Text",
-    "Vertex",
-    "Mesh",
-    "Image",
-    "MaterialStandard",
-    "PeopleSimulation",
-    "UnityPackage"
+    LineSet = 0, Text = 1, Vertex = 2, Mesh = 3, Image = 4, MaterialStandard = 5, PeopleSimulation = 6, UnityPackage = 7
 };
+
+static const char *rex_data_types[]
+    = { "LineSet", "Text", "Vertex", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
 
 void usage (const char *exec)
 {
@@ -48,16 +45,27 @@ void rex_dump_header (struct rex_header *header)
     printf ("nr_datablocks          %20d\n", header->nr_datablocks);
     printf ("start_addr             %20d\n", header->start_addr);
     printf ("sz_all_datablocks      %20lu\n", header->sz_all_datablocks);
-    printf ("═══════════════════════════════════════════\n");
 }
 
 void rex_dump_block_header (struct rex_block_header *header)
 {
+    printf ("═══════════════════════════════════════════\n");
     printf ("id                     %20lu\n", header->id);
     printf ("type                   %20s\n", rex_data_types[header->type]);
     printf ("version                %20d\n", header->version);
     printf ("sz                     %20d\n", header->sz);
-    printf ("═══════════════════════════════════════════\n");
+}
+
+void rex_dump_material_block (struct rex_material_standard *mat)
+{
+    if (!mat)
+        return;
+
+    printf ("Ka %22.2f %5.2f %5.2f %5ld\n", mat->ka_red, mat->ka_green, mat->ka_blue, (mat->ka_textureId != REX_NOT_SET) ? mat->ka_textureId : -1);
+    printf ("Kd %22.2f %5.2f %5.2f %5ld\n", mat->kd_red, mat->kd_green, mat->kd_blue, (mat->kd_textureId != REX_NOT_SET) ? mat->kd_textureId : -1);
+    printf ("Ks %22.2f %5.2f %5.2f %5ld\n", mat->ks_red, mat->ks_green, mat->ks_blue, (mat->ks_textureId != REX_NOT_SET) ? mat->ks_textureId : -1);
+    printf ("ns %40.2f \n", mat->ns);
+    printf ("alpha %37.2f \n", mat->alpha);
 }
 
 void rex_dump_mesh_block (struct rex_mesh *mesh)
@@ -104,21 +112,28 @@ int main (int argc, char **argv)
     {
         struct rex_block_header block_header;
         rex_read_data_block_header (fp, &block_header);
-        if (block_header.type == 3)
+        rex_dump_block_header (&block_header);
+
+        if (block_header.type == Mesh)
         {
             struct rex_mesh_header header;
-            struct rex_mesh mesh = {0};
+            struct rex_mesh mesh = { 0 };
             mesh.id = block_header.id;
             rex_read_mesh_block (fp, block_header.sz, &header, &mesh);
             rex_dump_mesh_block (&mesh);
             rex_mesh_free (&mesh);
         }
-        else
-            fseek (fp, block_header.sz, SEEK_CUR);
+        else if (block_header.type == MaterialStandard)
+        {
+            struct rex_material_standard mat;
+            rex_read_material_block (fp, block_header.sz, &mat);
+            rex_dump_material_block (&mat);
+        }
+        else fseek (fp, block_header.sz, SEEK_CUR);
 
-        rex_dump_block_header (&block_header);
     }
 
+    printf ("═══════════════════════════════════════════\n");
     fclose (fp);
     return 0;
 }

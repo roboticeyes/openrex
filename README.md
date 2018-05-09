@@ -14,7 +14,7 @@ This repository contains
 
 # Development
 
-In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and 
+In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and
 `cmake` installed on your system. The code should work for Linux, MacOS, and Windows.
 
 ## Build
@@ -39,7 +39,7 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [x] Write file header
 * [x] Read mesh block
 * [x] Write mesh block
-* [ ] Read material block
+* [x] Read material block
 * [x] Write material block
 * [ ] Read image block
 * [x] Write image block
