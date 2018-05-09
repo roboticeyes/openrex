@@ -43,17 +43,6 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 
 ## Implementation status
 
-### Prio 1
-* [x] Read file header
-* [x] Write file header
-* [x] Read mesh block
-* [x] Write mesh block
-* [x] Read material block
-* [x] Write material block
-* [x] Read image block
-* [x] Write image block
-
-### Prio 2
 * [ ] Read lineset block
 * [ ] Write lineset block
 * [ ] Read vertex block
@@ -65,7 +54,7 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 * [ ] Read unitypackage block
 * [ ] Write unitypackage block
 
-## Contribution/Ideas
+## Contribution and ideas
 
 Your contribution is welcome. Here are some ideas:
 
@@ -73,7 +62,7 @@ Your contribution is welcome. Here are some ideas:
 * Extend rex-info to support filtering (e.g. only show meshes, or materials)
 * Save images from REX to files
 
-### Guidelines/Pre-requisite(s)
+### Guidelines and pre-requisite(s)
 
 * Keep it simple and follow the UNIX philosophy
 * You should be able to write robust C code
