@@ -141,8 +141,20 @@ int main (int argc, char **argv)
             printf ("image size  %31ld\n", data_size);
             free (data);
         }
+        else if (block_header.type == UnityPackage)
+        {
+            long block_end = ftell (fp) + block_header.sz;
+            uint16_t str_len;
+            if (fread (&str_len, sizeof (uint16_t), 1, fp) != 1)
+                fseek (fp, block_end, SEEK_SET);
+            char *name = malloc (str_len + 1);
+            fread (name, str_len, 1, fp);
+            name[str_len] = '\0';
+            printf ("asset name: %31s\n", name);
+            free (name);
+            fseek (fp, block_end, SEEK_SET);
+        }
         else fseek (fp, block_header.sz, SEEK_CUR);
-
     }
 
     printf ("═══════════════════════════════════════════\n");

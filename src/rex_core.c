@@ -277,7 +277,7 @@ int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *blob,
     // write strlen(name) + name
     if (fwrite (&name_len, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite (&name, sizeof (name_len), 1, fp) != 1)
+    if (fwrite (name, 1, name_len, fp) != name_len)
         return REX_ERROR_FILE_WRITE;
     if (fwrite (blob, size, 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
