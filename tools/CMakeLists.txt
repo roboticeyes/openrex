@@ -7,16 +7,18 @@ include_directories(
 # Targets
 add_executable(rex-info rex-info.c)
 add_executable(rex-gencube rex-gencube.c)
+add_executable(rex-asset rex-asset.c)
 
 
 # Linkage
 target_link_libraries(rex-info openrex-static)
 target_link_libraries(rex-gencube openrex-static)
+target_link_libraries(rex-asset openrex-static)
 
 # Source includes
 include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
 
-install( TARGETS rex-info rex-gencube
+install( TARGETS rex-info rex-gencube rex-asset
     RUNTIME DESTINATION bin
     )
 

@@ -264,6 +264,22 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
     return REX_OK;
 }
 
+int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, uint64_t id)
+{
+    // write block header
+    struct rex_block_header block_header = { .type = 7, .version = 1, .sz = size, .id = id };
+
+    if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+    if (fwrite (blob, size, 1, fp) != 1)
+        return REX_ERROR_FILE_WRITE;
+
+    header->nr_datablocks += 1;
+    header->sz_all_datablocks += size;
+    return REX_OK;
+}
+
+
 int rex_write_image_bock (
     FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id)
 {

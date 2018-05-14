@@ -196,11 +196,21 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
  */
 int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
 
+/**
+ * Writes a rex asset block
+ * \param fp file pointer
+ * \param header rex header
+ * \param blob the content of the rex asset file
+ * \param size the size of the binary image in bytes
+ * \param id the data id for this block
+ */
+int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, uint64_t id);
+
 /*
  * Reads a image block from the given file pointer. This call will allocate memory
  * for the image. The caller is responsible to free this memory!
  */
 int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint8_t *data, uint64_t *data_size);
 
-void rex_mesh_init(struct rex_mesh * mesh);
-void rex_mesh_free(struct rex_mesh * mesh);
+void rex_mesh_init (struct rex_mesh *mesh);
+void rex_mesh_free (struct rex_mesh *mesh);
