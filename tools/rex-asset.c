@@ -59,7 +59,7 @@ int main (int argc, char **argv)
         die ("Cannot read rexasset content");
     fclose (t);
 
-    if (rex_write_rexasset_bock (fp, &header, blob, sz, 0))
+    if (rex_write_rexasset_bock (fp, &header, blob, sz, "rexasset", 0))
     {
         warn ("Error during file write %d\n", errno);
         free (blob);
