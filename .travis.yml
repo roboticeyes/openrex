@@ -5,3 +5,4 @@ addons:
     apt:
         packages:
             - libglew-dev
+            - libsdl2-dev
