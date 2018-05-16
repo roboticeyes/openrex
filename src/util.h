@@ -23,6 +23,12 @@
 void warn (const char *, ...);
 void die (const char *, ...);
 
+/**
+ * Reads the content of a file. The caller must make sure
+ * that the memory gets freed!
+ */
+char *read_file (const char *filename);
+
 #define FP_CHECK(fp) \
 if (!fp) \
 { \
