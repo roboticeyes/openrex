@@ -266,7 +266,7 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
     return REX_OK;
 }
 
-int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, const char *name, uint64_t id)
+int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, const char *name, uint8_t target_platform, uint64_t id)
 {
     uint16_t name_len = strlen (name);
     uint64_t total_sz = sizeof (uint16_t) + name_len + size;
@@ -280,6 +280,8 @@ int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob
     if (fwrite (&name_len, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     if (fwrite (name, 1, name_len, fp) != name_len)
+        return REX_ERROR_FILE_WRITE;
+    if (fwrite (&target_platform, sizeof(uint8_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     if (fwrite (blob, size, 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;

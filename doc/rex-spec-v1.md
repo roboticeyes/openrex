@@ -313,8 +313,9 @@ The UnityPackage data block contains an arbitrary pre-prepared Unity package. An
 which can then directly be used by the Unity app to be included. The data block size in the header refers to the total size of
 this block plus the string size and string length. E.g.
 
-| **size [bytes]** | **name**  | **type** | **description**                                              |
-|------------------|-----------|----------|--------------------------------------------------------------|
-| 2+sz             | assetname | string   | name of the asset stored in the blob                         |
-|                  | data      | bytes    | data of the unity asset content                              |
+| **size [bytes]** | **name**       | **type**  | **description**                                              |
+|------------------|----------------|-----------|--------------------------------------------------------------|
+| 2+sz             | assetname      | string    | name of the asset stored in the blob                         |
+| 1                | targetplatform | uint8_t   | target platform for the asset package                        |
+|                  | data           | bytes     | data of the unity asset content                              |
 
