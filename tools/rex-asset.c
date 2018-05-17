@@ -13,21 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.*
  *
- * This tool takes a REX Unity Asset file and generates a REX file.
+ * This tool takes a REX Unity Asset file for each target platform and generates a REX file.
+ * The file endings have to be:
+ *   ".a_rexasset" for Android
+ *   ".i_rexasset" for iOS
+ *   ".w_rexasset" for WSA
  */
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "core.h"
 #include "global.h"
 #include "util.h"
 
+#define TARGET_PLATFROM_ANDROID 0
+#define TARGET_PLATFROM_IOS 1
+#define TARGET_PLATFROM_WSA 2
+
 void usage (const char *exec)
 {
-    die ("usage: %s <rex_asset_file> filename.rex\n", exec);
+    die ("usage: %s <rex_asset_file_name_without_ending> filename.rex\n", exec);
 }
 
 int main (int argc, char **argv)
@@ -46,22 +55,18 @@ int main (int argc, char **argv)
     struct rex_header header = rex_create_header();
     rex_write_header (fp, &header);
 
-    // write texture file
-    FILE *t = fopen (argv[1], "rb");
-    if (!t)
-        die ("Cannot open rex asset file %s\n", argv[1]);
-    fseek (t, 0, SEEK_END);
-    uint64_t sz = ftell (t);
-    fseek (t, 0, SEEK_SET);
-    uint8_t *blob = malloc (sz);
-    if (fread (blob, sz, 1, t) != 1)
-        die ("Cannot read rexasset content");
-    fclose (t);
-
-    if (rex_write_rexasset_bock (fp, &header, blob, sz, "rexasset", 0))
+    if (read_and_write_asset_file(fp, &header, argv[1], ".a_rexasset",0))
     {
-        warn ("Error during file write %d\n", errno);
-        free (blob);
+        fclose (fp);
+        return -1;
+    }
+        if (read_and_write_asset_file(fp, &header, argv[1], ".i_rexasset",1))
+    {
+        fclose (fp);
+        return -1;
+    }
+        if (read_and_write_asset_file(fp, &header, argv[1], ".w_rexasset",2))
+    {
         fclose (fp);
         return -1;
     }
@@ -69,7 +74,53 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     fclose (fp);
-    free (blob);
     return 0;
 }
 
+int read_and_write_asset_file(FILE *fp, struct rex_header *header, char *fileName, char *fileEnding, uint64_t id)
+{
+    // write asset file
+    char *fileNameWithEnding;
+    fileNameWithEnding = malloc(strlen(fileName) + strlen(fileEnding) + 1);
+    strcpy(fileNameWithEnding, fileName);
+    strcat(fileNameWithEnding, fileEnding);
+    
+
+    FILE *assetFile = fopen (fileNameWithEnding, "rb");
+    if (!assetFile)
+        die ("Cannot open rex asset file %s\n", fileNameWithEnding);
+    fseek (assetFile, 0, SEEK_END);
+    uint64_t fileSize = ftell (assetFile);
+    fseek (assetFile, 0, SEEK_SET);
+    uint8_t *blob = malloc (fileSize);
+    if (fread (blob, fileSize, 1, assetFile) != 1)
+        die ("Cannot read rexasset content");
+    fclose (assetFile);
+
+    uint8_t targetPlatform;
+    if(strcmp(fileEnding,".a_rexasset") == 0)
+    {
+        targetPlatform = TARGET_PLATFROM_ANDROID;
+    }
+    else if(strcmp(fileEnding,".i_rexasset") == 0)
+    {
+        targetPlatform = TARGET_PLATFROM_IOS;
+    }
+    else if(strcmp(fileEnding,".w_rexasset") == 0)
+    {
+        targetPlatform = TARGET_PLATFROM_WSA;
+    }
+    
+    if (rex_write_rexasset_block (fp, header, blob, fileSize, fileNameWithEnding, targetPlatform, id))
+    {
+        warn ("Error during file write %d\n", errno);
+        free (blob);
+        fclose (fp);
+        return -1;
+    }
+    free(fileNameWithEnding);
+    fileNameWithEnding = NULL;
+    free (blob);
+    blob = NULL;
+    return 0;
+}
