@@ -97,7 +97,7 @@ int read_and_write_asset_file(FILE *fp, struct rex_header *header, char *fileNam
         die ("Cannot read rexasset content");
     fclose (assetFile);
 
-    uint8_t targetPlatform;
+    uint16_t targetPlatform;
     if(strcmp(fileEnding,".a_rexasset") == 0)
     {
         targetPlatform = TARGET_PLATFROM_ANDROID;
