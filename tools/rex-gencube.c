@@ -19,10 +19,9 @@
 #include <stdlib.h>
 
 #include "config.h"
-
-#include "rex_core.h"
-#include "util.h"
+#include "core.h"
 #include "global.h"
+#include "util.h"
 
 struct rex_position vertices[] =
 {

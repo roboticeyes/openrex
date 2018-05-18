@@ -18,7 +18,7 @@
 #include <string.h>
 
 #include "global.h"
-#include "rex_core.h"
+#include "core.h"
 #include "status.h"
 #include "util.h"
 

@@ -19,8 +19,8 @@
 
 #include "config.h"
 
+#include "core.h"
 #include "global.h"
-#include "rex_core.h"
 #include "status.h"
 #include "util.h"
 
