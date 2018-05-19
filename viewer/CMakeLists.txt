@@ -11,6 +11,7 @@ find_package(GLEW REQUIRED)
 
 # Target
 add_executable(rex-view
+    camera.c
     rex-view.c
     shader.c
     mesh.c

@@ -39,22 +39,19 @@ void mesh_load_vao (struct mesh *m)
     glBindVertexArray (0);
 }
 
-void mesh_render (struct mesh *m, struct shader *s, mat4x4 projection)
+void mesh_render (struct mesh *m, struct shader *s, struct camera* cam, mat4x4 projection)
 {
-    if (!m) return;
+    if (!m || !cam) return;
 
     shader_use (s);
 
-    mat4x4 modelview;
-    vec3 eye = {2.0, 2.0, 2.0};
-    vec3 center = {0.0, 0.0, 0.0};
-    vec3 up = {0.0, 1.0, 0.0};
-    mat4x4_look_at (modelview, eye, center, up);
+    // TODO missing model matrix!
 
     glUniformMatrix4fv (s->projection, 1, GL_FALSE, (GLfloat *) projection);
-    glUniformMatrix4fv (s->modelview, 1, GL_FALSE, (GLfloat *) modelview);
+    glUniformMatrix4fv (s->modelview, 1, GL_FALSE, (GLfloat *) cam->view);
 
     glBindVertexArray (m->vao);
+
     glDrawElements (GL_TRIANGLES, m->data->nr_triangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray (0);
 }

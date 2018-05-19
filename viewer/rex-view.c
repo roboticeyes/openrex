@@ -15,16 +15,15 @@
 
 #define WIDTH 1918
 #define HEIGHT 2136
-#define FOV 45 * 0.0174533f
+#define FOV (45 * 0.0174533f)
 
 SDL_Window *win = NULL;
 SDL_GLContext *ctx = NULL;
 
 struct mesh m;
-struct shader *s;
-
+struct camera cam;
 mat4x4 projection;
-GLuint MVP;
+struct shader *s;
 
 void usage (const char *exec)
 {
@@ -75,11 +74,14 @@ int init()
 
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT);
+
     SDL_GL_SwapWindow (win);
 
     s = shader_load ("../viewer/shader.vert", "../viewer/shader.frag");
 
     mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, 0.001f, 1000.0);
+    vec3 initial_pos = {0.0, 0.0, 10.0};
+    camera_init(&cam,initial_pos);
 
     return 0;
 }
@@ -88,6 +90,7 @@ void render()
 {
     int loop = 1;
     int mouse_x = WIDTH / 2, mouse_y = HEIGHT / 2;
+
     bool mouse_moved = false;
     while (loop)
     {
@@ -103,6 +106,14 @@ void render()
                 {
                     case SDLK_ESCAPE:
                         loop = 0;
+                        break;
+                    case SDLK_h:
+                        cam.pos[0] += 1;
+                        camera_update(&cam);
+                        break;
+                    case SDLK_l:
+                        cam.pos[0] -= 1;
+                        camera_update(&cam);
                         break;
                     default:
                         break;
@@ -133,7 +144,9 @@ void render()
 
 
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mesh_render (&m, s, projection);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        mesh_render (&m, s, &cam, projection);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         SDL_GL_SwapWindow (win);
     }
