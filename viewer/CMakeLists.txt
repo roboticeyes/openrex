@@ -22,6 +22,7 @@ target_link_libraries(rex-view
     SDL2
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARIES}
+    m
     )
 
 # Source includes

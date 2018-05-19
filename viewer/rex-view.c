@@ -2,6 +2,7 @@
 #define GL3_PROTOTYPES 1
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "config.h"
@@ -12,14 +13,18 @@
 #include "status.h"
 #include "util.h"
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1918
+#define HEIGHT 2136
+#define FOV 45 * 0.0174533f
 
 SDL_Window *win = NULL;
 SDL_GLContext *ctx = NULL;
 
 struct mesh m;
 struct shader *s;
+
+mat4x4 projection;
+GLuint MVP;
 
 void usage (const char *exec)
 {
@@ -73,12 +78,17 @@ int init()
     SDL_GL_SwapWindow (win);
 
     s = shader_load ("../viewer/shader.vert", "../viewer/shader.frag");
+
+    mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, 0.001f, 1000.0);
+
     return 0;
 }
 
 void render()
 {
     int loop = 1;
+    int mouse_x = WIDTH / 2, mouse_y = HEIGHT / 2;
+    bool mouse_moved = false;
     while (loop)
     {
         SDL_Event event;
@@ -98,10 +108,33 @@ void render()
                         break;
                 }
             }
+            /* else if (!mouse_moved && event.type == SDL_MOUSEMOTION) */
+            /*     mouse_moved = true; */
         }
 
+        /* SDL_GetMouseState (&mouse_x, &mouse_y); */
+        /* printf ("Mouse %d %d\n", mouse_x, mouse_y); */
+
+        /* float deltax = mouse_x - WIDTH / 2; */
+        /* float deltay = mouse_y - HEIGHT / 2; */
+
+        /* if ( (deltax != 0 || deltay != 0) && mouseGrab) */
+        /* { */
+        /*     horizontalAngle += (float) (WIDTH / 2 - mouse_x) * SENSITIVITY; */
+        /*     verticalAngle += (float) (HEIGHT / 2 - mouse_y) * SENSITIVITY; */
+        /*  */
+        /*     if (verticalAngle > C3D_PI / 2.0f) */
+        /*         verticalAngle = C3D_PI / 2.0f; */
+        /*     else if (verticalAngle < -C3D_PI / 2.0f) */
+        /*         verticalAngle = -C3D_PI / 2.0f; */
+        /*  */
+        /*     SDL_WarpMouseInWindow (window, WIDTH / 2, HEIGHT / 2); */
+        /* } */
+
+
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mesh_render (&m, s);
+        mesh_render (&m, s, projection);
+
         SDL_GL_SwapWindow (win);
     }
 }

@@ -64,6 +64,9 @@ struct shader *shader_load (const char *vs, const char *fs)
     glDeleteShader (fragment_shader);
     free (vertex_source);
     free (fragment_source);
+
+    // Load uniforms
+	s->mvp = glGetUniformLocation(s->program, "MVP");
     return s;
 }
 

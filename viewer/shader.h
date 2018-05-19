@@ -16,7 +16,7 @@
 struct shader
 {
     GLuint program;
-    GLuint *uniforms;
+    GLuint mvp;
 };
 
 struct shader *shader_load (const char *vs, const char *fs);

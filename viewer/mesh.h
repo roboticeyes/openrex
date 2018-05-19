@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include "core.h"
 #include "shader.h"
+#include "linmath.h"
 
 struct mesh
 {
@@ -16,4 +17,4 @@ void mesh_init (struct mesh *);
 void mesh_free (struct mesh *);
 
 void mesh_load_vao (struct mesh *);
-void mesh_render (struct mesh *, struct shader *);
+void mesh_render (struct mesh *, struct shader *, mat4x4 projection);
