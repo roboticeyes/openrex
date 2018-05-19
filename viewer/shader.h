@@ -16,7 +16,8 @@
 struct shader
 {
     GLuint program;
-    GLuint mvp;
+    GLuint projection;
+    GLuint modelview;
 };
 
 struct shader *shader_load (const char *vs, const char *fs);
