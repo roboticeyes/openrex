@@ -1,9 +1,7 @@
 #version 330 core
-// It was expressed that some drivers required this next line to function properly
-precision highp float;
 
-in  vec4 ex_Color;
+out vec3 color;
 
 void main(void) {
-    gl_FragColor = vec4(ex_Color);
+    color = vec3(0.8,0.8,0.8);
 }

@@ -12,6 +12,8 @@ find_package(GLEW REQUIRED)
 # Target
 add_executable(rex-view
     rex-view.c
+    shader.c
+    mesh.c
     )
 
 # Linkage

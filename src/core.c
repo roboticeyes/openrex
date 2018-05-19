@@ -389,3 +389,22 @@ void rex_mesh_free (struct rex_mesh *mesh)
         free (mesh->triangles);
     rex_mesh_init (mesh);
 }
+
+void rex_mesh_dump_obj (struct rex_mesh *mesh)
+{
+    if (!mesh) return;
+
+    if (mesh->positions)
+    {
+        float *p = mesh->positions;
+        for (int i = 0; i < mesh->nr_vertices * 3; i += 3)
+            printf ("v %f %f %f\n", p[i], p[i + 1], p[i + 2]);
+    }
+
+    if (mesh->triangles)
+    {
+        uint32_t *t = mesh->triangles;
+        for (int i = 0; i < mesh->nr_triangles * 3; i += 3)
+            printf ("f %d %d %d\n", t[i] + 1, t[i + 1] + 1, t[i + 2] + 1);
+    }
+}

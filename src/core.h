@@ -214,3 +214,4 @@ int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint
 
 void rex_mesh_init (struct rex_mesh *mesh);
 void rex_mesh_free (struct rex_mesh *mesh);
+void rex_mesh_dump_obj (struct rex_mesh *mesh);
