@@ -81,17 +81,26 @@ int init()
 
     mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, 0.001f, 1000.0);
     vec3 initial_pos = {0.0, 0.0, 10.0};
-    camera_init(&cam,initial_pos);
+    camera_init (&cam, initial_pos);
 
     return 0;
+}
+
+static void set_zoom (int value)
+{
+    cam.distance += value;
+    if (cam.distance < 1) cam.distance = 1;
+    if (cam.distance > 10) cam.distance = 10;
+    camera_update (&cam);
 }
 
 void render()
 {
     int loop = 1;
-    int mouse_x = WIDTH / 2, mouse_y = HEIGHT / 2;
-
     bool mouse_moved = false;
+    bool mouse_pressed = false;
+    vec2 mouse_pos = {0.0, 0.0};
+
     while (loop)
     {
         SDL_Event event;
@@ -108,47 +117,70 @@ void render()
                         loop = 0;
                         break;
                     case SDLK_h:
-                        cam.pos[0] += 1;
-                        camera_update(&cam);
+                        set_zoom (-1);
                         break;
                     case SDLK_l:
-                        cam.pos[0] -= 1;
-                        camera_update(&cam);
+                        set_zoom (1);
+                        break;
+                    case SDLK_UP:
+                        cam.pitch += 5;
+                        camera_update (&cam);
+                        break;
+                    case SDLK_DOWN:
+                        cam.pitch -= 5;
+                        camera_update (&cam);
+                        break;
+                    case SDLK_j:
+                    case SDLK_LEFT:
+                        cam.orbit += 5;
+                        camera_update (&cam);
+                        break;
+                    case SDLK_k:
+                    case SDLK_RIGHT:
+                        cam.orbit -= 5;
+                        camera_update (&cam);
                         break;
                     default:
                         break;
                 }
             }
-            /* else if (!mouse_moved && event.type == SDL_MOUSEMOTION) */
-            /*     mouse_moved = true; */
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (!mouse_pressed && event.button.button == SDL_BUTTON_LEFT)
+                {
+                    mouse_pressed = true;
+                    mouse_pos[0] = event.button.x;
+                    mouse_pos[1] = event.button.y;
+                }
+            }
+            else if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (mouse_pressed && event.button.button == SDL_BUTTON_LEFT)
+                    mouse_pressed = false;
+            }
+            else if (!mouse_moved && event.type == SDL_MOUSEMOTION)
+                mouse_moved = true;
         }
 
-        /* SDL_GetMouseState (&mouse_x, &mouse_y); */
-        /* printf ("Mouse %d %d\n", mouse_x, mouse_y); */
-
-        /* float deltax = mouse_x - WIDTH / 2; */
-        /* float deltay = mouse_y - HEIGHT / 2; */
-
-        /* if ( (deltax != 0 || deltay != 0) && mouseGrab) */
-        /* { */
-        /*     horizontalAngle += (float) (WIDTH / 2 - mouse_x) * SENSITIVITY; */
-        /*     verticalAngle += (float) (HEIGHT / 2 - mouse_y) * SENSITIVITY; */
-        /*  */
-        /*     if (verticalAngle > C3D_PI / 2.0f) */
-        /*         verticalAngle = C3D_PI / 2.0f; */
-        /*     else if (verticalAngle < -C3D_PI / 2.0f) */
-        /*         verticalAngle = -C3D_PI / 2.0f; */
-        /*  */
-        /*     SDL_WarpMouseInWindow (window, WIDTH / 2, HEIGHT / 2); */
-        /* } */
-
+        if (mouse_pressed && mouse_moved)
+        {
+            int mx, my;
+            SDL_GetMouseState (&mx, &my);
+            float dx = (mouse_pos[0] - mx) * 0.01;
+            float dy = (mouse_pos[1] - my) * 0.01;
+            cam.orbit += dx;
+            cam.pitch -= dy;
+            camera_update (&cam);
+        }
 
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
         mesh_render (&m, s, &cam, projection);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
         SDL_GL_SwapWindow (win);
+        SDL_Delay (1);
     }
 }
 

@@ -6,10 +6,10 @@ struct camera
 {
     vec3 pos;
     vec3 center;
-    vec3 up;
-    float pitch;
-    float yaw;
-    float roll;
+    vec3 up;     // up vector of the camera
+    float orbit; // orbit angle around the object (degrees)
+    float pitch; // height angle of the camera (degrees)
+    float distance; // distance to object
     mat4x4 view;
 };
 

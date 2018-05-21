@@ -2,6 +2,13 @@
 
 #include <math.h>
 
+#ifndef M_PI
+#    define M_PI 3.14159265358979323846
+#endif
+
+#define deg2rad(angleDegrees) ((angleDegrees) * M_PI / 180.0)
+#define rad2deg(angleRadians) ((angleRadians) * 180.0 / M_PI)
+
 #define LINMATH_H_DEFINE_VEC(n) \
 typedef float vec##n[n]; \
 static inline void vec##n##_dup(vec##n r, vec##n const a) \
