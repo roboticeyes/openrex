@@ -236,6 +236,7 @@ void loadmesh (struct rex_mesh *mesh)
     m = malloc (sizeof (struct mesh));
     mesh_init (m);
     m->data = mesh;
+    mesh_calc_normals(m);
     mesh_load_vao (m);
     list_insert (meshes, m);
 }
