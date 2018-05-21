@@ -41,15 +41,13 @@ void list_delete_node (struct list *l, struct node *N)
     if (cur == N)
     {
         l->head = cur->next;
-        free(cur);
+        free (cur);
         return;
     }
     cur = cur->next;
 
     while (cur != N && cur != NULL)
-    {
         cur = cur->next;
-    }
 
     // not found
     if (cur == NULL)
@@ -60,14 +58,14 @@ void list_delete_node (struct list *l, struct node *N)
     {
         l->tail = cur->prev;
         cur->prev->next = NULL;
-        free(N);
+        free (N);
         return;
     }
 
     // middle
     cur->prev->next = cur->next;
     cur->next->prev = cur->prev;
-    free(N);
+    free (N);
 }
 
 void list_destroy (struct list *l)

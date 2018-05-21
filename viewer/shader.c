@@ -66,8 +66,8 @@ struct shader *shader_load (const char *vs, const char *fs)
     free (fragment_source);
 
     // Load uniforms
-	s->projection = glGetUniformLocation(s->program, "projection");
-	s->modelview = glGetUniformLocation(s->program, "modelview");
+    s->projection = glGetUniformLocation (s->program, "projection");
+    s->modelview = glGetUniformLocation (s->program, "modelview");
     return s;
 }
 

@@ -19,4 +19,4 @@ void mesh_init (struct mesh *);
 void mesh_free (struct mesh *);
 
 void mesh_load_vao (struct mesh *);
-void mesh_render (struct mesh *, struct shader *, struct camera*, mat4x4 projection);
+void mesh_render (struct mesh *, struct shader *, struct camera *, mat4x4 projection);

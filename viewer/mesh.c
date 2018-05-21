@@ -40,7 +40,7 @@ void mesh_load_vao (struct mesh *m)
     glBindVertexArray (0);
 }
 
-void mesh_render (struct mesh *m, struct shader *s, struct camera* cam, mat4x4 projection)
+void mesh_render (struct mesh *m, struct shader *s, struct camera *cam, mat4x4 projection)
 {
     if (!m || !cam) return;
 

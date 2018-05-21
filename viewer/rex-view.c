@@ -96,14 +96,10 @@ static void set_zoom (int value)
 
 void render_meshes()
 {
-    int nr = 0;
     if (!meshes || !meshes->head) return;
     struct node *cur = meshes->head;
     while (cur)
     {
-        nr++;
-        struct mesh *m = cur->data;
-        /* printf ("rendered %d meshes\n", m->data->nr_triangles); fflush (stdout); */
         mesh_render (cur->data, s, &cam, projection);
         cur = cur->next;
     }
@@ -267,18 +263,6 @@ int loadrex (const char *file)
         else fseek (fp, block_header.sz, SEEK_CUR);
     }
     fclose (fp);
-
-    if (meshes && meshes->head)
-    {
-        struct node *cur = meshes->head;
-        while (cur)
-        {
-            struct mesh *m = cur->data;
-            printf ("Triangles: %d\n", m->data->nr_triangles);
-            cur = cur->next;
-        }
-    }
-
     return 0;
 }
 

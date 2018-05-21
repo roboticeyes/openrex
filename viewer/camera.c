@@ -36,8 +36,8 @@ static void cam_pos_update (struct camera *c)
     const float MAX_PITCH = 89.9f;
     if (c->pitch < -MAX_PITCH) c->pitch = -MAX_PITCH;
     if (c->pitch > MAX_PITCH) c->pitch = MAX_PITCH;
-    float ofs_x = calc_dist_horizontal(c->distance, c->pitch) * sinf (deg2rad (c->orbit));
-    float ofs_z = calc_dist_horizontal(c->distance, c->pitch) * cosf (deg2rad (c->orbit));
+    float ofs_x = calc_dist_horizontal (c->distance, c->pitch) * sinf (deg2rad (c->orbit));
+    float ofs_z = calc_dist_horizontal (c->distance, c->pitch) * cosf (deg2rad (c->orbit));
     c->pos[0] = ofs_x;
     c->pos[1] = calc_dist_vertical (c->distance, c->pitch);
     c->pos[2] = ofs_z;
