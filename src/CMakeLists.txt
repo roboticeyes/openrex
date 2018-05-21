@@ -1,5 +1,6 @@
 set(c_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/core.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/list.c
     ${CMAKE_CURRENT_SOURCE_DIR}/util.c
     )
 
@@ -8,6 +9,7 @@ set(c_headers
     ${CMAKE_CURRENT_SOURCE_DIR}/core.h
     ${CMAKE_CURRENT_SOURCE_DIR}/global.h
     ${CMAKE_CURRENT_SOURCE_DIR}/linmath.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/list.h
     ${CMAKE_CURRENT_SOURCE_DIR}/status.h
     ${CMAKE_CURRENT_SOURCE_DIR}/util.h
     CACHE INTERNAL "List of c sources" )

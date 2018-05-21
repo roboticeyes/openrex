@@ -2,6 +2,7 @@
 
 void mesh_init (struct mesh *m)
 {
+    if (!m) return;
     m->data = NULL;
 
     glGenVertexArrays (1, & (m->vao));

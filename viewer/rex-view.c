@@ -8,6 +8,7 @@
 #include "config.h"
 #include "core.h"
 #include "global.h"
+#include "list.h"
 #include "mesh.h"
 #include "shader.h"
 #include "status.h"
@@ -20,7 +21,7 @@
 SDL_Window *win = NULL;
 SDL_GLContext *ctx = NULL;
 
-struct mesh m;
+struct list *meshes;
 struct camera cam;
 mat4x4 projection;
 struct shader *s;
@@ -37,6 +38,7 @@ enum rex_block_enums
 
 int init()
 {
+    meshes = list_create();
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
         return 1;
 
@@ -67,10 +69,8 @@ int init()
 
     SDL_GL_SetSwapInterval (1);
 
-#ifndef __APPLE__
     glewExperimental = GL_TRUE;
     glewInit();
-#endif
 
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT);
@@ -90,8 +90,23 @@ static void set_zoom (int value)
 {
     cam.distance += value;
     if (cam.distance < 1) cam.distance = 1;
-    if (cam.distance > 10) cam.distance = 10;
+    if (cam.distance > 100) cam.distance = 100;
     camera_update (&cam);
+}
+
+void render_meshes()
+{
+    int nr = 0;
+    if (!meshes || !meshes->head) return;
+    struct node *cur = meshes->head;
+    while (cur)
+    {
+        nr++;
+        struct mesh *m = cur->data;
+        /* printf ("rendered %d meshes\n", m->data->nr_triangles); fflush (stdout); */
+        mesh_render (cur->data, s, &cam, projection);
+        cur = cur->next;
+    }
 }
 
 void render()
@@ -176,7 +191,7 @@ void render()
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-        mesh_render (&m, s, &cam, projection);
+        render_meshes();
         glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
         SDL_GL_SwapWindow (win);
@@ -186,7 +201,18 @@ void render()
 
 void cleanup()
 {
-    mesh_free (&m);
+    if (meshes && meshes->head)
+    {
+        struct node *cur = meshes->head;
+        while (cur)
+        {
+            struct mesh *m = cur->data;
+            rex_mesh_free (m->data);
+            mesh_free (m);
+            cur = cur->next;
+        }
+    }
+    list_destroy (meshes);
     SDL_GL_DeleteContext (ctx);
     SDL_DestroyWindow (win);
     SDL_Quit();
@@ -204,9 +230,12 @@ void loadmesh (struct rex_mesh *mesh)
     printf ("texture coords         %20s\n", (mesh->tex_coords) ? "yes" : "no");
     printf ("vertex colors          %20s\n", (mesh->colors) ? "yes" : "no");
 
-    mesh_init (&m);
-    m.data = mesh;
-    mesh_load_vao (&m);
+    struct mesh *m;
+    m = malloc (sizeof (struct mesh));
+    mesh_init (m);
+    m->data = mesh;
+    mesh_load_vao (m);
+    list_insert (meshes, m);
 }
 
 int loadrex (const char *file)
@@ -230,15 +259,26 @@ int loadrex (const char *file)
         if (block_header.type == Mesh)
         {
             struct rex_mesh_header header;
-            struct rex_mesh mesh = { 0 };
-            mesh.id = block_header.id;
-            rex_read_mesh_block (fp, block_header.sz, &header, &mesh);
-            loadmesh (&mesh);
-            rex_mesh_free (&mesh);
+            struct rex_mesh *mesh = malloc (sizeof (struct rex_mesh));
+            mesh->id = block_header.id;
+            rex_read_mesh_block (fp, block_header.sz, &header, mesh);
+            loadmesh (mesh);
         }
         else fseek (fp, block_header.sz, SEEK_CUR);
     }
     fclose (fp);
+
+    if (meshes && meshes->head)
+    {
+        struct node *cur = meshes->head;
+        while (cur)
+        {
+            struct mesh *m = cur->data;
+            printf ("Triangles: %d\n", m->data->nr_triangles);
+            cur = cur->next;
+        }
+    }
+
     return 0;
 }
 
