@@ -108,6 +108,7 @@ void render_meshes()
 void render()
 {
     int loop = 1;
+    bool wireframe = false;
     bool mouse_moved = false;
     bool mouse_pressed = false;
     vec2 mouse_pos = {0.0, 0.0};
@@ -126,6 +127,9 @@ void render()
                 {
                     case SDLK_ESCAPE:
                         loop = 0;
+                        break;
+                    case SDLK_w:
+                        wireframe = !wireframe;
                         break;
                     case SDLK_h:
                         set_zoom (-1);
@@ -186,9 +190,11 @@ void render()
 
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+        if (wireframe)
+            glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
         render_meshes();
-        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+        if (wireframe)
+            glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
         SDL_GL_SwapWindow (win);
         SDL_Delay (1);
@@ -247,6 +253,7 @@ int loadrex (const char *file)
 
     rex_read_header (fp, &header);
 
+    int meshes = 0;
     for (int i = 0; i < header.nr_datablocks; i++)
     {
         struct rex_block_header block_header;
@@ -259,10 +266,16 @@ int loadrex (const char *file)
             mesh->id = block_header.id;
             rex_read_mesh_block (fp, block_header.sz, &header, mesh);
             loadmesh (mesh);
+            meshes++;
         }
         else fseek (fp, block_header.sz, SEEK_CUR);
     }
     fclose (fp);
+
+    if (!meshes) {
+        printf("Nothing found to render, go home!\n");
+        return 1;
+    }
     return 0;
 }
 
