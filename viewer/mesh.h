@@ -22,8 +22,11 @@ void mesh_init (struct mesh *);
 void mesh_free (struct mesh *);
 
 void mesh_load_vao (struct mesh *);
-void mesh_render (struct mesh *, struct shader *, struct camera *, mat4x4 projection);
+void mesh_render (struct mesh *, struct shader *, mat4x4 model, struct camera *, mat4x4 projection);
 
+/**
+ * Sets the model matrix to center the model to 0/0/0 using the bounding box
+ */
 void mesh_center (struct mesh *);
 
 /**

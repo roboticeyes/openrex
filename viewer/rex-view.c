@@ -8,8 +8,8 @@
 #include "config.h"
 #include "core.h"
 #include "global.h"
-#include "list.h"
 #include "mesh.h"
+#include "mesh_group.h"
 #include "shader.h"
 #include "status.h"
 #include "util.h"
@@ -21,7 +21,7 @@
 SDL_Window *win = NULL;
 SDL_GLContext *ctx = NULL;
 
-struct list *meshes;
+struct mesh_group root;
 struct camera cam;
 mat4x4 projection;
 struct shader *s;
@@ -38,7 +38,7 @@ enum rex_block_enums
 
 int init()
 {
-    meshes = list_create();
+    mesh_group_init(&root);
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
         return 1;
 
@@ -92,17 +92,6 @@ static void set_zoom (int value)
     if (cam.distance < 1) cam.distance = 1;
     if (cam.distance > 100) cam.distance = 100;
     camera_update (&cam);
-}
-
-void render_meshes()
-{
-    if (!meshes || !meshes->head) return;
-    struct node *cur = meshes->head;
-    while (cur)
-    {
-        mesh_render (cur->data, s, &cam, projection);
-        cur = cur->next;
-    }
 }
 
 void render()
@@ -192,7 +181,7 @@ void render()
 
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-        render_meshes();
+        mesh_group_render(&root, s, &cam, projection);
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
@@ -203,18 +192,7 @@ void render()
 
 void cleanup()
 {
-    if (meshes && meshes->head)
-    {
-        struct node *cur = meshes->head;
-        while (cur)
-        {
-            struct mesh *m = cur->data;
-            rex_mesh_free (m->data);
-            mesh_free (m);
-            cur = cur->next;
-        }
-    }
-    list_destroy (meshes);
+    mesh_group_destroy(&root);
     SDL_GL_DeleteContext (ctx);
     SDL_DestroyWindow (win);
     SDL_Quit();
@@ -238,7 +216,7 @@ void loadmesh (struct rex_mesh *mesh)
     mesh_set_data(m, mesh);
     mesh_calc_normals(m);
     mesh_load_vao (m);
-    list_insert (meshes, m);
+    mesh_group_add_mesh(&root, m);
 }
 
 int loadrex (const char *file)
@@ -277,6 +255,8 @@ int loadrex (const char *file)
         printf("Nothing found to render, go home!\n");
         return 1;
     }
+
+    mesh_group_center(&root);
     return 0;
 }
 

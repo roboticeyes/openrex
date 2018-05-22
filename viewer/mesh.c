@@ -45,16 +45,15 @@ void mesh_load_vao (struct mesh *m)
     glBindVertexArray (0);
 }
 
-void mesh_render (struct mesh *m, struct shader *s, struct camera *cam, mat4x4 projection)
+void mesh_render (struct mesh *m, struct shader *s, mat4x4 model, struct camera *cam, mat4x4 projection)
 {
     if (!m || !cam) return;
 
     shader_use (s);
 
-    // TODO missing model matrix!
-
     glUniformMatrix4fv (s->projection, 1, GL_FALSE, (GLfloat *) projection);
-    glUniformMatrix4fv (s->modelview, 1, GL_FALSE, (GLfloat *) cam->view);
+    glUniformMatrix4fv (s->view, 1, GL_FALSE, (GLfloat *) cam->view);
+    glUniformMatrix4fv (s->model, 1, GL_FALSE, (GLfloat *) model);
 
     glBindVertexArray (m->vao);
 
@@ -124,6 +123,18 @@ void mesh_calc_bbox(struct mesh *m)
     printf("Mesh bounding box:\n");
     vec3_dump("  min", m->bb.min);
     vec3_dump("  max", m->bb.max);
+}
+
+void mesh_center (struct mesh *m)
+{
+    if (!m) return;
+
+    float tx = -(m->bb.min[0] + (m->bb.max[0] - m->bb.min[0]));
+    float ty = -(m->bb.min[1] + (m->bb.max[1] - m->bb.min[1]));
+    float tz = -(m->bb.min[2] + (m->bb.max[2] - m->bb.min[2]));
+
+    mat4x4_translate(m->model, tx, ty, tz);
+    mat4x4_dump(m->model);
 }
 
 void mesh_set_data(struct mesh *m, struct rex_mesh *data)

@@ -607,3 +607,14 @@ static inline void quat_from_mat4x4 (quat q, mat4x4 M)
     q[2] = (M[p[2]][p[0]] - M[p[0]][p[2]]) / (2.f * r);
     q[3] = (M[p[2]][p[1]] - M[p[1]][p[2]]) / (2.f * r);
 }
+
+static inline void mat4x4_dump(mat4x4 a) {
+    int i, j;
+    printf("------------------------------------\n");
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++)
+            printf("%f ", a[j][i]);
+        putchar('\n');
+    }
+    printf("------------------------------------\n");
+}
