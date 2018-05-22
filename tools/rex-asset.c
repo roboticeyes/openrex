@@ -66,7 +66,7 @@ int write_asset_package_to_rex_file(FILE *fp, struct rex_header *header, char *f
     else if(strcmp(file_ending,".w_rexasset") == 0)
         target_platform = TARGET_PLATFROM_WSA;
     
-    if (rex_write_rexasset_block (fp, header, blob, file_size, file_name_with_ending, target_platform, id))
+    if (rex_write_rexasset_block (fp, header, blob, file_size, target_platform, id))
     {
         warn ("Error during file write %d\n", errno);
         free (blob);

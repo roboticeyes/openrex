@@ -315,7 +315,6 @@ this block plus the string size and string length. E.g.
 
 | **size [bytes]** | **name**       | **type**  | **description**                                              |
 |------------------|----------------|-----------|--------------------------------------------------------------|
-| 2+sz             | assetname      | string    | name of the asset stored in the blob                         |
 | 2                | targetplatform | uint16_t  | target platform for the asset package                        |
 |                  | data           | bytes     | data of the unity asset content                              |
 
