@@ -319,3 +319,10 @@ this block plus the string size and string length. E.g.
 | 2                | targetplatform | uint16_t  | target platform for the asset package                        |
 |                  | data           | bytes     | data of the unity asset content                              |
 
+The current values for targetplatform are:
+
+| **value** | **platform** |
+|-----------|--------------|
+| 0         | Android      |
+| 1         | iOS          |
+| 2         | WSA          |

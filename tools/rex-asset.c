@@ -39,6 +39,50 @@ void usage (const char *exec)
     die ("usage: %s <rex_asset_file_name_without_ending> filename.rex\n", exec);
 }
 
+int write_asset_package_to_rex_file(FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint64_t id)
+{
+    // write asset file
+    char *file_name_with_ending;
+    file_name_with_ending = malloc(strlen(file_name) + strlen(file_ending) + 1);
+    strcpy(file_name_with_ending, file_name);
+    strcat(file_name_with_ending, file_ending);
+
+    FILE *asset_file = fopen (file_name_with_ending, "rb");
+    if (!asset_file)
+        die ("Cannot open rex asset file %s\n", file_name_with_ending);
+    fseek (asset_file, 0, SEEK_END);
+    uint64_t file_size = ftell (asset_file);
+    fseek (asset_file, 0, SEEK_SET);
+    uint8_t *blob = malloc (file_size);
+    if (fread (blob, file_size, 1, asset_file) != 1)
+        die ("Cannot read content of %s\n", file_name_with_ending);
+    fclose (asset_file);
+
+    uint16_t target_platform = 0;
+    if(strcmp(file_ending,".a_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_ANDROID;
+    else if(strcmp(file_ending,".i_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_IOS;
+    else if(strcmp(file_ending,".w_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_WSA;
+    
+    if (rex_write_rexasset_block (fp, header, blob, file_size, file_name_with_ending, target_platform, id))
+    {
+        warn ("Error during file write %d\n", errno);
+        free (blob);
+        blob = NULL;
+        free(file_name_with_ending);
+        file_name_with_ending = NULL;
+        fclose (fp);
+        return -1;
+    }
+    free(file_name_with_ending);
+    file_name_with_ending = NULL;
+    free (blob);
+    blob = NULL;
+    return 0;
+}
+
 int main (int argc, char **argv)
 {
     printf ("═══════════════════════════════════════════\n");
@@ -80,49 +124,3 @@ int main (int argc, char **argv)
     return 0;
 }
 
-int write_asset_package_to_rex_file(FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint64_t id)
-{
-    // write asset file
-    char *file_name_with_ending;
-    file_name_with_ending = malloc(strlen(file_name) + strlen(file_ending) + 1);
-    strcpy(file_name_with_ending, file_name);
-    strcat(file_name_with_ending, file_ending);
-
-    FILE *asset_file = fopen (file_name_with_ending, "rb");
-    if (!asset_file)
-        die ("Cannot open rex asset file %s\n", file_name_with_ending);
-    fseek (asset_file, 0, SEEK_END);
-    uint64_t file_size = ftell (asset_file);
-    fseek (asset_file, 0, SEEK_SET);
-    uint8_t *blob = malloc (file_size);
-    if (fread (blob, file_size, 1, asset_file) != 1)
-        die ("Cannot read content of %s\n", file_name_with_ending);
-    fclose (asset_file);
-
-    uint16_t target_platform;
-    if(strcmp(file_ending,".a_rexasset") == 0)
-    {
-        target_platform = TARGET_PLATFROM_ANDROID;
-    }
-    else if(strcmp(file_ending,".i_rexasset") == 0)
-    {
-        target_platform = TARGET_PLATFROM_IOS;
-    }
-    else if(strcmp(file_ending,".w_rexasset") == 0)
-    {
-        target_platform = TARGET_PLATFROM_WSA;
-    }
-    
-    if (rex_write_rexasset_block (fp, header, blob, file_size, file_name_with_ending, target_platform, id))
-    {
-        warn ("Error during file write %d\n", errno);
-        free (blob);
-        fclose (fp);
-        return -1;
-    }
-    free(file_name_with_ending);
-    file_name_with_ending = NULL;
-    free (blob);
-    blob = NULL;
-    return 0;
-}
