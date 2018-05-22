@@ -269,14 +269,14 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
 int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, const char *name, uint16_t target_platform, uint64_t id)
 {
     uint16_t name_len = strlen (name);
-    uint64_t total_sz = sizeof (uint16_t) + name_len + size;
+    uint64_t total_sz = sizeof (uint16_t) + name_len + sizeof (uint16_t) + size;
 
     // write block header
     struct rex_block_header block_header = { .type = 7, .version = 1, .sz = total_sz, .id = id };
 
     if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    // write strlen(name) + name
+    // write strlen(name) + name + target platform
     if (fwrite (&name_len, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     if (fwrite (name, 1, name_len, fp) != name_len)
