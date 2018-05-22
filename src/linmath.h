@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <stdio.h>
 
 #ifndef M_PI
 #    define M_PI 3.14159265358979323846
@@ -63,6 +64,14 @@ static inline void vec##n##_max(vec##n r, vec##n a, vec##n b) \
     int i; \
     for(i=0; i<n; ++i) \
         r[i] = a[i]>b[i] ? a[i] : b[i]; \
+} \
+static inline void vec##n##_dump(const char* prefix, vec##n v) \
+{ \
+    int i; \
+    printf("%s: ", prefix); \
+    for(i=0; i<n; ++i) \
+        printf("%.2f ", v[i]);\
+    printf("\n"); \
 }
 
 LINMATH_H_DEFINE_VEC (2)

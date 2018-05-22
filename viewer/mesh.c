@@ -1,10 +1,14 @@
 #include "mesh.h"
+#include "bbox.h"
 #include "linmath.h"
 
 void mesh_init (struct mesh *m)
 {
     if (!m) return;
     m->data = NULL;
+
+    bbox_init(&m->bb);
+    mat4x4_identity(m->model);
 
     glGenVertexArrays (1, & (m->vao));
     glGenBuffers (1, & (m->vbo));
@@ -69,7 +73,7 @@ void mesh_calc_normals (struct mesh *m)
 {
     if (!m || !m->data) return;
 
-    rex_mesh_dump_obj (m->data);
+    /* rex_mesh_dump_obj (m->data); */
 
     struct rex_mesh *rmesh = m->data;
     const int MAX_TRI = 10;
@@ -88,7 +92,7 @@ void mesh_calc_normals (struct mesh *m)
         vec3 r, n;
         vec3_mul_cross (r, a, b);
         vec3_norm (n, r);
-        printf ("norm: %f %f %f\n", n[0], n[1], n[2]);
+        /* printf ("norm: %f %f %f\n", n[0], n[1], n[2]); */
 
         // store pre-face normal for each vertex
         /* normals[rmesh->triangles[i]] = n; */
@@ -97,4 +101,34 @@ void mesh_calc_normals (struct mesh *m)
 
         fflush (stdout);
     }
+}
+
+void mesh_calc_bbox(struct mesh *m)
+{
+    if (!m || !m->data) return;
+    struct rex_mesh *rmesh = m->data;
+    bbox_init(&m->bb);
+    for (int i=0; i<rmesh->nr_vertices*3; i+=3)
+    {
+        // x
+        if (rmesh->positions[i]>m->bb.max[0]) m->bb.max[0] = rmesh->positions[i];
+        if (rmesh->positions[i]<m->bb.min[0]) m->bb.min[0] = rmesh->positions[i];
+        // y
+        if (rmesh->positions[i+1]>m->bb.max[1]) m->bb.max[1] = rmesh->positions[i+1];
+        if (rmesh->positions[i+1]<m->bb.min[1]) m->bb.min[1] = rmesh->positions[i+1];
+        // z
+        if (rmesh->positions[i+2]>m->bb.max[2]) m->bb.max[2] = rmesh->positions[i+2];
+        if (rmesh->positions[i+2]<m->bb.min[2]) m->bb.min[2] = rmesh->positions[i+2];
+
+    }
+    printf("Mesh bounding box:\n");
+    vec3_dump("  min", m->bb.min);
+    vec3_dump("  max", m->bb.max);
+}
+
+void mesh_set_data(struct mesh *m, struct rex_mesh *data)
+{
+    if (!m) return;
+    m->data = data;
+    mesh_calc_bbox(m);
 }
