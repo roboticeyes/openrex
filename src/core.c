@@ -276,7 +276,7 @@ int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob
     if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     // write target platform
-    if (fwrite (&target_platform, sizeof(uint16_t), 1, fp) != 1)
+    if (fwrite (&target_platform, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
     // write data
     if (fwrite (blob, size, 1, fp) != 1)

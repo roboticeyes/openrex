@@ -39,13 +39,13 @@ void usage (const char *exec)
     die ("usage: %s <rex_asset_file_name_without_ending> filename.rex\n", exec);
 }
 
-int write_asset_package_to_rex_file(FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint64_t id)
+int write_asset_package_to_rex_file (FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint64_t id)
 {
     // write asset file
     char *file_name_with_ending;
-    file_name_with_ending = malloc(strlen(file_name) + strlen(file_ending) + 1);
-    strcpy(file_name_with_ending, file_name);
-    strcat(file_name_with_ending, file_ending);
+    file_name_with_ending = malloc (strlen (file_name) + strlen (file_ending) + 1);
+    strcpy (file_name_with_ending, file_name);
+    strcat (file_name_with_ending, file_ending);
 
     FILE *asset_file = fopen (file_name_with_ending, "rb");
     if (!asset_file)
@@ -59,24 +59,24 @@ int write_asset_package_to_rex_file(FILE *fp, struct rex_header *header, char *f
     fclose (asset_file);
 
     uint16_t target_platform = 0;
-    if(strcmp(file_ending,".a_rexasset") == 0)
+    if (strcmp (file_ending, ".a_rexasset") == 0)
         target_platform = TARGET_PLATFROM_ANDROID;
-    else if(strcmp(file_ending,".i_rexasset") == 0)
+    else if (strcmp (file_ending, ".i_rexasset") == 0)
         target_platform = TARGET_PLATFROM_IOS;
-    else if(strcmp(file_ending,".w_rexasset") == 0)
+    else if (strcmp (file_ending, ".w_rexasset") == 0)
         target_platform = TARGET_PLATFROM_WSA;
-    
+
     if (rex_write_rexasset_block (fp, header, blob, file_size, target_platform, id))
     {
         warn ("Error during file write %d\n", errno);
         free (blob);
         blob = NULL;
-        free(file_name_with_ending);
+        free (file_name_with_ending);
         file_name_with_ending = NULL;
         fclose (fp);
         return -1;
     }
-    free(file_name_with_ending);
+    free (file_name_with_ending);
     file_name_with_ending = NULL;
     free (blob);
     blob = NULL;
@@ -100,19 +100,19 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     char *file_ending = ".a_rexasset";
-    if (write_asset_package_to_rex_file(fp, &header, argv[1], file_ending, 0))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 0))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".i_rexasset";
-    if (write_asset_package_to_rex_file(fp, &header, argv[1], file_ending, 1))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 1))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".w_rexasset";
-    if (write_asset_package_to_rex_file(fp, &header, argv[1], file_ending, 2))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 2))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
