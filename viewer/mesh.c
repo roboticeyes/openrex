@@ -41,11 +41,8 @@ static void mesh_load_vao (struct mesh *m, GLuint elem_size, GLfloat *vertices, 
     glEnableVertexAttribArray (0);
 
     // normals
-    /* if (m->data->has_normals) */
-    /* { */
-    /*     glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, (void *) (m->data->normals - m->data->vertex_data)); */
-    /*     glEnableVertexAttribArray (1); */
-    /* } */
+    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, (void *) (sizeof(GLfloat) * 3 * m->nr_vertices));
+    glEnableVertexAttribArray (1);
 
     // indices
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, m->ibo);
@@ -81,6 +78,13 @@ inline static void get_vertex (vec3 *pos, float *positions, uint32_t index)
 static void mesh_calc_normals (struct mesh *m, struct rex_mesh *rm)
 {
     if (!m || !rm) return;
+
+    if (rm->normals)
+    {
+        warn("Mesh has normals, nothing to calculate");
+        return;
+    }
+    rm->normals = malloc(12 * rm->nr_vertices);
     float *n_ptr = rm->normals;
 
     /* const int MAX_TRI = 10; */
@@ -146,14 +150,22 @@ void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
     m->nr_triangles = data->nr_triangles;
     m->nr_vertices = data->nr_vertices;
     mesh_calc_bbox (m, data);
-    /* mesh_calc_normals(m, data); */
-    GLuint elem_size = 3;
+    mesh_calc_normals(m, data);
+    GLuint elem_size = 6; // pos and normals
     GLfloat *vertices = malloc (sizeof (GLfloat) * m->nr_vertices * elem_size);
-    uint32_t *indices = malloc (sizeof (uint32_t) * m->nr_triangles * 3);
+    memset (vertices, 0, sizeof (GLfloat) * m->nr_vertices * elem_size);
 
-    // copy data
-    memcpy(vertices, data->positions, 12 * data->nr_vertices);
-    memcpy(indices, data->triangles, 12 * data->nr_triangles);
+    GLfloat *ptr = vertices;
+    memcpy (ptr, data->positions, 12 * data->nr_vertices);
+    ptr += 3 * data->nr_vertices;
+    if (data->normals)
+        memcpy (ptr, data->normals, 12 * data->nr_vertices);
+
+    uint32_t *indices = malloc (sizeof (uint32_t) * m->nr_triangles * 3);
+    memcpy (indices, data->triangles, 12 * data->nr_triangles);
 
     mesh_load_vao (m, elem_size, vertices, indices);
+
+    FREE (vertices);
+    FREE (indices);
 }
