@@ -11,8 +11,8 @@
 struct mesh
 {
     GLuint vao;
-    GLuint vbo; // positions
-    GLuint ibo; // indices
+    GLuint vbo; // vertex data
+    GLuint ibo; // indexed triangle data
     struct rex_mesh *data;
     struct bbox bb;
     mat4x4 model; // model matrix

@@ -21,9 +21,10 @@
 #include "config.h"
 #include "core.h"
 #include "global.h"
+#include "linmath.h"
 #include "util.h"
 
-struct rex_position vertices[] =
+vec3 vertices[] =
 {
     {0, 0, 0},
     {0, 0, 1},
@@ -35,7 +36,7 @@ struct rex_position vertices[] =
     {1, 1, 0}
 };
 
-struct rex_texel texels[] =
+vec2 texels[] =
 {
     {0, 0},
     {1, 0},
@@ -99,7 +100,7 @@ int main (int argc, char **argv)
     if (rex_write_image_bock (fp, &header, img, sz, Png, 0))
     {
         warn ("Error during file write %d\n", errno);
-        free (img);
+        FREE (img);
         fclose (fp);
         return -1;
     }
@@ -136,9 +137,9 @@ int main (int argc, char **argv)
         .name = "test",
         .nr_vertices = LEN (vertices),
         .nr_triangles = LEN (triangles),
-        .positions = & (vertices[0].x),
+        .positions = & (vertices[0][0]),
         .normals = NULL,
-        .tex_coords = & (texels[0].s),
+        .tex_coords = & (texels[0][0]),
         .colors = NULL,
         .triangles = & (triangles[0].v1)
     };
@@ -152,7 +153,7 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     fclose (fp);
-    free (img);
+    FREE (img);
     return 0;
 }
 

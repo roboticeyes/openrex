@@ -128,10 +128,10 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read positions
     if (mesh->nr_vertices)
     {
-        mesh->positions = malloc (mesh->nr_vertices * sizeof (struct rex_position));
-        if (fread (mesh->positions, sizeof (struct rex_position), mesh->nr_vertices, fp) != mesh->nr_vertices)
+        mesh->positions = malloc (mesh->nr_vertices * 12);
+        if (fread (mesh->positions, 12, mesh->nr_vertices, fp) != mesh->nr_vertices)
         {
-            free (mesh->positions);
+            FREE (mesh->positions);
             fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
@@ -140,10 +140,10 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read normals
     if (header->nrOfNorCoords)
     {
-        mesh->normals = malloc (header->nrOfNorCoords * sizeof (struct rex_position));
-        if (fread (mesh->normals, sizeof (struct rex_position), header->nrOfNorCoords, fp) != header->nrOfNorCoords)
+        mesh->normals = malloc (header->nrOfNorCoords * 12);
+        if (fread (mesh->normals, 12, header->nrOfNorCoords, fp) != header->nrOfNorCoords)
         {
-            free (mesh->normals);
+            FREE (mesh->normals);
             fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
@@ -152,10 +152,10 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read texture coords
     if (header->nrOfTexCoords)
     {
-        mesh->tex_coords = malloc (header->nrOfTexCoords * sizeof (struct rex_texel));
-        if (fread (mesh->tex_coords, sizeof (struct rex_texel), header->nrOfTexCoords, fp) != header->nrOfTexCoords)
+        mesh->tex_coords = malloc (header->nrOfTexCoords * 12);
+        if (fread (mesh->tex_coords, 12, header->nrOfTexCoords, fp) != header->nrOfTexCoords)
         {
-            free (mesh->tex_coords);
+            FREE (mesh->tex_coords);
             fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
@@ -164,10 +164,10 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read colors
     if (header->nrOfVtxColors)
     {
-        mesh->colors = malloc (header->nrOfVtxColors * sizeof (struct rex_position));
-        if (fread (mesh->colors, sizeof (struct rex_position), header->nrOfVtxColors, fp) != header->nrOfVtxColors)
+        mesh->colors = malloc (header->nrOfVtxColors * 12);
+        if (fread (mesh->colors, 12, header->nrOfVtxColors, fp) != header->nrOfVtxColors)
         {
-            free (mesh->colors);
+            FREE (mesh->colors);
             fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
@@ -179,11 +179,13 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
         mesh->triangles = malloc (mesh->nr_triangles * sizeof (struct rex_triangle));
         if (fread (mesh->triangles, sizeof (struct rex_triangle), mesh->nr_triangles, fp) != mesh->nr_triangles)
         {
-            free (mesh->triangles);
+            FREE (mesh->triangles);
             fseek (fp, block_end, SEEK_SET);
             return REX_ERROR_FILE_READ;
         }
     }
+    else
+        mesh->triangles = NULL;
 
     fseek (fp, block_end, SEEK_SET);
     return REX_OK;
@@ -344,6 +346,7 @@ int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint
 
     *data_size = block_size - sizeof (uint32_t);
     data = malloc (*data_size);
+    memset(data, 0, *data_size);
     if (fread (data, *data_size, 1, fp) != 1)
     {
         fseek (fp, block_end, SEEK_SET);
@@ -376,17 +379,17 @@ void rex_mesh_free (struct rex_mesh *mesh)
         return;
 
     if (mesh->name)
-        free (mesh->name);
+        FREE (mesh->name);
     if (mesh->positions)
-        free (mesh->positions);
+        FREE (mesh->positions);
     if (mesh->normals)
-        free (mesh->normals);
+        FREE (mesh->normals);
     if (mesh->tex_coords)
-        free (mesh->tex_coords);
+        FREE (mesh->tex_coords);
     if (mesh->colors)
-        free (mesh->colors);
+        FREE (mesh->colors);
     if (mesh->triangles)
-        free (mesh->triangles);
+        FREE (mesh->triangles);
     rex_mesh_init (mesh);
 }
 

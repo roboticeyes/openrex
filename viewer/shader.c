@@ -62,8 +62,8 @@ struct shader *shader_load (const char *vs, const char *fs)
     glDetachShader (s->program, fragment_shader);
     glDeleteShader (vertex_shader);
     glDeleteShader (fragment_shader);
-    free (vertex_source);
-    free (fragment_source);
+    FREE (vertex_source);
+    FREE (fragment_source);
 
     // Load uniforms
     s->projection = glGetUniformLocation (s->program, "projection");

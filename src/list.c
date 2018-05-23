@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "list.h"
+#include "util.h"
 
 struct list *list_create()
 {
@@ -41,7 +42,7 @@ void list_delete_node (struct list *l, struct node *N)
     if (cur == N)
     {
         l->head = cur->next;
-        free (cur);
+        FREE (cur);
         return;
     }
     cur = cur->next;
@@ -58,14 +59,14 @@ void list_delete_node (struct list *l, struct node *N)
     {
         l->tail = cur->prev;
         cur->prev->next = NULL;
-        free (N);
+        FREE (N);
         return;
     }
 
     // middle
     cur->prev->next = cur->next;
     cur->next->prev = cur->prev;
-    free (N);
+    FREE (N);
 }
 
 void list_destroy (struct list *l)
@@ -75,8 +76,8 @@ void list_destroy (struct list *l)
     while (cur != NULL)
     {
         struct node *next = cur->next;
-        free (cur);
+        FREE (cur);
         cur = next;
     }
-    free (l);
+    FREE (l);
 }

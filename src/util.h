@@ -36,3 +36,4 @@ if (!fp) \
     return REX_ERROR_FILE_OPEN; \
 }
 
+#define FREE(m) do { free(m); m = NULL; } while(0);
