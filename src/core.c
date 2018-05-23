@@ -153,7 +153,7 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     if (header->nrOfTexCoords)
     {
         mesh->tex_coords = malloc (header->nrOfTexCoords * 12);
-        if (fread (mesh->tex_coords, 12, header->nrOfTexCoords, fp) != header->nrOfTexCoords)
+        if (fread (mesh->tex_coords, 8, header->nrOfTexCoords, fp) != header->nrOfTexCoords)
         {
             FREE (mesh->tex_coords);
             fseek (fp, block_end, SEEK_SET);
@@ -176,8 +176,8 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read triangles
     if (mesh->nr_triangles)
     {
-        mesh->triangles = malloc (mesh->nr_triangles * sizeof (struct rex_triangle));
-        if (fread (mesh->triangles, sizeof (struct rex_triangle), mesh->nr_triangles, fp) != mesh->nr_triangles)
+        mesh->triangles = malloc (mesh->nr_triangles * 12);
+        if (fread (mesh->triangles, 12, mesh->nr_triangles, fp) != mesh->nr_triangles)
         {
             FREE (mesh->triangles);
             fseek (fp, block_end, SEEK_SET);

@@ -215,10 +215,9 @@ void loadmesh (struct rex_mesh *mesh)
     struct mesh *m;
     m = malloc (sizeof (struct mesh));
     mesh_init (m);
-    mesh_set_data (m, mesh);
-    mesh_calc_normals (m);
-    mesh_load_vao (m);
+    mesh_set_rex_mesh (m, mesh);
     mesh_group_add_mesh (&root, m);
+    rex_mesh_free (mesh);
 }
 
 int loadrex (const char *file)

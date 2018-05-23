@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "bbox.h"
 #include "global.h"
@@ -9,7 +10,6 @@
 void mesh_init (struct mesh *m)
 {
     if (!m) return;
-    m->data = NULL;
 
     bbox_init (&m->bb);
     mat4x4_identity (m->model);
@@ -28,16 +28,13 @@ void mesh_free (struct mesh *m)
     glDeleteBuffers (1, & (m->ibo));
 }
 
-void mesh_load_vao (struct mesh *m)
+static void mesh_load_vao (struct mesh *m, GLuint elem_size, GLfloat *vertices, GLuint *indices)
 {
-    if (!m || !m->data) return;
-
     glBindVertexArray (m->vao);
 
     glBindBuffer (GL_ARRAY_BUFFER, m->vbo);
     /* allocate memory for vertex data */
-    glBufferData (GL_ARRAY_BUFFER, m->data->nr_vertices * sizeof (GLfloat) * REX_VERTEX_SIZE,
-                  m->data->positions, GL_STATIC_DRAW);
+    glBufferData (GL_ARRAY_BUFFER, m->nr_vertices * sizeof (GLfloat) * elem_size, vertices, GL_STATIC_DRAW);
 
     // positions
     glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
@@ -52,7 +49,7 @@ void mesh_load_vao (struct mesh *m)
 
     // indices
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, m->ibo);
-    glBufferData (GL_ELEMENT_ARRAY_BUFFER, m->data->nr_triangles * 3 * sizeof (GLuint), m->data->triangles, GL_STATIC_DRAW);
+    glBufferData (GL_ELEMENT_ARRAY_BUFFER, m->nr_triangles * 3 * sizeof (GLuint), indices, GL_STATIC_DRAW);
 
     glBindBuffer (GL_ARRAY_BUFFER, 0);
     glBindVertexArray (0);
@@ -70,7 +67,7 @@ void mesh_render (struct mesh *m, struct shader *s, mat4x4 model, struct camera 
 
     glBindVertexArray (m->vao);
 
-    glDrawElements (GL_TRIANGLES, m->data->nr_triangles * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements (GL_TRIANGLES, m->nr_triangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray (0);
 }
 
@@ -81,22 +78,20 @@ inline static void get_vertex (vec3 *pos, float *positions, uint32_t index)
     (*pos) [2] = positions[index * 3 + 2];
 }
 
-void mesh_calc_normals (struct mesh *m)
+static void mesh_calc_normals (struct mesh *m, struct rex_mesh *rm)
 {
-    if (!m || !m->data) return;
-
-    struct rex_mesh *rmesh = m->data;
-    float *n_ptr = rmesh->normals;
+    if (!m || !rm) return;
+    float *n_ptr = rm->normals;
 
     /* const int MAX_TRI = 10; */
-    /* vec3 normals[rmesh->nr_vertices][MAX_TRI]; */
+    /* vec3 normals[rm->nr_vertices][MAX_TRI]; */
 
-    for (int i = 0; i < rmesh->nr_triangles * 3; i += 3)
+    for (int i = 0; i < rm->nr_triangles * 3; i += 3)
     {
         vec3 v0, v1, v2;
-        get_vertex (&v0, rmesh->positions, rmesh->triangles[i]);
-        get_vertex (&v1, rmesh->positions, rmesh->triangles[i + 1]);
-        get_vertex (&v2, rmesh->positions, rmesh->triangles[i + 2]);
+        get_vertex (&v0, rm->positions, rm->triangles[i]);
+        get_vertex (&v1, rm->positions, rm->triangles[i + 1]);
+        get_vertex (&v2, rm->positions, rm->triangles[i + 2]);
 
         vec3 a, b;
         vec3_sub (a, v1, v0);
@@ -116,28 +111,27 @@ void mesh_calc_normals (struct mesh *m)
         n_ptr++;
 
         // store pre-face normal for each vertex
-        /* normals[rmesh->triangles[i]] = n; */
-        /* normals[rmesh->triangles[i+1]] = n; */
-        /* normals[rmesh->triangles[i+2]] = n; */
+        /* normals[rm->triangles[i]] = n; */
+        /* normals[rm->triangles[i+1]] = n; */
+        /* normals[rm->triangles[i+2]] = n; */
     }
 }
 
-void mesh_calc_bbox (struct mesh *m)
+static void mesh_calc_bbox (struct mesh *m, struct rex_mesh *rm)
 {
-    if (!m || !m->data) return;
-    struct rex_mesh *rmesh = m->data;
+    if (!m || !rm) return;
     bbox_init (&m->bb);
-    for (int i = 0; i < rmesh->nr_vertices * 3; i += 3)
+    for (int i = 0; i < rm->nr_vertices * 3; i += 3)
     {
         // x
-        if (rmesh->positions[i] > m->bb.max[0]) m->bb.max[0] = rmesh->positions[i];
-        if (rmesh->positions[i] < m->bb.min[0]) m->bb.min[0] = rmesh->positions[i];
+        if (rm->positions[i] > m->bb.max[0]) m->bb.max[0] = rm->positions[i];
+        if (rm->positions[i] < m->bb.min[0]) m->bb.min[0] = rm->positions[i];
         // y
-        if (rmesh->positions[i + 1] > m->bb.max[1]) m->bb.max[1] = rmesh->positions[i + 1];
-        if (rmesh->positions[i + 1] < m->bb.min[1]) m->bb.min[1] = rmesh->positions[i + 1];
+        if (rm->positions[i + 1] > m->bb.max[1]) m->bb.max[1] = rm->positions[i + 1];
+        if (rm->positions[i + 1] < m->bb.min[1]) m->bb.min[1] = rm->positions[i + 1];
         // z
-        if (rmesh->positions[i + 2] > m->bb.max[2]) m->bb.max[2] = rmesh->positions[i + 2];
-        if (rmesh->positions[i + 2] < m->bb.min[2]) m->bb.min[2] = rmesh->positions[i + 2];
+        if (rm->positions[i + 2] > m->bb.max[2]) m->bb.max[2] = rm->positions[i + 2];
+        if (rm->positions[i + 2] < m->bb.min[2]) m->bb.min[2] = rm->positions[i + 2];
 
     }
     printf ("Mesh bounding box:\n");
@@ -145,21 +139,21 @@ void mesh_calc_bbox (struct mesh *m)
     vec3_dump ("  max", m->bb.max);
 }
 
-void mesh_center (struct mesh *m)
+void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
 {
-    if (!m) return;
+    if (!m || !data) return;
 
-    float tx = - (m->bb.min[0] + (m->bb.max[0] - m->bb.min[0]));
-    float ty = - (m->bb.min[1] + (m->bb.max[1] - m->bb.min[1]));
-    float tz = - (m->bb.min[2] + (m->bb.max[2] - m->bb.min[2]));
+    m->nr_triangles = data->nr_triangles;
+    m->nr_vertices = data->nr_vertices;
+    mesh_calc_bbox (m, data);
+    /* mesh_calc_normals(m, data); */
+    GLuint elem_size = 3;
+    GLfloat *vertices = malloc (sizeof (GLfloat) * m->nr_vertices * elem_size);
+    uint32_t *indices = malloc (sizeof (uint32_t) * m->nr_triangles * 3);
 
-    mat4x4_translate (m->model, tx, ty, tz);
-    mat4x4_dump (m->model);
-}
+    // copy data
+    memcpy(vertices, data->positions, 12 * data->nr_vertices);
+    memcpy(indices, data->triangles, 12 * data->nr_triangles);
 
-void mesh_set_data (struct mesh *m, struct rex_mesh *data)
-{
-    if (!m) return;
-    m->data = data;
-    mesh_calc_bbox (m);
+    mesh_load_vao (m, elem_size, vertices, indices);
 }

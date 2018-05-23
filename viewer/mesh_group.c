@@ -18,7 +18,6 @@ void mesh_group_destroy (struct mesh_group *g)
         while (cur)
         {
             struct mesh *m = cur->data;
-            rex_mesh_free (m->data);
             mesh_free (m);
             cur = cur->next;
         }
