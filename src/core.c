@@ -346,7 +346,7 @@ int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint
 
     *data_size = block_size - sizeof (uint32_t);
     data = malloc (*data_size);
-    memset(data, 0, *data_size);
+    memset (data, 0, *data_size);
     if (fread (data, *data_size, 1, fp) != 1)
     {
         fseek (fp, block_end, SEEK_SET);

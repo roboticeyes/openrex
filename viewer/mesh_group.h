@@ -16,13 +16,13 @@ struct mesh_group
     struct list *meshes;
 };
 
-void mesh_group_init(struct mesh_group *g);
-void mesh_group_destroy(struct mesh_group *g);
+void mesh_group_init (struct mesh_group *g);
+void mesh_group_destroy (struct mesh_group *g);
 
-void mesh_group_add_mesh(struct mesh_group *g, struct mesh *m);
-void mesh_group_remove_mesh(struct mesh_group *g, struct mesh *m);
+void mesh_group_add_mesh (struct mesh_group *g, struct mesh *m);
+void mesh_group_remove_mesh (struct mesh_group *g, struct mesh *m);
 
-void mesh_group_calc_bbox(struct mesh_group *g);
-void mesh_group_center(struct mesh_group *g);
+void mesh_group_calc_bbox (struct mesh_group *g);
+void mesh_group_center (struct mesh_group *g);
 
 void mesh_group_render (struct mesh_group *g, struct shader *s, struct camera *cam, mat4x4 projection);

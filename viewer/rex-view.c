@@ -38,7 +38,7 @@ enum rex_block_enums
 
 int init()
 {
-    mesh_group_init(&root);
+    mesh_group_init (&root);
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
         return 1;
 
@@ -163,13 +163,9 @@ void render()
                     mouse_pressed = false;
             }
             else if (!mouse_moved && event.type == SDL_MOUSEMOTION)
-            {
                 mouse_moved = true;
-            }
             else if (event.type == SDL_MOUSEWHEEL)
-            {
                 set_zoom (-event.wheel.y);
-            }
         }
 
         if (mouse_pressed && mouse_moved)
@@ -187,7 +183,7 @@ void render()
 
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-        mesh_group_render(&root, s, &cam, projection);
+        mesh_group_render (&root, s, &cam, projection);
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
@@ -198,7 +194,7 @@ void render()
 
 void cleanup()
 {
-    mesh_group_destroy(&root);
+    mesh_group_destroy (&root);
     SDL_GL_DeleteContext (ctx);
     SDL_DestroyWindow (win);
     SDL_Quit();
@@ -219,10 +215,10 @@ void loadmesh (struct rex_mesh *mesh)
     struct mesh *m;
     m = malloc (sizeof (struct mesh));
     mesh_init (m);
-    mesh_set_data(m, mesh);
-    mesh_calc_normals(m);
+    mesh_set_data (m, mesh);
+    mesh_calc_normals (m);
     mesh_load_vao (m);
-    mesh_group_add_mesh(&root, m);
+    mesh_group_add_mesh (&root, m);
 }
 
 int loadrex (const char *file)
@@ -257,12 +253,13 @@ int loadrex (const char *file)
     }
     fclose (fp);
 
-    if (!meshes) {
-        printf("Nothing found to render, go home!\n");
+    if (!meshes)
+    {
+        printf ("Nothing found to render, go home!\n");
         return 1;
     }
 
-    mesh_group_center(&root);
+    mesh_group_center (&root);
     return 0;
 }
 

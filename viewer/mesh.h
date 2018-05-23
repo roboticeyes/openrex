@@ -38,4 +38,4 @@ void mesh_calc_normals (struct mesh *m);
  * Set the actual mesh data and prepares the mesh for the next steps.
  * Preparation includes bbox calculations, ...
  */
-void mesh_set_data(struct mesh *m, struct rex_mesh *data);
+void mesh_set_data (struct mesh *m, struct rex_mesh *data);
