@@ -44,6 +44,10 @@ static void mesh_load_vao (struct mesh *m, GLuint elem_size, GLfloat *vertices, 
     glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, (void *) (sizeof (GLfloat) * 3 * m->nr_vertices));
     glEnableVertexAttribArray (1);
 
+    // colors
+    glVertexAttribPointer (2, 3, GL_FLOAT, GL_FALSE, 0, (void *) (sizeof (GLfloat) * 6 * m->nr_vertices));
+    glEnableVertexAttribArray (2);
+
     // indices
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, m->ibo);
     glBufferData (GL_ELEMENT_ARRAY_BUFFER, m->nr_triangles * 3 * sizeof (GLuint), indices, GL_STATIC_DRAW);
@@ -83,10 +87,7 @@ static void mesh_calc_normals (float *ptr, struct rex_mesh *rm)
     if (!ptr || !rm) return;
 
     if (rm->normals)
-    {
         memcpy (ptr, rm->normals, 12 * rm->nr_vertices);
-        ptr += 3 * rm->nr_vertices;
-    }
 
     /* const int MAX_TRI = 10; */
     /* vec3 normals[rm->nr_vertices][MAX_TRI]; */
@@ -156,7 +157,18 @@ void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
 
     ptr += 3 * data->nr_vertices; // point to beginning of normals
     mesh_calc_normals (ptr, data);
+    ptr += 3 * data->nr_vertices; // point to beginning of colors
 
+    if (data->colors)
+        memcpy (ptr, data->colors, 12 * data->nr_vertices);
+    else
+    {
+        // TODO set mesh material
+        for (int i = 0; i < 12 * data->nr_vertices; i++, ptr++)
+            (*ptr) = 0.5f;
+    }
+
+    // triangles
     uint32_t *indices = malloc (sizeof (uint32_t) * m->nr_triangles * 3);
     memcpy (indices, data->triangles, 12 * data->nr_triangles);
 
