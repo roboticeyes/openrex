@@ -140,8 +140,8 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read normals
     if (header->nrOfNorCoords)
     {
-        mesh->normals = malloc (header->nrOfNorCoords * 12);
-        if (fread (mesh->normals, 12, header->nrOfNorCoords, fp) != header->nrOfNorCoords)
+        mesh->normals = malloc (mesh->nr_vertices * 12);
+        if (fread (mesh->normals, 12, mesh->nr_vertices, fp) != mesh->nr_vertices)
         {
             FREE (mesh->normals);
             fseek (fp, block_end, SEEK_SET);
@@ -152,8 +152,8 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read texture coords
     if (header->nrOfTexCoords)
     {
-        mesh->tex_coords = malloc (header->nrOfTexCoords * 12);
-        if (fread (mesh->tex_coords, 8, header->nrOfTexCoords, fp) != header->nrOfTexCoords)
+        mesh->tex_coords = malloc (mesh->nr_vertices * 8);
+        if (fread (mesh->tex_coords, 8, mesh->nr_vertices, fp) != mesh->nr_vertices)
         {
             FREE (mesh->tex_coords);
             fseek (fp, block_end, SEEK_SET);
@@ -164,8 +164,8 @@ int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *head
     // read colors
     if (header->nrOfVtxColors)
     {
-        mesh->colors = malloc (header->nrOfVtxColors * 12);
-        if (fread (mesh->colors, 12, header->nrOfVtxColors, fp) != header->nrOfVtxColors)
+        mesh->colors = malloc (mesh->nr_vertices * 12);
+        if (fread (mesh->colors, 12, mesh->nr_vertices, fp) != mesh->nr_vertices)
         {
             FREE (mesh->colors);
             fseek (fp, block_end, SEEK_SET);

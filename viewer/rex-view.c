@@ -39,6 +39,7 @@ enum rex_block_enums
 int init()
 {
     mesh_group_init (&root);
+
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
         return 1;
 

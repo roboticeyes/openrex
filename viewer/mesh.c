@@ -88,10 +88,11 @@ static void mesh_calc_normals (float *ptr, struct rex_mesh *rm)
 
     if (rm->normals)
         memcpy (ptr, rm->normals, 12 * rm->nr_vertices);
+    else
+        memset (ptr, 0, 12 * rm->nr_vertices);
 
-    /* const int MAX_TRI = 10; */
-    /* vec3 normals[rm->nr_vertices][MAX_TRI]; */
-
+#if 0
+    //  currently no normal are calculated
     vec3 v0, v1, v2;
     vec3 a, b;
     vec3 r;
@@ -107,12 +108,8 @@ static void mesh_calc_normals (float *ptr, struct rex_mesh *rm)
         vec3_norm (ptr, r);
         /* printf ("norm: %f %f %f\n", n[0], n[1], n[2]); */
         /* fflush (stdout); */
-
-        // store pre-face normal for each vertex
-        /* normals[rm->triangles[i]] = n; */
-        /* normals[rm->triangles[i+1]] = n; */
-        /* normals[rm->triangles[i+2]] = n; */
     }
+#endif
 }
 
 static void mesh_calc_bbox (struct mesh *m, struct rex_mesh *rm)
@@ -147,30 +144,28 @@ void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
 
     GLuint elem_size = 9; // pos, normals, color
     size_t mem = sizeof (GLfloat) * m->nr_vertices * elem_size;
-    printf ("Allocating %ld bytes ...\n", mem);
-    fflush (stdout);
     GLfloat *vertices = malloc (mem);
     memset (vertices, 0, mem);
 
     GLfloat *ptr = vertices;
     memcpy (ptr, data->positions, 12 * data->nr_vertices);
+    ptr = &vertices[3 * data->nr_vertices];
 
-    ptr += 3 * data->nr_vertices; // point to beginning of normals
     mesh_calc_normals (ptr, data);
-    ptr += 3 * data->nr_vertices; // point to beginning of colors
+    ptr = &vertices[6 * data->nr_vertices];
 
     if (data->colors)
         memcpy (ptr, data->colors, 12 * data->nr_vertices);
     else
     {
         // TODO set mesh material
-        for (int i = 0; i < 12 * data->nr_vertices; i++, ptr++)
+        for (int i = 0; i < 3 * data->nr_vertices; i++, ptr++)
             (*ptr) = 0.5f;
     }
 
     // triangles
     uint32_t *indices = malloc (sizeof (uint32_t) * m->nr_triangles * 3);
-    memcpy (indices, data->triangles, 12 * data->nr_triangles);
+    indices = memcpy (indices, data->triangles, 12 * data->nr_triangles);
 
     mesh_load_vao (m, elem_size, vertices, indices);
 
