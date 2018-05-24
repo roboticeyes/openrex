@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "core.h"
@@ -24,44 +25,103 @@
 #include "linmath.h"
 #include "util.h"
 
-vec3 vertices[] =
+float cube_vertices[] =
 {
-    {0, 0, 0},
-    {0, 0, 1},
-    {0, 1, 1},
-    {0, 1, 0},
-    {1, 0, 0},
-    {1, 0, 1},
-    {1, 1, 1},
-    {1, 1, 0}
+    // front
+    -1.0, -1.0,  1.0,
+        1.0, -1.0,  1.0,
+        1.0,  1.0,  1.0,
+        -1.0,  1.0,  1.0,
+        // top
+        -1.0,  1.0,  1.0,
+        1.0,  1.0,  1.0,
+        1.0,  1.0, -1.0,
+        -1.0,  1.0, -1.0,
+        // back
+        1.0, -1.0, -1.0,
+        -1.0, -1.0, -1.0,
+        -1.0,  1.0, -1.0,
+        1.0,  1.0, -1.0,
+        // bottom
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0,  1.0,
+        -1.0, -1.0,  1.0,
+        // left
+        -1.0, -1.0, -1.0,
+        -1.0, -1.0,  1.0,
+        -1.0,  1.0,  1.0,
+        -1.0,  1.0, -1.0,
+        // right
+        1.0, -1.0,  1.0,
+        1.0, -1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0,  1.0,  1.0,
+    };
+
+float cube_normals[] =
+{
+    // front
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    // top
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    // back
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    // bottom
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    // left
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    // right
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
 };
 
-vec2 texels[] =
+float cube_texcoords[2 * 4 * 6] =
 {
-    {0, 0},
-    {1, 0},
-    {1, 1},
-    {0, 1},
-    {0, 0},
-    {0, 0},
-    {0, 0},
-    {0, 0}
+    // front
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
 };
 
-struct rex_triangle triangles[] =
+uint32_t cube_elements[] =
 {
-    {0, 1, 3},
-    {7, 6, 4},
-    {0, 4, 1},
-    {1, 5, 2},
-    {2, 6, 3},
-    {3, 7, 0},
-    {1, 2, 3},
-    {6, 5, 4},
-    {4, 5, 1},
-    {5, 6, 2},
-    {6, 7, 3},
-    {7, 4, 0}
+    // front
+    0,  1,  2,
+    2,  3,  0,
+    // top
+    4,  5,  6,
+    6,  7,  4,
+    // back
+    8,  9, 10,
+    10, 11,  8,
+    // bottom
+    12, 13, 14,
+    14, 15, 12,
+    // left
+    16, 17, 18,
+    18, 19, 16,
+    // right
+    20, 21, 22,
+    22, 23, 20,
 };
 
 void usage (const char *exec)
@@ -84,6 +144,10 @@ int main (int argc, char **argv)
 
     struct rex_header header = rex_create_header();
     rex_write_header (fp, &header);
+
+    // setup all texture coordinates for each side
+    for (int i = 1; i < 6; i++)
+        memcpy (&cube_texcoords[i * 4 * 2], &cube_texcoords[0], 2 * 4 * sizeof (float));
 
     // write texture file
     FILE *t = fopen (argv[1], "rb");
@@ -108,7 +172,7 @@ int main (int argc, char **argv)
     // write material
     struct rex_material_standard mat =
     {
-        .ka_red = 1,
+        .ka_red = 0,
         .ka_green = 0,
         .ka_blue = 0,
         .ka_textureId = 0,
@@ -116,7 +180,7 @@ int main (int argc, char **argv)
         .kd_green = 0,
         .kd_blue = 0,
         .kd_textureId = 0,
-        .ks_red = 1,
+        .ks_red = 0,
         .ks_green = 0,
         .ks_blue = 0,
         .ks_textureId = 0,
@@ -135,13 +199,13 @@ int main (int argc, char **argv)
     {
         .id = 2,
         .name = "test",
-        .nr_vertices = LEN (vertices),
-        .nr_triangles = LEN (triangles),
-        .positions = & (vertices[0][0]),
-        .normals = NULL,
-        .tex_coords = & (texels[0][0]),
+        .nr_vertices = LEN (cube_vertices) / 3,
+        .nr_triangles = LEN (cube_elements) / 3,
+        .positions = cube_vertices,
+        .normals = cube_normals,
+        .tex_coords = NULL, //& (texels[0][0]),
         .colors = NULL,
-        .triangles = & (triangles[0].v1)
+        .triangles = cube_elements
     };
 
     if (rex_write_mesh_block (fp, &header, &mesh, 1 /* material_id */))
@@ -156,4 +220,3 @@ int main (int argc, char **argv)
     FREE (img);
     return 0;
 }
-

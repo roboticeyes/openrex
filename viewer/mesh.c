@@ -41,7 +41,7 @@ static void mesh_load_vao (struct mesh *m, GLuint elem_size, GLfloat *vertices, 
     glEnableVertexAttribArray (0);
 
     // normals
-    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, (void *) (sizeof(GLfloat) * 3 * m->nr_vertices));
+    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 0, (void *) (sizeof (GLfloat) * 3 * m->nr_vertices));
     glEnableVertexAttribArray (1);
 
     // indices
@@ -81,10 +81,10 @@ static void mesh_calc_normals (struct mesh *m, struct rex_mesh *rm)
 
     if (rm->normals)
     {
-        warn("Mesh has normals, nothing to calculate");
+        warn ("Mesh has normals, nothing to calculate");
         return;
     }
-    rm->normals = malloc(12 * rm->nr_vertices);
+    rm->normals = malloc (12 * rm->nr_vertices);
     float *n_ptr = rm->normals;
 
     /* const int MAX_TRI = 10; */
@@ -150,7 +150,7 @@ void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
     m->nr_triangles = data->nr_triangles;
     m->nr_vertices = data->nr_vertices;
     mesh_calc_bbox (m, data);
-    mesh_calc_normals(m, data);
+    mesh_calc_normals (m, data);
     GLuint elem_size = 6; // pos and normals
     GLfloat *vertices = malloc (sizeof (GLfloat) * m->nr_vertices * elem_size);
     memset (vertices, 0, sizeof (GLfloat) * m->nr_vertices * elem_size);

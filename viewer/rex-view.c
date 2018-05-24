@@ -74,9 +74,9 @@ int init()
 
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
+    glEnable (GL_CULL_FACE);
+    glEnable (GL_DEPTH_TEST);
+    glCullFace (GL_BACK);
 
     SDL_GL_SwapWindow (win);
 
