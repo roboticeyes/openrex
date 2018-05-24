@@ -8,7 +8,7 @@ uniform vec3 lightPos;
 
 void main(void) {
     vec3 lightCol = vec3(0.9, 0.9, 0.7);
-    vec3 ambient = vec3(0.2,0.2,0.2);
+    vec3 ambient = vec3(0.4,0.4,0.4);
 
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - fragPos);
