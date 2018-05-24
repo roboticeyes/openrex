@@ -13,7 +13,7 @@ void main(void) {
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - fragPos);
 
-    float diff = clamp(dot(norm, lightDir), 0.1, 1);
+    float diff = clamp(dot(norm, lightDir), 0.5, 1);
     vec3 diffuse = diff * lightCol;
 
     vec3 result = (ambient + diffuse) * color;
