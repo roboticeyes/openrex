@@ -278,6 +278,7 @@ int main (int argc, char **argv)
     if (loadrex (argv[1]))
         return 1;
 
+    printf("Scene completely loaded, start rendering ...\n"); fflush(stdout);
     render();
     cleanup();
     return 0;
