@@ -57,3 +57,17 @@ void die (const char *fmt, ...)
 
     exit (1);
 }
+
+char *read_file (const char *filename)
+{
+    FILE *f = fopen (filename, "rt");
+    if (f == NULL) return NULL;
+    fseek (f, 0, SEEK_END);
+    long length = ftell (f);
+    fseek (f, 0, SEEK_SET);
+    char *buffer = (char *) malloc (length + 1);
+    buffer[length] = '\0';
+    fread (buffer, 1, length, f);
+    fclose (f);
+    return buffer;
+}

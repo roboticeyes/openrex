@@ -31,6 +31,10 @@ if (TOOLS)
     add_subdirectory(tools)
 endif()
 
+if (VIEWER)
+    add_subdirectory(viewer)
+endif()
+
 set ( LIBOPENREX_INCLUDE_DIR ${includedir} )
 set ( LIBOPENREX_INCLUDE_DIRS ${LIBOPENREX_INCLUDE_DIR} )
 set ( LIBOPENREX_LIBRARY openrex )
@@ -47,4 +51,5 @@ message (STATUS "Summary build options:
 
     Build static libs: ${STATICLIBS}
     Build tools: ${TOOLS}
+    Build viewer: ${VIEWER}
     ")

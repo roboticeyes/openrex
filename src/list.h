@@ -15,12 +15,21 @@
  */
 #pragma once
 
-#define REX_FILE_MAGIC                  "REX1"
-#define REX_FILE_VERSION                1
+struct node
+{
+    void *data;
+    struct node *prev;
+    struct node *next;
+};
 
-#define REX_BLOCK_HEADER_SIZE           16
-#define REX_MESH_HEADER_SIZE            128
-#define REX_MESH_NAME_MAX_SIZE          74
-#define REX_VERTEX_SIZE                 11
+struct list
+{
+    struct node *head;
+    struct node *tail;
+};
 
-#define REX_NOT_SET                     0x7fffffffffffffffL
+struct list *list_create();
+void list_destroy (struct list *l);
+
+void list_insert (struct list *l, void *data);
+void list_delete_node (struct list *l, struct node *N);

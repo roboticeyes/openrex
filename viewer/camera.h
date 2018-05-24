@@ -15,12 +15,18 @@
  */
 #pragma once
 
-#define REX_FILE_MAGIC                  "REX1"
-#define REX_FILE_VERSION                1
+#include "linmath.h"
 
-#define REX_BLOCK_HEADER_SIZE           16
-#define REX_MESH_HEADER_SIZE            128
-#define REX_MESH_NAME_MAX_SIZE          74
-#define REX_VERTEX_SIZE                 11
+struct camera
+{
+    vec3 pos;
+    vec3 center;
+    vec3 up;     // up vector of the camera
+    float orbit; // orbit angle around the object (degrees)
+    float pitch; // height angle of the camera (degrees)
+    float distance; // distance to object
+    mat4x4 view;
+};
 
-#define REX_NOT_SET                     0x7fffffffffffffffL
+void camera_init (struct camera *c, vec3 pos);
+void camera_update (struct camera *C);

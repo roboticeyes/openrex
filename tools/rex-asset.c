@@ -21,9 +21,8 @@
 #include <stdlib.h>
 
 #include "config.h"
-
+#include "core.h"
 #include "global.h"
-#include "rex_core.h"
 #include "util.h"
 
 void usage (const char *exec)

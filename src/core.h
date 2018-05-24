@@ -104,19 +104,6 @@ struct rex_mesh
     uint32_t *triangles;
 };
 
-struct rex_position
-{
-    float x;
-    float y;
-    float z;
-};
-
-struct rex_texel
-{
-    float s;
-    float t;
-};
-
 struct rex_triangle
 {
     uint32_t v1;
@@ -214,3 +201,4 @@ int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint
 
 void rex_mesh_init (struct rex_mesh *mesh);
 void rex_mesh_free (struct rex_mesh *mesh);
+void rex_mesh_dump_obj (struct rex_mesh *mesh);

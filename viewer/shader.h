@@ -15,12 +15,27 @@
  */
 #pragma once
 
-#define REX_FILE_MAGIC                  "REX1"
-#define REX_FILE_VERSION                1
+#include <GL/glew.h>
+#include <stdbool.h>
 
-#define REX_BLOCK_HEADER_SIZE           16
-#define REX_MESH_HEADER_SIZE            128
-#define REX_MESH_NAME_MAX_SIZE          74
-#define REX_VERTEX_SIZE                 11
+#include "linmath.h"
 
-#define REX_NOT_SET                     0x7fffffffffffffffL
+/**
+    This function will load a shader from the disk, compile, attach and then link it.
+
+    @param vs vertex shader file
+    @param fs fragment shader file
+    @return allocated shader struct (NULL if not successful)
+*/
+
+struct shader
+{
+    GLuint program;
+    GLuint projection;
+    GLuint view;
+    GLuint model;
+    GLuint lightPos;
+};
+
+struct shader *shader_load (const char *vs, const char *fs);
+void shader_use (struct shader *s);

@@ -9,7 +9,6 @@ add_executable(rex-info rex-info.c)
 add_executable(rex-gencube rex-gencube.c)
 add_executable(rex-asset rex-asset.c)
 
-
 # Linkage
 target_link_libraries(rex-info openrex-static)
 target_link_libraries(rex-gencube openrex-static)
