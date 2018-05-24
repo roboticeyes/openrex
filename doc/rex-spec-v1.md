@@ -316,6 +316,7 @@ this block plus the string size and string length. E.g.
 | **size [bytes]** | **name**       | **type**  | **description**                                              |
 |------------------|----------------|-----------|--------------------------------------------------------------|
 | 2                | targetplatform | uint16_t  | target platform for the asset package                        |
+| 2                | unityversion   | uint16_t  | unity verison that built the assetbundle (at least 20180)    |
 |                  | data           | bytes     | data of the unity asset content                              |
 
 The current values for targetplatform are:

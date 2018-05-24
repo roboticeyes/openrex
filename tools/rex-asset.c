@@ -36,11 +36,13 @@
 
 void usage (const char *exec)
 {
-    die ("usage: %s <rex_asset_file_name_without_ending> filename.rex\n", exec);
+    die ("usage: %s <rex_asset_file_name_without_ending> filename.rex <5_digit_unity_version>\n", exec);
 }
 
-int write_asset_package_to_rex_file (FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint64_t id)
+int write_asset_package_to_rex_file (FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint16_t unity_version, uint64_t id)
 {
+    if (unity_version < 20180)
+        die("Unity version has to be at least 20180");
     // write asset file
     char *file_name_with_ending;
     file_name_with_ending = malloc (strlen (file_name) + strlen (file_ending) + 1);
@@ -66,7 +68,7 @@ int write_asset_package_to_rex_file (FILE *fp, struct rex_header *header, char *
     else if (strcmp (file_ending, ".w_rexasset") == 0)
         target_platform = TARGET_PLATFROM_WSA;
 
-    if (rex_write_rexasset_block (fp, header, blob, file_size, target_platform, id))
+    if (rex_write_rexasset_block (fp, header, blob, file_size, target_platform, unity_version, id))
     {
         warn ("Error during file write %d\n", errno);
         free (blob);
@@ -89,9 +91,9 @@ int main (int argc, char **argv)
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 3)
+    if (argc < 4)
         usage (argv[0]);
-
+basename();
     FILE *fp = fopen (argv[2], "wb");
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
@@ -100,19 +102,19 @@ int main (int argc, char **argv)
     rex_write_header (fp, &header);
 
     char *file_ending = ".a_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 0))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 0))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".i_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 1))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 1))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".w_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, 2))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 2))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);

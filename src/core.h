@@ -193,7 +193,7 @@ int rex_write_image_block (FILE *fp, struct rex_header *header, uint8_t *img, ui
  * \param target_platform uint16 representation of target platform
  * \param id the data id for this block
  */
-int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, uint16_t target_platform, uint64_t id);
+int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, uint16_t target_platform, uint16_t unity_version, uint64_t id);
 
 /*
  * Reads a image block from the given file pointer. This call will allocate memory
