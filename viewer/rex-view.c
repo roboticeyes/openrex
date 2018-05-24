@@ -14,6 +14,8 @@
 #include "status.h"
 #include "util.h"
 
+#define NEAR 0.1
+#define FAR 100.0
 #define WIDTH 1918
 #define HEIGHT 2136
 #define FOV (45 * 0.0174533f)
@@ -83,7 +85,7 @@ int init()
 
     s = shader_load ("../viewer/shader.vert", "../viewer/shader.frag");
 
-    mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, 0.001f, 1000.0);
+    mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, NEAR, FAR);
     vec3 initial_pos = {0.0, 0.0, 10.0};
     camera_init (&cam, initial_pos);
 
@@ -184,6 +186,9 @@ void render()
         }
 
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // update camera position for light position
+        glUniform3fv (s->lightPos, 1, (GLfloat *) cam.pos);
 
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);

@@ -69,6 +69,7 @@ struct shader *shader_load (const char *vs, const char *fs)
     s->projection = glGetUniformLocation (s->program, "projection");
     s->view = glGetUniformLocation (s->program, "view");
     s->model = glGetUniformLocation (s->program, "model");
+    s->lightPos = glGetUniformLocation (s->program, "lightPos");
     return s;
 }
 
