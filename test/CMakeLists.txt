@@ -26,4 +26,8 @@ add_test(
 target_link_libraries(test_all
     openrex-static
     check
+    pthread
+    m
+    rt
+    subunit
     )
