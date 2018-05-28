@@ -255,7 +255,7 @@ int loadrex (const char *file)
         return 1;
     }
 
-    rex_read_header (fp, &header);
+    rex_header_read (fp, &header);
 
     int meshes = 0;
     for (int i = 0; i < header.nr_datablocks; i++)

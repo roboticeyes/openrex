@@ -18,27 +18,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#pragma pack (1)
-struct rex_header
-{
-    char magic[4];
-    uint16_t version;
-    uint32_t crc;
-    uint16_t nr_datablocks;
-    uint16_t start_addr;
-    uint64_t sz_all_datablocks;
-    char reserved[42];
-};
-
-struct rex_csb
-{
-    uint32_t srid;
-    uint16_t sz;
-    char name[4]; // restricted to 4 bytes here
-    float offset_x;
-    float offset_y;
-    float offset_z;
-};
+#include "rex-header.h"
 
 struct rex_block_header
 {
@@ -111,8 +91,6 @@ struct rex_triangle
     uint32_t v3;
 };
 
-#pragma pack ()
-
 /**
  * This is a list of supported image types
  */
@@ -122,21 +100,6 @@ enum rex_image_type
     Jpeg = 1,
     Png = 2
 };
-
-/**
- * Creates a valid REX header block
- */
-struct rex_header rex_create_header (void);
-
-/*
- * Reads the REX header from an open file pointer
- */
-int rex_read_header (FILE *fp, struct rex_header *header);
-
-/*
- * Write the REX header to an open file pointer
- */
-int rex_write_header (FILE *fp, struct rex_header *header);
 
 /*
  * Reads a data block header from the current file position

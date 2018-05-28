@@ -142,8 +142,8 @@ int main (int argc, char **argv)
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
 
-    struct rex_header header = rex_create_header();
-    rex_write_header (fp, &header);
+    struct rex_header *header = rex_header_create();
+    rex_header_write (fp, header);
 
     // setup all texture coordinates for each side
     for (int i = 1; i < 6; i++)
@@ -161,7 +161,7 @@ int main (int argc, char **argv)
         die ("Cannot read image content");
     fclose (t);
 
-    if (rex_write_image_bock (fp, &header, img, sz, Png, 0))
+    if (rex_write_image_bock (fp, header, img, sz, Png, 0))
     {
         warn ("Error during file write %d\n", errno);
         FREE (img);
@@ -188,7 +188,7 @@ int main (int argc, char **argv)
         .alpha = 1
     };
 
-    if (rex_write_material_block (fp, &header, &mat, 1))
+    if (rex_write_material_block (fp, header, &mat, 1))
     {
         warn ("Error during file write %d\n", errno);
         fclose (fp);
@@ -208,15 +208,16 @@ int main (int argc, char **argv)
         .triangles = cube_elements
     };
 
-    if (rex_write_mesh_block (fp, &header, &mesh, 1 /* material_id */))
+    if (rex_write_mesh_block (fp, header, &mesh, 1 /* material_id */))
     {
         warn ("Error during file read %d\n", errno);
         fclose (fp);
         return -1;
     }
-    rex_write_header (fp, &header);
+    rex_header_write (fp, header);
 
     fclose (fp);
     FREE (img);
+    FREE(header);
     return 0;
 }

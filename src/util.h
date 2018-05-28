@@ -18,6 +18,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "status.h"
+
 #define LEN(x) (sizeof (x) / sizeof *(x))
 
 void warn (const char *, ...);
@@ -37,3 +39,17 @@ if (!fp) \
 }
 
 #define FREE(m) do { free(m); m = NULL; } while(0);
+
+#define rex_write(p,s,n,fp) \
+{ \
+    size_t ret = fwrite (p, s, n, fp); \
+    if (ret != n) \
+        return REX_ERROR_FILE_READ; \
+}
+
+#define rex_read(p,s,n,fp) \
+{ \
+    size_t ret = fread (p, s, n, fp); \
+    if (ret != n) \
+        return REX_ERROR_FILE_WRITE; \
+}

@@ -107,8 +107,10 @@ int main (int argc, char **argv)
 
     if (!fp)
         die ("Cannot open REX file %s\n", argv[1]);
-    rex_read_header (fp, &header);
+    if (rex_header_read (fp, &header) != REX_OK)
+        printf("Cannot read header\n");
     rex_dump_header (&header);
+    return 0;
 
     for (int i = 0; i < header.nr_datablocks; i++)
     {
