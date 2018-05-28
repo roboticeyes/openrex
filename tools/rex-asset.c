@@ -26,8 +26,9 @@
 #include <string.h>
 
 #include "config.h"
-#include "core.h"
+
 #include "global.h"
+#include "core.h"
 #include "util.h"
 
 #define TARGET_PLATFROM_ANDROID 0
@@ -93,7 +94,7 @@ int main (int argc, char **argv)
 
     if (argc < 4)
         usage (argv[0]);
-basename();
+
     FILE *fp = fopen (argv[2], "wb");
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
@@ -102,19 +103,20 @@ basename();
     rex_write_header (fp, &header);
 
     char *file_ending = ".a_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 0))
+    uint16_t unity_version = (uint16_t)strtol(argv[3], NULL, 10);
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 0))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".i_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 1))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 1))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
     file_ending = ".w_rexasset";
-    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, argv[2], 2))
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 2))
     {
         fclose (fp);
         die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
