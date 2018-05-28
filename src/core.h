@@ -181,7 +181,7 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
  * \param type the image type/compression
  * \param id the data id for this block
  */
-int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
+int rex_write_image_block (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id);
 
 /**
  * Writes a rex asset block
@@ -189,9 +189,11 @@ int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uin
  * \param header rex header
  * \param blob the content of the rex asset file
  * \param size the size of the binary image in bytes
+ * \param name the name of the asset file with extension
+ * \param target_platform uint16 representation of target platform
  * \param id the data id for this block
  */
-int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, const char *name, uint64_t id);
+int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, uint16_t target_platform, uint16_t unity_version, uint64_t id);
 
 /*
  * Reads a image block from the given file pointer. This call will allocate memory

@@ -13,21 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.*
  *
- * This tool takes a REX Unity Asset file and generates a REX file.
+ * This tool takes a REX Unity Asset file for each target platform and generates a REX file.
+ * The file endings have to be:
+ *   ".a_rexasset" for Android
+ *   ".i_rexasset" for iOS
+ *   ".w_rexasset" for WSA
  */
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
-#include "core.h"
+
 #include "global.h"
+#include "core.h"
 #include "util.h"
+
+#define TARGET_PLATFROM_ANDROID 0
+#define TARGET_PLATFROM_IOS 1
+#define TARGET_PLATFROM_WSA 2
 
 void usage (const char *exec)
 {
-    die ("usage: %s <rex_asset_file> filename.rex\n", exec);
+    die ("usage: %s <rex_asset_file_name_without_ending> filename.rex <5_digit_unity_version>\n", exec);
+}
+
+int write_asset_package_to_rex_file (FILE *fp, struct rex_header *header, char *file_name, char *file_ending, uint16_t unity_version, uint64_t id)
+{
+    if (unity_version < 20180)
+        die("Unity version has to be at least 20180");
+    // write asset file
+    char *file_name_with_ending;
+    file_name_with_ending = malloc (strlen (file_name) + strlen (file_ending) + 1);
+    strcpy (file_name_with_ending, file_name);
+    strcat (file_name_with_ending, file_ending);
+
+    FILE *asset_file = fopen (file_name_with_ending, "rb");
+    if (!asset_file)
+        die ("Cannot open rex asset file %s\n", file_name_with_ending);
+    fseek (asset_file, 0, SEEK_END);
+    uint64_t file_size = ftell (asset_file);
+    fseek (asset_file, 0, SEEK_SET);
+    uint8_t *blob = malloc (file_size);
+    if (fread (blob, file_size, 1, asset_file) != 1)
+        die ("Cannot read content of %s\n", file_name_with_ending);
+    fclose (asset_file);
+
+    uint16_t target_platform = 0;
+    if (strcmp (file_ending, ".a_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_ANDROID;
+    else if (strcmp (file_ending, ".i_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_IOS;
+    else if (strcmp (file_ending, ".w_rexasset") == 0)
+        target_platform = TARGET_PLATFROM_WSA;
+
+    if (rex_write_rexasset_block (fp, header, blob, file_size, target_platform, unity_version, id))
+    {
+        warn ("Error during file write %d\n", errno);
+        free (blob);
+        blob = NULL;
+        free (file_name_with_ending);
+        file_name_with_ending = NULL;
+        fclose (fp);
+        return -1;
+    }
+    free (file_name_with_ending);
+    file_name_with_ending = NULL;
+    free (blob);
+    blob = NULL;
+    return 0;
 }
 
 int main (int argc, char **argv)
@@ -36,7 +92,7 @@ int main (int argc, char **argv)
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 3)
+    if (argc < 4)
         usage (argv[0]);
 
     FILE *fp = fopen (argv[2], "wb");
@@ -46,30 +102,29 @@ int main (int argc, char **argv)
     struct rex_header header = rex_create_header();
     rex_write_header (fp, &header);
 
-    // write texture file
-    FILE *t = fopen (argv[1], "rb");
-    if (!t)
-        die ("Cannot open rex asset file %s\n", argv[1]);
-    fseek (t, 0, SEEK_END);
-    uint64_t sz = ftell (t);
-    fseek (t, 0, SEEK_SET);
-    uint8_t *blob = malloc (sz);
-    if (fread (blob, sz, 1, t) != 1)
-        die ("Cannot read rexasset content");
-    fclose (t);
-
-    if (rex_write_rexasset_bock (fp, &header, blob, sz, "rexasset", 0))
+    char *file_ending = ".a_rexasset";
+    uint16_t unity_version = (uint16_t)strtol(argv[3], NULL, 10);
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 0))
     {
-        warn ("Error during file write %d\n", errno);
-        free (blob);
         fclose (fp);
-        return -1;
+        die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
+    }
+    file_ending = ".i_rexasset";
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 1))
+    {
+        fclose (fp);
+        die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
+    }
+    file_ending = ".w_rexasset";
+    if (write_asset_package_to_rex_file (fp, &header, argv[1], file_ending, unity_version, 2))
+    {
+        fclose (fp);
+        die ("Could not write asset package %s%s to REX file\n", argv[1], file_ending);
     }
 
     rex_write_header (fp, &header);
 
     fclose (fp);
-    free (blob);
     return 0;
 }
 

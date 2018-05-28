@@ -161,7 +161,7 @@ int main (int argc, char **argv)
         die ("Cannot read image content");
     fclose (t);
 
-    if (rex_write_image_bock (fp, &header, img, sz, Png, 0))
+    if (rex_write_image_block (fp, &header, img, sz, Png, 0))
     {
         warn ("Error during file write %d\n", errno);
         FREE (img);

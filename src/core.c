@@ -266,21 +266,22 @@ int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_ma
     return REX_OK;
 }
 
-int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, const char *name, uint64_t id)
+int rex_write_rexasset_block (FILE *fp, struct rex_header *header, uint8_t *blob, uint64_t size, uint16_t target_platform, uint16_t unity_version, uint64_t id)
 {
-    uint16_t name_len = strlen (name);
-    uint64_t total_sz = sizeof (uint16_t) + name_len + size;
+    uint64_t total_sz = sizeof (uint16_t) + sizeof (uint16_t) + size;
 
     // write block header
     struct rex_block_header block_header = { .type = 7, .version = 1, .sz = total_sz, .id = id };
 
     if (fwrite (&block_header, sizeof (block_header), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    // write strlen(name) + name
-    if (fwrite (&name_len, sizeof (uint16_t), 1, fp) != 1)
+    // write target platform
+    if (fwrite (&target_platform, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
-    if (fwrite (name, 1, name_len, fp) != name_len)
+    // write target platform
+    if (fwrite (&unity_version, sizeof (uint16_t), 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
+    // write data
     if (fwrite (blob, size, 1, fp) != 1)
         return REX_ERROR_FILE_WRITE;
 
@@ -290,7 +291,7 @@ int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *blob,
 }
 
 
-int rex_write_image_bock (
+int rex_write_image_block (
     FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, enum rex_image_type type, uint64_t id)
 {
     uint64_t total_sz = sizeof (uint32_t) + size;
