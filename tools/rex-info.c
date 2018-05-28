@@ -21,6 +21,7 @@
 
 #include "core.h"
 #include "global.h"
+#include "rex-data-block.h"
 #include "status.h"
 #include "util.h"
 
@@ -115,7 +116,7 @@ int main (int argc, char **argv)
     for (int i = 0; i < header.nr_datablocks; i++)
     {
         struct rex_block_header block_header;
-        rex_read_data_block_header (fp, &block_header);
+        rex_block_header_read (fp, &block_header);
         rex_dump_block_header (&block_header);
 
         if (block_header.type == Mesh)

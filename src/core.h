@@ -20,14 +20,6 @@
 
 #include "rex-header.h"
 
-struct rex_block_header
-{
-    uint16_t type;
-    uint16_t version;
-    uint32_t sz;  // data block size w/o header
-    uint64_t id;
-};
-
 struct rex_mesh_header
 {
     uint16_t lod;            // level of detail for the given geometry
@@ -100,16 +92,6 @@ enum rex_image_type
     Jpeg = 1,
     Png = 2
 };
-
-/*
- * Reads a data block header from the current file position
- */
-int rex_read_data_block_header (FILE *fp, struct rex_block_header *header);
-
-/*
- * Reads the data block from the current file position with the given size len
- */
-int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len);
 
 /**
  * Reads a complete mesh data block. The fp must point to the beginning of

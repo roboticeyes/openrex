@@ -17,35 +17,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "global.h"
 #include "core.h"
+#include "global.h"
+#include "rex-data-block.h"
 #include "status.h"
 #include "util.h"
-
-int rex_read_data_block_header (FILE *fp, struct rex_block_header *header)
-{
-    FP_CHECK (fp)
-
-    if (fread (header, sizeof (*header), 1, fp) != 1)
-        return REX_ERROR_FILE_READ;
-
-    return REX_OK;
-}
-
-int rex_read_data_block (FILE *fp, uint8_t *block, uint32_t len)
-{
-    FP_CHECK (fp)
-
-    if (!block)
-    {
-        warn ("Block is not allocated");
-        return REX_ERROR_MEMORY;
-    }
-    if (fread (block, sizeof (uint8_t), len, fp) != len)
-        return REX_ERROR_FILE_READ;
-
-    return REX_OK;
-}
 
 int rex_read_mesh_block (FILE *fp, long block_size, struct rex_mesh_header *header, struct rex_mesh *mesh)
 {
