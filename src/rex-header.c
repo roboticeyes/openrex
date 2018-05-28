@@ -48,9 +48,9 @@ int rex_header_write (FILE *fp, struct rex_header *header)
     FP_CHECK (fp)
     rewind (fp);
 
-    header->start_addr = sizeof (struct rex_header) + 22; // 22 because of fixed CSB below!
+    header->start_addr = 86; // 86 because of fixed CSB below!
 
-    rex_write(header->magic, sizeof(REX_FILE_MAGIC), 1, fp);
+    rex_write(header->magic, 4, 1, fp);
     rex_write(&header->version, sizeof(uint16_t), 1, fp);
     rex_write(&header->crc, sizeof(uint32_t), 1, fp);
     rex_write(&header->nr_datablocks, sizeof(uint16_t), 1, fp);
