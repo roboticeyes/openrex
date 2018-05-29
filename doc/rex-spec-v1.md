@@ -309,7 +309,7 @@ height 1m).
 
 #### DataType UnityPackage (7)
 
-!!!Unity Asset Bundle Packages are currently supported for REX Holo only!!!
+Please note that the **UnityPackage is only supported by REX Holo**!
 
 
 The UnityPackage data block contains an arbitrary pre-prepared Unity package. An example is to store animation data
