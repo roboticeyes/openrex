@@ -83,8 +83,8 @@ uint8_t *read_file_binary (const char *filename, long *sz)
     size_t ret = fread (buffer, 1, *sz, f);
     if (ret != *sz)
     {
-        FREE(buffer);
-        fclose(f);
+        FREE (buffer);
+        fclose (f);
         return NULL;
     }
 

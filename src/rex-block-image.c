@@ -17,13 +17,13 @@
 #include "rex-block-image.h"
 #include "util.h"
 
-uint8_t* rex_block_read_image (uint8_t *ptr, struct rex_image *img, uint32_t sz)
+uint8_t *rex_block_read_image (uint8_t *ptr, struct rex_image *img, uint32_t sz)
 {
     MEM_CHECK (ptr)
     MEM_CHECK (img)
 
     rexcpy (&img->compression, ptr, sizeof (uint32_t));
-    img->data = malloc(sz);
+    img->data = malloc (sz);
 
     rexcpy (img->data, ptr, sz);
     return ptr;

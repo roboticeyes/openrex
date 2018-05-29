@@ -12,7 +12,7 @@
 
 char tmp[256];
 
-void check_template_header(struct rex_header *header)
+void check_template_header (struct rex_header *header)
 {
     ck_assert (header->version == REX_FILE_VERSION);
     ck_assert (header->crc == 0);
@@ -29,7 +29,7 @@ START_TEST (test_rex_header_read)
     header->nr_datablocks = 4;
     header->start_addr = 86;
     header->sz_all_datablocks = 430;
-    check_template_header(&header);
+    check_template_header (&header);
 }
 END_TEST
 
@@ -40,22 +40,22 @@ START_TEST (test_rex_header_write)
     // read
     sprintf (tmp, "%s/%s", TEST_DATA_PATH, REX_TEMPLATE);
     struct rex_header header;
-    FILE *fp = read_header(path, &header);
+    FILE *fp = read_header (path, &header);
     ck_assert (fp != NULL);
 
     // write
     FILE *fpout = fopen (name, "wb");
     ck_assert (fpout != NULL);
     ck_assert (rex_header_write (fpout, &header) == REX_OK);
-    ck_assert (fclose(fp) == 0);
-    ck_assert (fclose(fpout) == 0);
+    ck_assert (fclose (fp) == 0);
+    ck_assert (fclose (fpout) == 0);
 
     // read
-    fp = read_header(name, &header);
-    check_template_header(&header);
-    ck_assert (fclose(fp) == 0);
+    fp = read_header (name, &header);
+    check_template_header (&header);
+    ck_assert (fclose (fp) == 0);
 
-    remove("test.rex");
+    remove ("test.rex");
 }
 END_TEST
 #endif
@@ -64,45 +64,45 @@ START_TEST (test_rex_reader)
 {
     sprintf (tmp, "%s/%s", TEST_DATA_PATH, REX_TEMPLATE);
     long sz;
-    uint8_t *buf = read_file_binary(tmp, &sz);
-    ck_assert(buf != NULL);
-    ck_assert(sz == 516);
+    uint8_t *buf = read_file_binary (tmp, &sz);
+    ck_assert (buf != NULL);
+    ck_assert (sz == 516);
 
     struct rex_header header;
-    ck_assert(rex_header_read(buf, &header) == (buf+86));
-    check_template_header(&header);
-    uint8_t *ptr = buf+86;
+    ck_assert (rex_header_read (buf, &header) == (buf + 86));
+    check_template_header (&header);
+    uint8_t *ptr = buf + 86;
 
-    ck_assert(header.nr_datablocks == 4);
+    ck_assert (header.nr_datablocks == 4);
 
     struct rex_block block;
 
     // Mesh
-    ptr = rex_block_read(ptr, &block);
-    ck_assert(block.id == 0);
-    ck_assert(block.type == 3);
+    ptr = rex_block_read (ptr, &block);
+    ck_assert (block.id == 0);
+    ck_assert (block.type == 3);
     struct rex_mesh *mesh = block.data;
-    ck_assert(mesh->nr_vertices == 3);
-    ck_assert(mesh->nr_triangles == 1);
-    ck_assert(mesh->material_id == 1);
-    ck_assert(strcmp(mesh->name, "mesh") == 0);
+    ck_assert (mesh->nr_vertices == 3);
+    ck_assert (mesh->nr_triangles == 1);
+    ck_assert (mesh->material_id == 1);
+    ck_assert (strcmp (mesh->name, "mesh") == 0);
 
     // MaterialStandard
-    ptr = rex_block_read(ptr, &block);
-    ck_assert(block.id == 1);
-    ck_assert(block.type == 5);
+    ptr = rex_block_read (ptr, &block);
+    ck_assert (block.id == 1);
+    ck_assert (block.type == 5);
 
     // PeopleSimulation
-    ptr = rex_block_read(ptr, &block);
-    ck_assert(block.id == 2);
-    ck_assert(block.type == 6);
+    ptr = rex_block_read (ptr, &block);
+    ck_assert (block.id == 2);
+    ck_assert (block.type == 6);
 
     // UnityPackage
-    ptr = rex_block_read(ptr, &block);
-    ck_assert(block.id == 3);
-    ck_assert(block.type == 7);
+    ptr = rex_block_read (ptr, &block);
+    ck_assert (block.id == 3);
+    ck_assert (block.type == 7);
 
-    FREE(buf);
+    FREE (buf);
 }
 END_TEST
 

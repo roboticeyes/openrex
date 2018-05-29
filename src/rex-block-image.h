@@ -42,7 +42,7 @@ struct rex_image
  * for the image. The caller is responsible to free this memory! The sz parameter
  * is required for the number of bytes to read.
  */
-uint8_t* rex_block_read_image (uint8_t *ptr, struct rex_image *img, uint32_t sz);
+uint8_t *rex_block_read_image (uint8_t *ptr, struct rex_image *img, uint32_t sz);
 
 #ifdef __cplusplus
 }

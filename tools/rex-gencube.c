@@ -218,6 +218,6 @@ int main (int argc, char **argv)
 
     fclose (fp);
     FREE (img);
-    FREE(header);
+    FREE (header);
     return 0;
 }

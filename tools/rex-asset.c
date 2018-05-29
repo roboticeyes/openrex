@@ -70,7 +70,7 @@ int main (int argc, char **argv)
 
     fclose (fp);
     FREE (blob);
-    FREE(header);
+    FREE (header);
     return 0;
 }
 

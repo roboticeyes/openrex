@@ -38,48 +38,48 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
     switch (block->type)
     {
         case LineSet:
-            warn("LineSet is not yet implemented");
+            warn ("LineSet is not yet implemented");
             return  data_start + block->sz;
             break;
         case Text:
-            warn("Text is not yet implemented");
+            warn ("Text is not yet implemented");
             return  data_start + block->sz;
             break;
         case Vertex:
-            warn("Vertex is not yet implemented");
+            warn ("Vertex is not yet implemented");
             return  data_start + block->sz;
             break;
         case Mesh:
             {
-                struct rex_mesh *mesh = malloc(sizeof(struct rex_mesh));
-                ptr = rex_block_read_mesh(ptr, mesh);
+                struct rex_mesh *mesh = malloc (sizeof (struct rex_mesh));
+                ptr = rex_block_read_mesh (ptr, mesh);
                 block->data = mesh;
                 break;
             }
         case Image:
             {
-                struct rex_image *img = malloc(sizeof(struct rex_image));
-                ptr = rex_block_read_image(ptr, img, block->sz);
+                struct rex_image *img = malloc (sizeof (struct rex_image));
+                ptr = rex_block_read_image (ptr, img, block->sz);
                 block->data = img;
                 break;
             }
         case MaterialStandard:
             {
-                struct rex_material_standard *mat = malloc(sizeof(struct rex_material_standard));
-                ptr = rex_block_read_material(ptr, mat);
+                struct rex_material_standard *mat = malloc (sizeof (struct rex_material_standard));
+                ptr = rex_block_read_material (ptr, mat);
                 block->data = mat;
                 break;
             }
         case PeopleSimulation:
-            warn("PeopleSimulation is not yet implemented");
+            warn ("PeopleSimulation is not yet implemented");
             return  data_start + block->sz;
             break;
         case UnityPackage:
-            warn("UnityPackage is not yet implemented");
+            warn ("UnityPackage is not yet implemented");
             return  data_start + block->sz;
             break;
         default:
-            warn("Not supported REX block, skipping.");
+            warn ("Not supported REX block, skipping.");
             return  data_start + block->sz;
     }
     return ptr;

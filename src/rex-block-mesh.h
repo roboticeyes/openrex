@@ -50,7 +50,7 @@ struct rex_mesh
  * the block. The mesh parameter must not be NULL.
  * Please note that memory will be allocated for the mesh data.
 */
-uint8_t* rex_block_read_mesh (uint8_t *ptr, struct rex_mesh *mesh);
+uint8_t *rex_block_read_mesh (uint8_t *ptr, struct rex_mesh *mesh);
 
 void rex_mesh_init (struct rex_mesh *mesh);
 void rex_mesh_free (struct rex_mesh *mesh);

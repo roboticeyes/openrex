@@ -43,7 +43,7 @@ struct rex_material_standard
  * Reads a material block from the data pointer. NULL is returned in case of error,
  * else the pointer after the block is returned.
  */
-uint8_t* rex_block_read_material (uint8_t *ptr, struct rex_material_standard *mat);
+uint8_t *rex_block_read_material (uint8_t *ptr, struct rex_material_standard *mat);
 
 #ifdef __cplusplus
 }

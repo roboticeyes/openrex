@@ -49,7 +49,7 @@ struct rex_block
  * Memory is allocated for the data block. The caller must make sure that this
  * memory is then deallocated.
  */
-uint8_t* rex_block_read(uint8_t *ptr, struct rex_block *block);
+uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block);
 
 #ifdef __cplusplus
 }
