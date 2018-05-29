@@ -19,6 +19,9 @@ add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -DVERSION=\"$
 
 include(CMakeOptions.txt)
 
+# Testing
+enable_testing()
+
 # Debug build
 message("-- Build type: ${CMAKE_BUILD_TYPE}")
 if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
@@ -34,6 +37,8 @@ endif()
 if (VIEWER)
     add_subdirectory(viewer)
 endif()
+
+add_subdirectory(test)
 
 set ( LIBOPENREX_INCLUDE_DIR ${includedir} )
 set ( LIBOPENREX_INCLUDE_DIRS ${LIBOPENREX_INCLUDE_DIR} )

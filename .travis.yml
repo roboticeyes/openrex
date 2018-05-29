@@ -1,8 +1,9 @@
 language: c
 script:
-    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build .
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest
 addons:
     apt:
         packages:
             - libglew-dev
             - libsdl2-dev
+            - check

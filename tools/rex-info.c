@@ -18,16 +18,14 @@
 #include <stdlib.h>
 
 #include "config.h"
-
-#include "core.h"
 #include "global.h"
+#include "rex-block-image.h"
+#include "rex-block-material.h"
+#include "rex-block-mesh.h"
+#include "rex-block.h"
+#include "rex-header.h"
 #include "status.h"
 #include "util.h"
-
-enum rex_block_enums
-{
-    LineSet = 0, Text = 1, Vertex = 2, Mesh = 3, Image = 4, MaterialStandard = 5, PeopleSimulation = 6, UnityPackage = 7
-};
 
 static const char *rex_data_types[]
     = { "LineSet", "Text", "Vertex", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
@@ -49,13 +47,13 @@ void rex_dump_header (struct rex_header *header)
     printf ("sz_all_datablocks      %20lu\n", header->sz_all_datablocks);
 }
 
-void rex_dump_block_header (struct rex_block_header *header)
+void rex_dump_block_header (struct rex_block *block)
 {
     printf ("═══════════════════════════════════════════\n");
-    printf ("id                     %20lu\n", header->id);
-    printf ("type                   %20s\n", rex_data_types[header->type]);
-    printf ("version                %20d\n", header->version);
-    printf ("sz                     %20d\n", header->sz);
+    printf ("id                     %20lu\n", block->id);
+    printf ("type                   %20s\n", rex_data_types[block->type]);
+    printf ("version                %20d\n", block->version);
+    printf ("sz                     %20d\n", block->sz);
 }
 
 void rex_dump_material_block (struct rex_material_standard *mat)
@@ -81,15 +79,6 @@ void rex_dump_mesh_block (struct rex_mesh *mesh)
     printf ("normals                %20s\n", (mesh->normals) ? "yes" : "no");
     printf ("texture coords         %20s\n", (mesh->tex_coords) ? "yes" : "no");
     printf ("vertex colors          %20s\n", (mesh->colors) ? "yes" : "no");
-
-#if 0
-    float *p = mesh->positions;
-    for (int i = 0; i < mesh->nr_vertices * 3; i += 3)
-        printf ("v %f %f %f\n", p[i], p[i + 1], p[i + 2]);
-    uint32_t *t = mesh->triangles;
-    for (int i = 0; i < mesh->nr_triangles * 3; i += 3)
-        printf ("f %d %d %d\n", t[i] + 1, t[i + 1] + 1, t[i + 2] + 1);
-#endif
 }
 
 int main (int argc, char **argv)
@@ -101,63 +90,47 @@ int main (int argc, char **argv)
     if (argc < 2)
         usage (argv[0]);
 
-    struct rex_header header;
-
-    FILE *fp = fopen (argv[1], "rb");
-
-    if (!fp)
+    long sz;
+    uint8_t *buf = read_file_binary (argv[1], &sz);
+    if (buf == NULL)
         die ("Cannot open REX file %s\n", argv[1]);
-    rex_read_header (fp, &header);
+
+    struct rex_header header;
+    uint8_t *ptr = rex_header_read (buf, &header);
+    if (ptr == NULL)
+        die ("Cannot read REX header");
+
     rex_dump_header (&header);
 
     for (int i = 0; i < header.nr_datablocks; i++)
     {
-        struct rex_block_header block_header;
-        rex_read_data_block_header (fp, &block_header);
-        rex_dump_block_header (&block_header);
+        struct rex_block block;
+        ptr = rex_block_read (ptr, &block);
+        rex_dump_block_header (&block);
 
-        if (block_header.type == Mesh)
+        if (block.type == Mesh)
         {
-            struct rex_mesh_header header;
-            struct rex_mesh mesh = { 0 };
-            mesh.id = block_header.id;
-            rex_read_mesh_block (fp, block_header.sz, &header, &mesh);
-            rex_dump_mesh_block (&mesh);
-            rex_mesh_free (&mesh);
+            struct rex_mesh *mesh = block.data;
+            rex_dump_mesh_block (mesh);
+            rex_mesh_free (mesh);
+            FREE (block.data);
         }
-        else if (block_header.type == MaterialStandard)
+        else if (block.type == MaterialStandard)
         {
-            struct rex_material_standard mat;
-            rex_read_material_block (fp, block_header.sz, &mat);
-            rex_dump_material_block (&mat);
+            struct rex_material_standard *mat = block.data;
+            rex_dump_material_block (mat);
+            FREE (block.data);
         }
-        else if (block_header.type == Image)
+        else if (block.type == Image)
         {
-            uint8_t *data = 0;
-            uint64_t data_size;
-            uint32_t compression;
-            rex_read_image_block (fp, block_header.sz, &compression, data, &data_size);
-            printf ("compression %31s\n", rex_image_types[compression]);
-            printf ("image size  %31ld\n", data_size);
-            free (data);
+            struct rex_image *img = block.data;
+            printf ("compression %31s\n", rex_image_types[img->compression]);
+            printf ("image size  %31d\n", block.sz);
+            FREE (img->data);
+            FREE (block.data);
         }
-        else if (block_header.type == UnityPackage)
-        {
-            long block_end = ftell (fp) + block_header.sz;
-            uint16_t str_len;
-            if (fread (&str_len, sizeof (uint16_t), 1, fp) != 1)
-                fseek (fp, block_end, SEEK_SET);
-            char *name = malloc (str_len + 1);
-            fread (name, str_len, 1, fp);
-            name[str_len] = '\0';
-            printf ("asset name: %31s\n", name);
-            free (name);
-            fseek (fp, block_end, SEEK_SET);
-        }
-        else fseek (fp, block_header.sz, SEEK_CUR);
     }
-
+    FREE (buf);
     printf ("═══════════════════════════════════════════\n");
-    fclose (fp);
     return 0;
 }

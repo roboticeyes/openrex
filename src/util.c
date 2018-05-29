@@ -58,7 +58,7 @@ void die (const char *fmt, ...)
     exit (1);
 }
 
-char *read_file (const char *filename)
+char *read_file_ascii (const char *filename)
 {
     FILE *f = fopen (filename, "rt");
     if (f == NULL) return NULL;
@@ -68,6 +68,26 @@ char *read_file (const char *filename)
     char *buffer = (char *) malloc (length + 1);
     buffer[length] = '\0';
     fread (buffer, 1, length, f);
+    fclose (f);
+    return buffer;
+}
+
+uint8_t *read_file_binary (const char *filename, long *sz)
+{
+    FILE *f = fopen (filename, "rb");
+    if (f == NULL) return NULL;
+    fseek (f, 0, SEEK_END);
+    *sz = ftell (f);
+    fseek (f, 0, SEEK_SET);
+    uint8_t *buffer = (uint8_t *) malloc (*sz);
+    size_t ret = fread (buffer, 1, *sz, f);
+    if (ret != *sz)
+    {
+        FREE (buffer);
+        fclose (f);
+        return NULL;
+    }
+
     fclose (f);
     return buffer;
 }

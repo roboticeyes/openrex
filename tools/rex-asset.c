@@ -43,8 +43,8 @@ int main (int argc, char **argv)
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
 
-    struct rex_header header = rex_create_header();
-    rex_write_header (fp, &header);
+    struct rex_header *header = rex_header_create();
+    rex_header_write (fp, header);
 
     // write texture file
     FILE *t = fopen (argv[1], "rb");
@@ -58,7 +58,7 @@ int main (int argc, char **argv)
         die ("Cannot read rexasset content");
     fclose (t);
 
-    if (rex_write_rexasset_bock (fp, &header, blob, sz, "rexasset", 0))
+    if (rex_write_rexasset_bock (fp, header, blob, sz, "rexasset", 0))
     {
         warn ("Error during file write %d\n", errno);
         free (blob);
@@ -66,10 +66,11 @@ int main (int argc, char **argv)
         return -1;
     }
 
-    rex_write_header (fp, &header);
+    rex_header_write (fp, header);
 
     fclose (fp);
-    free (blob);
+    FREE (blob);
+    FREE (header);
     return 0;
 }
 

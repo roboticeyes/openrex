@@ -19,6 +19,18 @@ This repository contains
 In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and
 `cmake` installed on your system. The code should work for Linux, MacOS, and Windows.
 
+For compiling all tests, you also need to install [check](https://github.com/libcheck/check). You can simply use your
+package manager to install the test library.
+
+The debug viewer also requires **SDL2** installed on your system including **GLEW**. For Ubuntu-based system just use
+the following commands:
+
+```
+apt-get install libglew-dev
+apt-get install libsdl2-dev
+apt-get install check
+```
+
 ## Build
 
 ```

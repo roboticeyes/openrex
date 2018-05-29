@@ -21,14 +21,14 @@
 
 struct shader *shader_load (const char *vs, const char *fs)
 {
-    char *vertex_source = read_file (vs);
+    char *vertex_source = read_file_ascii (vs);
     if (!vertex_source)
     {
         warn ("Failed to open file %s\n", vs);
         return NULL;
     }
 
-    char *fragment_source = read_file (fs);
+    char *fragment_source = read_file_ascii (fs);
     if (!fragment_source)
     {
         warn ("Failed to open file %s\n", fs);
