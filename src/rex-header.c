@@ -39,35 +39,3 @@ uint8_t* rex_header_read (uint8_t *buf, struct rex_header *header)
     // NOTE: we skip the coordinate system block because it is not used
     return start + header->start_addr;
 }
-
-int rex_header_write (FILE *fp, struct rex_header *header)
-{
-    FP_CHECK (fp)
-    rewind (fp);
-
-    header->start_addr = 86; // 86 because of fixed CSB below!
-
-    rex_write(header->magic, 4, 1, fp);
-    rex_write(&header->version, sizeof(uint16_t), 1, fp);
-    rex_write(&header->crc, sizeof(uint32_t), 1, fp);
-    rex_write(&header->nr_datablocks, sizeof(uint16_t), 1, fp);
-    rex_write(&header->start_addr, sizeof(uint16_t), 1, fp);
-    rex_write(&header->sz_all_datablocks, sizeof(uint64_t), 1, fp);
-    rex_write(header->reserved, 42, 1, fp);
-
-    // dummy CSB
-    uint32_t srid = 0;
-    uint16_t sz = 4;
-    char *name = "EPSG";
-    float xofs = 0.0f;
-    float yofs = 0.0f;
-    float zofs = 0.0f;
-    rex_write(&srid, sizeof(uint32_t), 1, fp);
-    rex_write(&sz, sizeof(uint16_t), 1, fp);
-    rex_write(name, sz, 1, fp);
-    rex_write(&xofs, sizeof(float), 1, fp);
-    rex_write(&yofs, sizeof(float), 1, fp);
-    rex_write(&zofs, sizeof(float), 1, fp);
-
-    return REX_OK;
-}

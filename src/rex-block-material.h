@@ -45,12 +45,6 @@ struct rex_material_standard
  */
 uint8_t* rex_block_read_material (uint8_t *ptr, struct rex_material_standard *mat);
 
-/*
- * Writes a mesh material block to the given file pointer
- */
-// int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);
-
-
 #ifdef __cplusplus
 }
 #endif

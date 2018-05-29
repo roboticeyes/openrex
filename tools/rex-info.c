@@ -18,7 +18,6 @@
 #include <stdlib.h>
 
 #include "config.h"
-
 #include "global.h"
 #include "rex-block-image.h"
 #include "rex-block-material.h"

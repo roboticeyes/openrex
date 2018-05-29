@@ -35,8 +35,6 @@ struct rex_header
 struct rex_header *rex_header_create ();
 uint8_t* rex_header_read (uint8_t *buf, struct rex_header *header);
 
-int rex_header_write (FILE *fp, struct rex_header *header);
-
 #ifdef __cplusplus
 }
 #endif
