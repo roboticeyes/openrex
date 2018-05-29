@@ -309,6 +309,10 @@ height 1m).
 
 #### DataType UnityPackage (7)
 
+<aside class="warning">
+Unity Asset Bundle Packages are currently supported for REX Holo only!
+</aside>
+
 The UnityPackage data block contains an arbitrary pre-prepared Unity package. An example is to store animation data
 which can then directly be used by the Unity app to be included. The data block size in the header refers to the total size of
 this block plus the string size and string length. E.g.
