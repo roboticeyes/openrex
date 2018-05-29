@@ -29,5 +29,4 @@ target_link_libraries(test_all
     pthread
     m
     rt
-    subunit
     )
