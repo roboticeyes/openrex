@@ -18,6 +18,7 @@
 
 #include "rex-block.h"
 #include "rex-block-mesh.h"
+#include "rex-block-material.h"
 #include "status.h"
 #include "util.h"
 
@@ -59,8 +60,12 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
             return  data_start + block->sz;
             break;
         case MaterialStandard:
-            warn("MaterialStandard is not yet implemented");
-            return  data_start + block->sz;
+            {
+                struct rex_material_standard *mat = malloc(sizeof(struct rex_material_standard));
+                ptr = rex_block_read_material(ptr, mat);
+                block->data = mat;
+                break;
+            }
             break;
         case PeopleSimulation:
             warn("PeopleSimulation is not yet implemented");

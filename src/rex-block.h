@@ -35,10 +35,10 @@ enum rex_block_type
 
 struct rex_block
 {
-    uint16_t type;
-    uint16_t version;
+    uint16_t type;    // identifies the block and therefore can be used to map *data
+    uint16_t version; // block version
     uint32_t sz;      // data block size w/o header
-    uint64_t id;
+    uint64_t id;      // a unique identifier for this block
     void     *data;   // stores the actual data
 };
 

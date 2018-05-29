@@ -24,6 +24,7 @@
 #include "rex-block.h"
 #include "rex-header.h"
 #include "rex-block-mesh.h"
+#include "rex-block-material.h"
 #include "status.h"
 #include "util.h"
 
@@ -125,9 +126,8 @@ int main (int argc, char **argv)
         }
         else if (block.type == MaterialStandard)
         {
-            /* struct rex_material_standard mat; */
-            /* rex_read_material_block (fp, block_header.sz, &mat); */
-            /* rex_dump_material_block (&mat); */
+            struct rex_material_standard *mat = block.data;
+            rex_dump_material_block (mat);
         }
         else if (block.type == Image)
         {

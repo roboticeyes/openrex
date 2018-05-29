@@ -20,31 +20,6 @@
 
 #include "rex-header.h"
 
-struct rex_material_standard
-{
-    float    ka_red;       // RED component for ambient color
-    float    ka_green;     // GREEN component for ambient color
-    float    ka_blue;      // BLUE component for ambient color
-    uint64_t ka_textureId; // dataId of the referenced texture for ambient component
-    float    kd_red;       // RED component for diffuse color
-    float    kd_green;     // GREEN component for diffuse color
-    float    kd_blue;      // BLUE component for diffuse color
-    uint64_t kd_textureId; // dataId of the referenced texture for diffuse component
-    float    ks_red;       // RED component for specular color
-    float    ks_green;     // GREEN component for specular color
-    float    ks_blue;      // BLUE component for specular color
-    uint64_t ks_textureId; // dataId of the referenced texture for specular component
-    float    ns;           // specular exponent
-    float    alpha;        // alpha between 0..1, 1 means full opaque
-};
-
-struct rex_triangle
-{
-    uint32_t v1;
-    uint32_t v2;
-    uint32_t v3;
-};
-
 /**
  * This is a list of supported image types
  */
@@ -54,16 +29,6 @@ enum rex_image_type
     Jpeg = 1,
     Png = 2
 };
-
-/*
- * Reads a mesh material block from the given file pointer
- */
-int rex_read_material_block (FILE *fp, long block_size, struct rex_material_standard *mat);
-
-/*
- * Writes a mesh material block to the given file pointer
- */
-int rex_write_material_block (FILE *fp, struct rex_header *header, struct rex_material_standard *mat, uint64_t id);
 
 /**
  * Writes a image block which can be used as mesh texture

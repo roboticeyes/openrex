@@ -83,27 +83,6 @@ int rex_write_image_bock (
     return REX_OK;
 }
 
-int rex_read_material_block (FILE *fp, long block_size, struct rex_material_standard *mat)
-{
-    FP_CHECK (fp)
-
-    if (!mat)
-    {
-        warn ("Material data structure not allocated");
-        return REX_ERROR_MEMORY;
-    }
-
-    long block_end = ftell (fp) + block_size;
-
-    if (fread (mat, sizeof (struct rex_material_standard), 1, fp) != 1)
-    {
-        fseek (fp, block_end, SEEK_SET);
-        return REX_ERROR_FILE_READ;
-    }
-
-    return REX_OK;
-}
-
 int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint8_t *data, uint64_t *data_size)
 {
     FP_CHECK (fp)
