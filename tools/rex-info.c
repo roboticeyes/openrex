@@ -92,14 +92,14 @@ int main (int argc, char **argv)
         usage (argv[0]);
 
     long sz;
-    uint8_t *buf = read_file_binary(argv[1], &sz);
+    uint8_t *buf = read_file_binary (argv[1], &sz);
     if (buf == NULL)
         die ("Cannot open REX file %s\n", argv[1]);
 
     struct rex_header header;
-    uint8_t *ptr = rex_header_read(buf, &header);
+    uint8_t *ptr = rex_header_read (buf, &header);
     if (ptr == NULL)
-        die("Cannot read REX header");
+        die ("Cannot read REX header");
 
     rex_dump_header (&header);
 
@@ -114,35 +114,24 @@ int main (int argc, char **argv)
             struct rex_mesh *mesh = block.data;
             rex_dump_mesh_block (mesh);
             rex_mesh_free (mesh);
+            FREE (block.data);
         }
         else if (block.type == MaterialStandard)
         {
             struct rex_material_standard *mat = block.data;
             rex_dump_material_block (mat);
+            FREE (block.data);
         }
         else if (block.type == Image)
         {
             struct rex_image *img = block.data;
             printf ("compression %31s\n", rex_image_types[img->compression]);
             printf ("image size  %31d\n", block.sz);
-            FREE(img->data);
+            FREE (img->data);
+            FREE (block.data);
         }
-        else if (block.type == UnityPackage)
-        {
-            /* long block_end = ftell (fp) + block_header.sz; */
-            /* uint16_t str_len; */
-            /* if (fread (&str_len, sizeof (uint16_t), 1, fp) != 1) */
-            /*     fseek (fp, block_end, SEEK_SET); */
-            /* char *name = malloc (str_len + 1); */
-            /* fread (name, str_len, 1, fp); */
-            /* name[str_len] = '\0'; */
-            /* printf ("asset name: %31s\n", name); */
-            /* free (name); */
-            /* fseek (fp, block_end, SEEK_SET); */
-        }
-        FREE (block.data);
     }
-
+    FREE (buf);
     printf ("═══════════════════════════════════════════\n");
     return 0;
 }
