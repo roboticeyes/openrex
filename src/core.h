@@ -20,15 +20,6 @@
 
 #include "rex-header.h"
 
-/**
- * This is a list of supported image types
- */
-enum rex_image_type
-{
-    Raw24 = 0,
-    Jpeg = 1,
-    Png = 2
-};
 
 /**
  * Writes a image block which can be used as mesh texture
@@ -51,9 +42,4 @@ int rex_write_image_bock (FILE *fp, struct rex_header *header, uint8_t *img, uin
  */
 int rex_write_rexasset_bock (FILE *fp, struct rex_header *header, uint8_t *img, uint64_t size, const char *name, uint64_t id);
 
-/*
- * Reads a image block from the given file pointer. This call will allocate memory
- * for the image. The caller is responsible to free this memory!
- */
-int rex_read_image_block (FILE *fp, long block_size, uint32_t *compression, uint8_t *data, uint64_t *data_size);
 

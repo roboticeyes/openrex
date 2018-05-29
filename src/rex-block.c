@@ -16,9 +16,10 @@
 
 #include <stdio.h>
 
-#include "rex-block.h"
-#include "rex-block-mesh.h"
+#include "rex-block-image.h"
 #include "rex-block-material.h"
+#include "rex-block-mesh.h"
+#include "rex-block.h"
 #include "status.h"
 #include "util.h"
 
@@ -56,9 +57,12 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
                 break;
             }
         case Image:
-            warn("Images is not yet implemented", block->type);
-            return  data_start + block->sz;
-            break;
+            {
+                struct rex_image *img = malloc(sizeof(struct rex_image));
+                ptr = rex_block_read_image(ptr, img, block->sz);
+                block->data = img;
+                break;
+            }
         case MaterialStandard:
             {
                 struct rex_material_standard *mat = malloc(sizeof(struct rex_material_standard));
@@ -66,7 +70,6 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
                 block->data = mat;
                 break;
             }
-            break;
         case PeopleSimulation:
             warn("PeopleSimulation is not yet implemented");
             return  data_start + block->sz;

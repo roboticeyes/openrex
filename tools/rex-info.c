@@ -19,12 +19,12 @@
 
 #include "config.h"
 
-#include "core.h"
 #include "global.h"
+#include "rex-block-image.h"
+#include "rex-block-material.h"
+#include "rex-block-mesh.h"
 #include "rex-block.h"
 #include "rex-header.h"
-#include "rex-block-mesh.h"
-#include "rex-block-material.h"
 #include "status.h"
 #include "util.h"
 
@@ -80,15 +80,6 @@ void rex_dump_mesh_block (struct rex_mesh *mesh)
     printf ("normals                %20s\n", (mesh->normals) ? "yes" : "no");
     printf ("texture coords         %20s\n", (mesh->tex_coords) ? "yes" : "no");
     printf ("vertex colors          %20s\n", (mesh->colors) ? "yes" : "no");
-
-#if 0
-    float *p = mesh->positions;
-    for (int i = 0; i < mesh->nr_vertices * 3; i += 3)
-        printf ("v %f %f %f\n", p[i], p[i + 1], p[i + 2]);
-    uint32_t *t = mesh->triangles;
-    for (int i = 0; i < mesh->nr_triangles * 3; i += 3)
-        printf ("f %d %d %d\n", t[i] + 1, t[i + 1] + 1, t[i + 2] + 1);
-#endif
 }
 
 int main (int argc, char **argv)
@@ -131,13 +122,10 @@ int main (int argc, char **argv)
         }
         else if (block.type == Image)
         {
-            /* uint8_t *data = 0; */
-            /* uint64_t data_size; */
-            /* uint32_t compression; */
-            /* rex_read_image_block (fp, block_header.sz, &compression, data, &data_size); */
-            /* printf ("compression %31s\n", rex_image_types[compression]); */
-            /* printf ("image size  %31ld\n", data_size); */
-            /* free (data); */
+            struct rex_image *img = block.data;
+            printf ("compression %31s\n", rex_image_types[img->compression]);
+            printf ("image size  %31d\n", block.sz);
+            FREE(img->data);
         }
         else if (block.type == UnityPackage)
         {
