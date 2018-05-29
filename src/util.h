@@ -17,6 +17,8 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "status.h"
 
@@ -26,16 +28,30 @@ void warn (const char *, ...);
 void die (const char *, ...);
 
 /**
- * Reads the content of a file. The caller must make sure
+ * Reads the content of a file as ASCII text. The caller must make sure
  * that the memory gets freed!
  */
-char *read_file (const char *filename);
+char *read_file_ascii (const char *filename);
+
+/**
+ * Reads the content of a file as binary blob. The caller must make sure
+ * that the memory gets freed! The total size of allocated memory is returned
+ * as sz.
+ */
+uint8_t *read_file_binary (const char *filename, long *sz);
 
 #define FP_CHECK(fp) \
 if (!fp) \
 { \
     warn ("File pointer is not valid"); \
     return REX_ERROR_FILE_OPEN; \
+}
+
+#define MEM_CHECK(buf) \
+if (buf == NULL) \
+{ \
+    warn ("Memory is corrupt"); \
+    return NULL; \
 }
 
 #define FREE(m) do { free(m); m = NULL; } while(0);
@@ -52,4 +68,10 @@ if (!fp) \
     size_t ret = fread (p, s, n, fp); \
     if (ret != n) \
         return REX_ERROR_FILE_WRITE; \
+}
+
+#define rexcpy(dest, src, sz) \
+{ \
+    memcpy(dest, src, sz); \
+    src += sz; \
 }

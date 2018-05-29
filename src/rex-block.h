@@ -21,25 +21,36 @@
 extern "C" {
 #endif
 
-struct rex_block_header
+enum rex_block_type
+{
+    LineSet          = 0,
+    Text             = 1,
+    Vertex           = 2,
+    Mesh             = 3,
+    Image            = 4,
+    MaterialStandard = 5,
+    PeopleSimulation = 6,
+    UnityPackage     = 7
+};
+
+struct rex_block
 {
     uint16_t type;
     uint16_t version;
-    uint32_t sz;  // data block size w/o header
+    uint32_t sz;      // data block size w/o header
     uint64_t id;
+    void     *data;   // stores the actual data
 };
 
 /*
- * Reads a data block header from the current file position
+ * Read the complete data block from the given data block pointer.
+ * After successful read, the new pointer location is return, else NULL.
+ *
+ * Memory is allocated for the data block. The caller must make sure that this
+ * memory is then deallocated.
  */
-int rex_block_header_read (FILE *fp, struct rex_block_header *header);
-
-/*
- * Reads the data block from the current file position with the given size len
- */
-int rex_block_read (FILE *fp, uint8_t *block, uint32_t len);
+uint8_t* rex_block_read(uint8_t *ptr, struct rex_block *block);
 
 #ifdef __cplusplus
 }
 #endif
-

@@ -19,7 +19,7 @@
 
 #include "bbox.h"
 #include "camera.h"
-#include "core.h"
+#include "rex-block-mesh.h"
 #include "linmath.h"
 #include "shader.h"
 

@@ -21,11 +21,12 @@
 #include <string.h>
 
 #include "config.h"
-#include "core.h"
 #include "global.h"
 #include "mesh.h"
 #include "mesh_group.h"
-#include "rex-data-block.h"
+#include "rex-header.h"
+#include "rex-block.h"
+#include "rex-block-mesh.h"
 #include "shader.h"
 #include "status.h"
 #include "util.h"
@@ -48,11 +49,6 @@ void usage (const char *exec)
 {
     die ("usage: %s filename.rex\n", exec);
 }
-
-enum rex_block_enums
-{
-    LineSet = 0, Text = 1, Vertex = 2, Mesh = 3, Image = 4, MaterialStandard = 5, PeopleSimulation = 6, UnityPackage = 7
-};
 
 int init()
 {
@@ -247,35 +243,32 @@ void loadmesh (struct rex_mesh *mesh)
 
 int loadrex (const char *file)
 {
-    struct rex_header header;
-    FILE *fp = fopen (file, "rb");
+    long sz;
+    uint8_t *buf = read_file_binary (file, &sz);
 
-    if (!fp)
+    if (buf == NULL)
     {
         printf ("Cannot open REX file %s\n", file);
         return 1;
     }
 
-    rex_header_read (fp, &header);
+    struct rex_header header;
+    uint8_t *ptr = rex_header_read (buf, &header);
 
     int meshes = 0;
     for (int i = 0; i < header.nr_datablocks; i++)
     {
-        struct rex_block_header block_header;
-        rex_block_header_read(fp, &block_header);
+        struct rex_block block;
+        ptr = rex_block_read (ptr, &block);
 
-        if (block_header.type == Mesh)
+        if (block.type == Mesh)
         {
-            struct rex_mesh_header header;
-            struct rex_mesh *mesh = malloc (sizeof (struct rex_mesh));
-            mesh->id = block_header.id;
-            rex_read_mesh_block (fp, block_header.sz, &header, mesh);
-            loadmesh (mesh);
+            loadmesh (block.data);
+            rex_mesh_free (block.data);
+            FREE (block.data);
             meshes++;
         }
-        else fseek (fp, block_header.sz, SEEK_CUR);
     }
-    fclose (fp);
 
     if (!meshes)
     {

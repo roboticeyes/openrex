@@ -20,27 +20,24 @@ struct rex_header* rex_header_create ()
     return header;
 }
 
-int rex_header_read (FILE *fp, struct rex_header *header)
+uint8_t* rex_header_read (uint8_t *buf, struct rex_header *header)
 {
-    FP_CHECK (fp);
-    rewind (fp);
+    MEM_CHECK (buf);
+    uint8_t *start = buf;
 
-    rex_read(header->magic, 4, 1, fp);
-    rex_read(&header->version, sizeof(uint16_t), 1, fp);
-    rex_read(&header->crc, sizeof(uint32_t), 1, fp);
-    rex_read(&header->nr_datablocks, sizeof(uint16_t), 1, fp);
-    rex_read(&header->start_addr, sizeof(uint16_t), 1, fp);
-    rex_read(&header->sz_all_datablocks, sizeof(uint64_t), 1, fp);
-    rex_read(header->reserved, 42, 1, fp);
+    rexcpy(header->magic, buf, 4);
+    rexcpy(&header->version, buf, sizeof(uint16_t));
+    rexcpy(&header->crc, buf, sizeof(uint32_t));
+    rexcpy(&header->nr_datablocks, buf, sizeof(uint16_t));
+    rexcpy(&header->start_addr, buf,sizeof(uint16_t));
+    rexcpy(&header->sz_all_datablocks,buf, sizeof(uint64_t));
+    rexcpy(header->reserved, buf, 42);
 
     if (strncmp (header->magic, "REX1", 4) != 0)
-        return REX_ERROR_WRONG_MAGIC;
+        die("This is not a valid REX file");
 
     // NOTE: we skip the coordinate system block because it is not used
-    // the file pointer is set to beginning of data block
-    fseek (fp, header->start_addr, SEEK_SET);
-
-    return REX_OK;
+    return start + header->start_addr;
 }
 
 int rex_header_write (FILE *fp, struct rex_header *header)
