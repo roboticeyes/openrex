@@ -70,8 +70,22 @@ if (buf == NULL) \
         return REX_ERROR_FILE_WRITE; \
 }
 
+/*
+ * Copies the src into the destination with the given size sz
+ * and advances the src pointer.
+ */
 #define rexcpy(dest, src, sz) \
 { \
     memcpy(dest, src, sz); \
     src += sz; \
+}
+
+/*
+ * Copies the src into the destination with the given size sz
+ * and advances the dest pointer.
+ */
+#define rexcpyr(src, dest, sz) \
+{ \
+    memcpy(dest, src, sz); \
+    dest += sz; \
 }

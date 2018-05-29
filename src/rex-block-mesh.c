@@ -21,6 +21,85 @@
 #include "status.h"
 #include "util.h"
 
+uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct rex_mesh *mesh, long *sz)
+{
+    MEM_CHECK (header)
+    MEM_CHECK (mesh)
+
+    uint32_t nr_normals = (mesh->normals == NULL) ? 0 : mesh->nr_vertices;
+    uint32_t nr_texcoords = (mesh->tex_coords == NULL) ? 0 : mesh->nr_vertices;
+    uint32_t nr_colors = (mesh->colors == NULL) ? 0 : mesh->nr_vertices;
+
+    // calculate total memory requirement
+    *sz = REX_BLOCK_HEADER_SIZE
+          + REX_MESH_HEADER_SIZE
+          + mesh->nr_vertices * 12
+          + nr_normals * 12
+          + nr_texcoords * 8
+          + nr_colors * 12
+          + mesh->nr_triangles * 12;
+
+    uint8_t *ptr = malloc (*sz);
+    memset (ptr, 0, *sz);
+    uint8_t *addr = ptr;
+
+    // block header
+    uint16_t type = 3;
+    uint16_t version = 1;
+    uint32_t block_size = *sz - REX_BLOCK_HEADER_SIZE;
+    rexcpyr (&type, ptr, sizeof (uint16_t));
+    rexcpyr (&version, ptr, sizeof (uint16_t));
+    rexcpyr (&block_size, ptr, sizeof (uint32_t));
+    rexcpyr (&id, ptr, sizeof (uint64_t));
+
+    // block data
+    rexcpyr (&mesh->lod, ptr, sizeof (uint16_t));
+    rexcpyr (&mesh->max_lod, ptr, sizeof (uint16_t));
+    rexcpyr (&mesh->nr_vertices, ptr, sizeof (uint32_t));
+
+    rexcpyr (&nr_normals, ptr, sizeof (uint32_t));
+    rexcpyr (&nr_texcoords, ptr, sizeof (uint32_t));
+    rexcpyr (&nr_colors, ptr, sizeof (uint32_t));
+
+    rexcpyr (&mesh->nr_triangles, ptr, sizeof (uint32_t));
+
+    // offset is relative from the beginning of the block (without the block header)
+    uint32_t start_coords = REX_MESH_HEADER_SIZE;
+    uint32_t start_normals = REX_MESH_HEADER_SIZE + mesh->nr_vertices * 12;
+    uint32_t start_texcoords = start_normals + nr_normals * 12;
+    uint32_t start_colors = start_texcoords + nr_texcoords * 8;
+    uint32_t start_triangles = start_colors + nr_colors * 12;
+
+    rexcpyr (&start_coords, ptr, sizeof (uint32_t));
+    rexcpyr (&start_normals, ptr, sizeof (uint32_t));
+    rexcpyr (&start_texcoords, ptr, sizeof (uint32_t));
+    rexcpyr (&start_colors, ptr, sizeof (uint32_t));
+    rexcpyr (&start_triangles, ptr, sizeof (uint32_t));
+
+    rexcpy (&mesh->material_id, ptr, sizeof (uint64_t));
+
+    uint16_t name_sz = strlen (mesh->name);
+    rexcpyr (&name_sz, ptr, sizeof (uint16_t));
+    rexcpyr (mesh->name, ptr, 74);
+
+    if (mesh->nr_vertices)
+        rexcpyr (mesh->positions, ptr, mesh->nr_vertices * 12);
+    if (nr_normals)
+        rexcpyr (mesh->normals, ptr, nr_normals * 12);
+    if (nr_texcoords)
+        rexcpyr (mesh->tex_coords, ptr, nr_texcoords * 8);
+    if (nr_colors)
+        rexcpyr (mesh->colors, ptr, nr_colors * 12);
+    if (mesh->nr_triangles)
+        rexcpyr (mesh->triangles, ptr, mesh->nr_triangles * 12);
+
+    header->nr_datablocks += 1;
+    header->sz_all_datablocks += *sz;
+
+    return addr;
+}
+
+
 uint8_t *rex_block_read_mesh (uint8_t *ptr, struct rex_mesh *mesh)
 {
     MEM_CHECK (ptr)
