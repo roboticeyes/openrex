@@ -2,6 +2,8 @@
 <img src="doc/openrex.png" />
 </p>
 
+** OpenREX is currently refactored, please note that the interfaces will change soon**
+
 [![Build Status](https://travis-ci.org/roboticeyes/openrex.svg?branch=master)](https://travis-ci.org/roboticeyes/openrex)
 
 OpenREX provides the specification for a binary file format which is used for the Robotic Eyes REX platform.
