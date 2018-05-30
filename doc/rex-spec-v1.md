@@ -93,7 +93,7 @@ Total size of the header is **16 bytes**.
 |--------|------------------|---------------------------------------------------------------------|
 | 0      | LineSet          | A list of vertices which get connected by line segments             |
 | 1      | Text             | A position information and the actual text                          |
-| 2      | Vertex           | A position only information which can display for instance and icon |
+| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)       |
 | 3      | Mesh             | A triangle mesh datastructure                                       |
 | 4      | Image            | A single of arbitrary format can be stored in this block            |
 | 5      | MaterialStandard | A standard (mesh) material definition                               |
@@ -129,16 +129,28 @@ can be interpreted as 0 being the highest level. As data type we use 32bit for b
 | 2+sz             | text      | string   | text for the label                |
 
 
-#### DataType Vertex (2)
+#### DataType PointList (2)
 
-| **size [bytes]** | **name**  | **type** | **description**            |
-|------------------|-----------|----------|----------------------------|
-| 4                | positionX | float    | x-coordinate of the vertex |
-| 4                | positionY | float    | y-coordinate of the vertex |
-| 4                | positionZ | float    | z-coordinate of the vertex |
-| 4                | scaleX    | float    | scale factor x             |
-| 4                | scaleY    | float    | scale factor y             |
-| 4                | scaleZ    | float    | scale factor z             |
+This data type can be used to store a set of points (e.g. colored point clouds).
+The number of vertices  The number of colors can be zero. If this is the case the
+points are rendered with a pre-defined color (e.g. white). If color is provided
+the number of color entries must fit the number of vertices (i.e. every point needs
+to have an RGB color).
+
+| **size [bytes]** | **name**     | **type** | **description**                              |
+|------------------|--------------|----------|----------------------------------------------|
+| 4                | nrOfVertices | uint32_t | number of vertices                           |
+| 4                | nrOfColors   | uint32_t | number of colors                             |
+| 4                | x            | float    | x-coordinate of first vertex                 |
+| 4                | y            | float    | y-coordinate of first vertex                 |
+| 4                | z            | float    | z-coordinate of first vertex                 |
+| 4                | x            | float    | x-coordinate of second vertex                |
+| ...              |              |          |                                              |
+| 4                | red          | float    | red component of the first vertex            |
+| 4                | green        | float    | green component of the first vertex          |
+| 4                | blue         | float    | blue component of the first vertex           |
+| 4                | red          | float    | red component of the second vertex           |
+| ...              |              |          |                                              |
 
 
 #### DataType Mesh (3)
