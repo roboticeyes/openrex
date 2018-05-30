@@ -133,7 +133,8 @@ int main (int argc, char **argv)
 {
     printf ("═══════════════════════════════════════════\n");
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
-    printf ("═══════════════════════════════════════════\n\n");
+    printf ("═══════════════════════════════════════════\n");
+    printf ("Generating sample REX cube with texture ...\n\n");
 
     if (argc < 2)
         usage (argv[0]);
