@@ -20,6 +20,7 @@
 
 #define REX_BLOCK_HEADER_SIZE           16
 #define REX_MESH_HEADER_SIZE            128
+#define REX_MATERIAL_STANDARD_SIZE      68
 #define REX_MESH_NAME_MAX_SIZE          74
 #define REX_VERTEX_SIZE                 11
 

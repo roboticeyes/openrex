@@ -79,6 +79,7 @@ void rex_dump_mesh_block (struct rex_mesh *mesh)
     printf ("normals                %20s\n", (mesh->normals) ? "yes" : "no");
     printf ("texture coords         %20s\n", (mesh->tex_coords) ? "yes" : "no");
     printf ("vertex colors          %20s\n", (mesh->colors) ? "yes" : "no");
+    printf ("material id            %20lu\n", mesh->material_id);
 }
 
 int main (int argc, char **argv)

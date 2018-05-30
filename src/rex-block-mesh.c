@@ -16,14 +16,14 @@
 
 #include <stdio.h>
 
-#include "rex-block-mesh.h"
 #include "global.h"
+#include "rex-block-mesh.h"
+#include "rex-block.h"
 #include "status.h"
 #include "util.h"
 
 uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct rex_mesh *mesh, long *sz)
 {
-    MEM_CHECK (header)
     MEM_CHECK (mesh)
 
     uint32_t nr_normals = (mesh->normals == NULL) ? 0 : mesh->nr_vertices;
@@ -43,14 +43,8 @@ uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct re
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    // block header
-    uint16_t type = 3;
-    uint16_t version = 1;
-    uint32_t block_size = *sz - REX_BLOCK_HEADER_SIZE;
-    rexcpyr (&type, ptr, sizeof (uint16_t));
-    rexcpyr (&version, ptr, sizeof (uint16_t));
-    rexcpyr (&block_size, ptr, sizeof (uint32_t));
-    rexcpyr (&id, ptr, sizeof (uint64_t));
+    struct rex_block block = { .type = 3, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    ptr = rex_block_header_write (ptr, &block);
 
     // block data
     rexcpyr (&mesh->lod, ptr, sizeof (uint16_t));
@@ -93,8 +87,11 @@ uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct re
     if (mesh->nr_triangles)
         rexcpyr (mesh->triangles, ptr, mesh->nr_triangles * 12);
 
-    header->nr_datablocks += 1;
-    header->sz_all_datablocks += *sz;
+    if (header)
+    {
+        header->nr_datablocks += 1;
+        header->sz_all_datablocks += *sz;
+    }
 
     return addr;
 }

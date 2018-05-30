@@ -44,18 +44,45 @@ void generate_mesh(struct rex_mesh *mesh)
     mesh->triangles[0] = 0;
     mesh->triangles[1] = 1;
     mesh->triangles[2] = 2;
+    mesh->material_id = 0;
 
     sprintf(mesh->name, "test");
+}
+
+void generate_material(struct rex_material_standard *mat)
+{
+    ck_assert(mat);
+
+    mat->ka_red = 1.0f;
+    mat->ka_green = 0.0f;
+    mat->ka_blue = 0.0f;
+    mat->ka_textureId = REX_NOT_SET;
+    mat->kd_red = 1.0f;
+    mat->kd_green = 0.0f;
+    mat->kd_blue = 0.0f;
+    mat->kd_textureId = REX_NOT_SET;
+    mat->ks_red = 1.0f;
+    mat->ks_green = 0.0f;
+    mat->ks_blue = 0.0f;
+    mat->ks_textureId = REX_NOT_SET;
+    mat->ns = 0.0f;
+    mat->alpha = 1.0f;
 }
 
 START_TEST (test_rex_writer)
 {
     struct rex_header *header = rex_header_create();
 
+    struct rex_material_standard mat;
+    generate_material(&mat);
+    long mat_sz;
+    uint8_t *mat_ptr = rex_block_write_material(0 /*id*/, header, &mat, &mat_sz);
+    ck_assert(mat_ptr);
+
     struct rex_mesh mesh;
     generate_mesh(&mesh);
     long mesh_sz;
-    uint8_t *mesh_ptr = rex_block_write_mesh(0 /*id*/, header, &mesh, &mesh_sz);
+    uint8_t *mesh_ptr = rex_block_write_mesh(1 /*id*/, header, &mesh, &mesh_sz);
     ck_assert(mesh_ptr);
 
     long header_sz;
@@ -66,6 +93,7 @@ START_TEST (test_rex_writer)
 
     fwrite(header_ptr, header_sz, 1, fp);
     fwrite(mesh_ptr, mesh_sz, 1, fp);
+    fwrite(mat_ptr, mat_sz, 1, fp);
     fclose(fp);
 }
 END_TEST

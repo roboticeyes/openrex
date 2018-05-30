@@ -23,6 +23,16 @@
 #include "status.h"
 #include "util.h"
 
+uint8_t *rex_block_header_write (uint8_t *ptr, struct rex_block *block)
+{
+    MEM_CHECK(block)
+    rexcpyr (&block->type, ptr, sizeof (uint16_t));
+    rexcpyr (&block->version, ptr, sizeof (uint16_t));
+    rexcpyr (&block->sz, ptr, sizeof (uint32_t));
+    rexcpyr (&block->id, ptr, sizeof (uint64_t));
+    return ptr;
+}
+
 uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
 {
     MEM_CHECK (ptr);
