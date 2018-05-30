@@ -120,13 +120,13 @@ can be interpreted as 0 being the highest level. As data type we use 32bit for b
 
 #### DataType Text (1)
 
-| **size [bytes]** | **name**  | **type** | **description**              |
-|------------------|-----------|----------|------------------------------|
-| 4                | positionX | float    | x-coordinate of the position |
-| 4                | positionY | float    | y-coordinate of the position |
-| 4                | positionZ | float    | z-coordinate of the position |
-| 4                | textSize  | float    | scale factor x               |
-| 2+sz             | text      | string   | text for the label           |
+| **size [bytes]** | **name**  | **type** | **description**                   |
+|------------------|-----------|----------|-----------------------------------|
+| 4                | positionX | float    | x-coordinate of the position      |
+| 4                | positionY | float    | y-coordinate of the position      |
+| 4                | positionZ | float    | z-coordinate of the position      |
+| 4                | fontSize  | float    | font size in font units (e.g. 24) |
+| 2+sz             | text      | string   | text for the label                |
 
 
 #### DataType Vertex (2)

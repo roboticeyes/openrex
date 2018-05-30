@@ -18,6 +18,7 @@
 
 #include "global.h"
 #include "rex-block-image.h"
+#include "rex-block-lineset.h"
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
 #include "rex-block-unitypackage.h"
@@ -50,9 +51,12 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
     switch (block->type)
     {
         case LineSet:
-            warn ("LineSet is not yet implemented");
-            return  data_start + block->sz;
-            break;
+            {
+                struct rex_lineset *lineset = malloc (sizeof (struct rex_lineset));
+                ptr = rex_block_read_lineset (ptr, lineset);
+                block->data = lineset;
+                break;
+            }
         case Text:
             warn ("Text is not yet implemented");
             return  data_start + block->sz;

@@ -17,16 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
-#include "global.h"
-#include "rex-block-image.h"
-#include "rex-block-material.h"
-#include "rex-block-mesh.h"
-#include "rex-block-unitypackage.h"
-#include "rex-block.h"
-#include "rex-header.h"
-#include "status.h"
-#include "util.h"
+#include "rex.h"
 
 static const char *rex_data_types[]
     = { "LineSet", "Text", "Vertex", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
@@ -67,6 +58,20 @@ void rex_dump_material_block (struct rex_material_standard *mat)
     printf ("Ks %22.2f %5.2f %5.2f %5ld\n", mat->ks_red, mat->ks_green, mat->ks_blue, (mat->ks_textureId != REX_NOT_SET) ? mat->ks_textureId : -1);
     printf ("ns %40.2f \n", mat->ns);
     printf ("alpha %37.2f \n", mat->alpha);
+}
+
+void rex_dump_lineset_block (struct rex_lineset *ls)
+{
+    if (!ls)
+        return;
+
+    printf ("red                    %20f\n", ls->red);
+    printf ("green                  %20f\n", ls->green);
+    printf ("blue                   %20f\n", ls->blue);
+    printf ("vertices               %20u\n", ls->nr_vertices);
+
+    /* for (int i = 0; i < ls->nr_vertices * 3; i += 3) */
+    /*     printf ("%f %f %f\n", ls->vertices[i], ls->vertices[i + 1], ls->vertices[i + 2]); */
 }
 
 void rex_dump_mesh_block (struct rex_mesh *mesh)
@@ -110,7 +115,14 @@ int main (int argc, char **argv)
         ptr = rex_block_read (ptr, &block);
         rex_dump_block_header (&block);
 
-        if (block.type == Mesh)
+        if (block.type == LineSet)
+        {
+            struct rex_lineset *ls = block.data;
+            rex_dump_lineset_block (ls);
+            FREE (ls->vertices);
+            FREE (block.data);
+        }
+        else if (block.type == Mesh)
         {
             struct rex_mesh *mesh = block.data;
             rex_dump_mesh_block (mesh);
@@ -127,7 +139,7 @@ int main (int argc, char **argv)
         {
             struct rex_image *img = block.data;
             printf ("compression %31s\n", rex_image_types[img->compression]);
-            printf ("image size  %31ld\n", block.sz - sizeof(uint32_t));
+            printf ("image size  %31ld\n", block.sz - sizeof (uint32_t));
             FREE (img->data);
             FREE (block.data);
         }
@@ -136,7 +148,7 @@ int main (int argc, char **argv)
             struct rex_unitypackage *unity = block.data;
             printf ("target platform  %26d\n", unity->target_platform);
             printf ("unity version    %26d\n", unity->unity_version);
-            printf ("package size     %26ld\n", block.sz - sizeof(uint16_t) - sizeof(uint16_t));
+            printf ("package size     %26ld\n", block.sz - sizeof (uint16_t) - sizeof (uint16_t));
             FREE (unity->data);
             FREE (block.data);
         }
