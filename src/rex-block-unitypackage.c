@@ -15,26 +15,27 @@
  */
 
 #include "global.h"
-#include "rex-block-image.h"
+#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "util.h"
 
-uint8_t *rex_block_write_image (uint64_t id, struct rex_header *header, struct rex_image *img, long *sz)
+uint8_t *rex_block_write_unitypackage (uint64_t id, struct rex_header *header, struct rex_unitypackage *unity, long *sz)
 {
-    MEM_CHECK (img)
-    MEM_CHECK (img->data)
+    MEM_CHECK (unity)
+    MEM_CHECK (unity->data)
 
-    *sz = REX_BLOCK_HEADER_SIZE + sizeof (uint32_t) + img->sz;
+    *sz = REX_BLOCK_HEADER_SIZE + sizeof (uint16_t) + sizeof (uint16_t) + unity->sz;
 
     uint8_t *ptr = malloc (*sz);
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 5, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = 7, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
-    rexcpyr (&img->compression, ptr, sizeof (uint32_t));
-    rexcpyr (img->data, ptr, img->sz);
+    rexcpyr (&unity->target_platform, ptr, sizeof (uint16_t));
+    rexcpyr (&unity->unity_version, ptr, sizeof (uint16_t));
+    rexcpyr (unity->data, ptr, unity->sz);
 
     if (header)
     {
@@ -44,15 +45,15 @@ uint8_t *rex_block_write_image (uint64_t id, struct rex_header *header, struct r
     return addr;
 }
 
-
-uint8_t *rex_block_read_image (uint8_t *ptr, struct rex_image *img)
+uint8_t *rex_block_read_unitypackage (uint8_t *ptr, struct rex_unitypackage *unity)
 {
     MEM_CHECK (ptr)
-    MEM_CHECK (img)
+    MEM_CHECK (unity)
 
-    rexcpy (&img->compression, ptr, sizeof (uint32_t));
-    img->data = malloc (img->sz);
+    rexcpy (&unity->target_platform, ptr, sizeof (uint16_t));
+    rexcpy (&unity->unity_version, ptr, sizeof (uint16_t));
 
-    rexcpy (img->data, ptr, img->sz);
+    unity->data = malloc (unity->sz);
+    rexcpy (unity->data, ptr, unity->sz);
     return ptr;
 }

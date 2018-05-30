@@ -22,6 +22,7 @@
 #include "rex-block-image.h"
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
+#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "rex-header.h"
 #include "status.h"
@@ -128,6 +129,15 @@ int main (int argc, char **argv)
             printf ("compression %31s\n", rex_image_types[img->compression]);
             printf ("image size  %31d\n", block.sz);
             FREE (img->data);
+            FREE (block.data);
+        }
+        else if (block.type == UnityPackage)
+        {
+            struct rex_unitypackage *unity = block.data;
+            printf ("target platform  %26d\n", unity->target_platform);
+            printf ("unity version    %26d\n", unity->unity_version);
+            printf ("package size     %26d\n", block.sz);
+            FREE (unity->data);
             FREE (block.data);
         }
     }

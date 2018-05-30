@@ -55,24 +55,20 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 
 ## Implementation status
 
-* [ ] Read lineset block
-* [ ] Write lineset block
-* [ ] Read vertex block
-* [ ] Write vertex block
-* [ ] Read text block
-* [ ] Write text block
-* [ ] Read peoplesimulation block
-* [ ] Write peoplesimulation block
-* [ ] Read unitypackage block
-* [ ] Write unitypackage block
+* [ ] Read/write lineset block
+* [ ] Read/write vertex block
+* [ ] Read/write text block
+* [ ] Read/write people simulation block
 
 ## Contribution and ideas
 
 Your contribution is welcome. Here are some ideas:
 
-* rex-view: SDL2-based OpenGL viewer of REX files
+* rex-dump: dumps a certain block to the stdout which can then be piped into other programs (e.g. feh)
+* rex-view: allow pipe input from commandline getting a certain data block
 * Extend rex-info to support filtering (e.g. only show meshes, or materials)
 * Save images from REX to files
+* Integrate assimp for data conversion
 
 ### Guidelines and pre-requisite(s)
 

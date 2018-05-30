@@ -3,6 +3,7 @@ set(c_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-mesh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-material.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-unitypackage.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-image.c
     ${CMAKE_CURRENT_SOURCE_DIR}/list.c
     ${CMAKE_CURRENT_SOURCE_DIR}/util.c
@@ -14,6 +15,7 @@ set(c_headers
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block.h
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-mesh.h
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-material.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-unitypackage.h
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-image.h
     ${CMAKE_CURRENT_SOURCE_DIR}/global.h
     ${CMAKE_CURRENT_SOURCE_DIR}/linmath.h
