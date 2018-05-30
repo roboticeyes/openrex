@@ -24,34 +24,34 @@ void check_template_header (struct rex_header *header)
     ck_assert (header->sz_all_datablocks == 430);
 }
 
-void generate_mesh(struct rex_mesh *mesh)
+void generate_mesh (struct rex_mesh *mesh)
 {
-    ck_assert(mesh);
+    ck_assert (mesh);
 
-    rex_mesh_init(mesh);
+    rex_mesh_init (mesh);
 
     mesh->nr_vertices = 3;
     mesh->nr_triangles = 1;
 
-    mesh->positions = malloc (12*3);
-    vec3 v1 = { 0.0,0.0,0.0 };
-    vec3 v2 = { 1.0,0.0,0.0 };
-    vec3 v3 = { 0.5,1.0,0.0 };
-    memcpy(mesh->positions, v1, 12);
-    memcpy(&mesh->positions[3], v2, 12);
-    memcpy(&mesh->positions[6], v3, 12);
+    mesh->positions = malloc (12 * 3);
+    vec3 v1 = { 0.0, 0.0, 0.0 };
+    vec3 v2 = { 1.0, 0.0, 0.0 };
+    vec3 v3 = { 0.5, 1.0, 0.0 };
+    memcpy (mesh->positions, v1, 12);
+    memcpy (&mesh->positions[3], v2, 12);
+    memcpy (&mesh->positions[6], v3, 12);
     mesh->triangles = malloc (12);
     mesh->triangles[0] = 0;
     mesh->triangles[1] = 1;
     mesh->triangles[2] = 2;
     mesh->material_id = 0;
 
-    sprintf(mesh->name, "test");
+    sprintf (mesh->name, "test");
 }
 
-void generate_material(struct rex_material_standard *mat)
+void generate_material (struct rex_material_standard *mat)
 {
-    ck_assert(mat);
+    ck_assert (mat);
 
     mat->ka_red = 1.0f;
     mat->ka_green = 0.0f;
@@ -74,27 +74,27 @@ START_TEST (test_rex_writer)
     struct rex_header *header = rex_header_create();
 
     struct rex_material_standard mat;
-    generate_material(&mat);
+    generate_material (&mat);
     long mat_sz;
-    uint8_t *mat_ptr = rex_block_write_material(0 /*id*/, header, &mat, &mat_sz);
-    ck_assert(mat_ptr);
+    uint8_t *mat_ptr = rex_block_write_material (0 /*id*/, header, &mat, &mat_sz);
+    ck_assert (mat_ptr);
 
     struct rex_mesh mesh;
-    generate_mesh(&mesh);
+    generate_mesh (&mesh);
     long mesh_sz;
-    uint8_t *mesh_ptr = rex_block_write_mesh(1 /*id*/, header, &mesh, &mesh_sz);
-    ck_assert(mesh_ptr);
+    uint8_t *mesh_ptr = rex_block_write_mesh (1 /*id*/, header, &mesh, &mesh_sz);
+    ck_assert (mesh_ptr);
 
     long header_sz;
-    uint8_t *header_ptr = rex_header_write(header, &header_sz);
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
-    const char* filename = "test.rex";
-    FILE *fp = fopen(filename, "wb");
+    const char *filename = "test.rex";
+    FILE *fp = fopen (filename, "wb");
 
-    fwrite(header_ptr, header_sz, 1, fp);
-    fwrite(mesh_ptr, mesh_sz, 1, fp);
-    fwrite(mat_ptr, mat_sz, 1, fp);
-    fclose(fp);
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (mesh_ptr, mesh_sz, 1, fp);
+    fwrite (mat_ptr, mat_sz, 1, fp);
+    fclose (fp);
 }
 END_TEST
 

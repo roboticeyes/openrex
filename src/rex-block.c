@@ -27,7 +27,7 @@
 
 uint8_t *rex_block_header_write (uint8_t *ptr, struct rex_block *block)
 {
-    MEM_CHECK(block)
+    MEM_CHECK (block)
     rexcpyr (&block->type, ptr, sizeof (uint16_t));
     rexcpyr (&block->version, ptr, sizeof (uint16_t));
     rexcpyr (&block->sz, ptr, sizeof (uint32_t));
@@ -71,7 +71,7 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
         case Image:
             {
                 struct rex_image *img = malloc (sizeof (struct rex_image));
-                img->sz = block->sz - sizeof(uint32_t);
+                img->sz = block->sz - sizeof (uint32_t);
                 ptr = rex_block_read_image (ptr, img);
                 block->data = img;
                 break;
@@ -90,7 +90,7 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
         case UnityPackage:
             {
                 struct rex_unitypackage *unity = malloc (sizeof (struct rex_unitypackage));
-                unity->sz = block->sz - sizeof(uint16_t) - sizeof(uint16_t);
+                unity->sz = block->sz - sizeof (uint16_t) - sizeof (uint16_t);
                 ptr = rex_block_read_unitypackage (ptr, unity);
                 block->data = unity;
                 break;

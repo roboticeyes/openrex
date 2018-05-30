@@ -19,9 +19,9 @@
 #include "rex-block.h"
 #include "util.h"
 
-uint8_t *rex_block_write_material(uint64_t id, struct rex_header *header, struct rex_material_standard *mat, long *sz)
+uint8_t *rex_block_write_material (uint64_t id, struct rex_header *header, struct rex_material_standard *mat, long *sz)
 {
-    MEM_CHECK(mat)
+    MEM_CHECK (mat)
 
     *sz = REX_BLOCK_HEADER_SIZE + REX_MATERIAL_STANDARD_SIZE;
 

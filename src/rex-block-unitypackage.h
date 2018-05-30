@@ -40,7 +40,7 @@ uint8_t *rex_block_read_unitypackage (uint8_t *ptr, struct rex_unitypackage *uni
  * Writes a Unity asset bundle block to a binary stream. Memory will be allocated and the caller
  * must take care of releasing the memory. The rex_header can be NULL.
  */
-uint8_t *rex_block_write_unitypackage(uint64_t id, struct rex_header *header, struct rex_unitypackage *unity, long *sz);
+uint8_t *rex_block_write_unitypackage (uint64_t id, struct rex_header *header, struct rex_unitypackage *unity, long *sz);
 
 #ifdef __cplusplus
 }

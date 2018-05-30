@@ -36,12 +36,12 @@ int main (int argc, char **argv)
     if (argc < 4)
         usage (argv[0]);
 
-    uint16_t unity_version = atoi(argv[3]);
+    uint16_t unity_version = atoi (argv[3]);
 
     if (unity_version < 20180)
-        die("Unity version has to be at least 20180");
+        die ("Unity version has to be at least 20180");
 
-    FILE *fp = fopen(argv[2], "wb");
+    FILE *fp = fopen (argv[2], "wb");
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
 
@@ -57,14 +57,14 @@ int main (int argc, char **argv)
     unity.data = buf;
     unity.sz = sz;
     long unity_sz;
-    uint8_t *unity_ptr = rex_block_write_unitypackage(0 /*id*/, header, &unity, &unity_sz);
+    uint8_t *unity_ptr = rex_block_write_unitypackage (0 /*id*/, header, &unity, &unity_sz);
 
     long header_sz;
-    uint8_t *header_ptr = rex_header_write(header, &header_sz);
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
-    fwrite(header_ptr, header_sz, 1, fp);
-    fwrite(unity_ptr, unity_sz, 1, fp);
-    fclose(fp);
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (unity_ptr, unity_sz, 1, fp);
+    fclose (fp);
 
     FREE (buf);
     FREE (unity_ptr);
