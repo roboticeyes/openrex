@@ -25,7 +25,6 @@ uint8_t *rex_block_write_text (uint64_t id, struct rex_header *header, struct re
     MEM_CHECK (text->data)
 
     uint16_t text_len = strlen (text->data);
-    printf ("xxxxxxxxx %d", text_len);
 
     *sz = REX_BLOCK_HEADER_SIZE
           + sizeof (float) * 3
