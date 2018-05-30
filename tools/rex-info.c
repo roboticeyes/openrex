@@ -122,6 +122,14 @@ int main (int argc, char **argv)
             FREE (ls->vertices);
             FREE (block.data);
         }
+        else if (block.type == Text)
+        {
+            struct rex_text *text = block.data;
+            printf ("position %22.2f %5.2f %5.2f\n", text->position[0], text->position[1], text->position[2]);
+            printf ("fontSize    %31.1f\n", text->font_size);
+            printf ("text        %31s\n", text->data);
+            FREE (block.data);
+        }
         else if (block.type == Mesh)
         {
             struct rex_mesh *mesh = block.data;
