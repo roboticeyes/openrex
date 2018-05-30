@@ -1,15 +1,7 @@
 #include <check.h>
 #include <stdio.h>
 
-#include "global.h"
-#include "rex-block-image.h"
-#include "rex-block-material.h"
-#include "rex-block-mesh.h"
-#include "rex-block.h"
-#include "linmath.h"
-#include "rex-header.h"
-#include "status.h"
-#include "util.h"
+#include "rex.h"
 
 #define REX_TEMPLATE "template.rex"
 
@@ -69,7 +61,28 @@ void generate_material (struct rex_material_standard *mat)
     mat->alpha = 1.0f;
 }
 
-START_TEST (test_rex_writer)
+void generate_lineset (struct rex_lineset *ls)
+{
+    ck_assert (ls);
+    ls->red = 0.7f;
+    ls->green = 0.0f;
+    ls->blue = 0.0f;
+    ls->nr_vertices = 5;
+    vec3 v1 = { 0.0, 0.0, 0.0 };
+    vec3 v2 = { 1.0, 0.0, 0.0 };
+    vec3 v3 = { 1.0, 1.0, 0.0 };
+    vec3 v4 = { 0.0, 1.0, 0.0 };
+    ls->vertices = malloc (12 * 5);
+    memset (ls->vertices, 0, 12 * 5);
+
+    memcpy (ls->vertices, v1, 12);
+    memcpy (&ls->vertices[3], v2, 12);
+    memcpy (&ls->vertices[6], v3, 12);
+    memcpy (&ls->vertices[9], v4, 12);
+    memcpy (&ls->vertices[12], v1, 12);
+}
+
+START_TEST (test_rex_writer_mesh)
 {
     struct rex_header *header = rex_header_create();
 
@@ -88,12 +101,37 @@ START_TEST (test_rex_writer)
     long header_sz;
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
-    const char *filename = "test.rex";
+    const char *filename = "test_mesh.rex";
     FILE *fp = fopen (filename, "wb");
 
     fwrite (header_ptr, header_sz, 1, fp);
     fwrite (mesh_ptr, mesh_sz, 1, fp);
     fwrite (mat_ptr, mat_sz, 1, fp);
+    fclose (fp);
+}
+END_TEST
+
+START_TEST (test_rex_writer_lineset)
+{
+    struct rex_header *header = rex_header_create();
+
+    struct rex_lineset ls;
+    generate_lineset (&ls);
+    long ls_sz;
+    uint8_t *ls_ptr = rex_block_write_lineset (0 /*id*/, header, &ls, &ls_sz);
+    ck_assert (ls_sz == 92);
+    ck_assert (header->sz_all_datablocks == 92);
+    ck_assert (ls_ptr);
+
+    long header_sz;
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
+    ck_assert (header_sz == 86);
+
+    const char *filename = "test_lineset.rex";
+    FILE *fp = fopen (filename, "wb");
+
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (ls_ptr, ls_sz, 1, fp);
     fclose (fp);
 }
 END_TEST
@@ -158,7 +196,8 @@ Suite *test_suite()
     tc_io = tcase_create ("io");
 
     tcase_add_test (tc_io, test_rex_reader);
-    tcase_add_test (tc_io, test_rex_writer);
+    tcase_add_test (tc_io, test_rex_writer_mesh);
+    tcase_add_test (tc_io, test_rex_writer_lineset);
 
     suite_add_tcase (s, tc_io);
     return s;
