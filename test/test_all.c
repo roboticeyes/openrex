@@ -18,7 +18,7 @@ void check_template_header (struct rex_header *header)
 
 void generate_mesh (struct rex_mesh *mesh)
 {
-    ck_assert (mesh);
+    ck_assert (mesh != NULL);
 
     rex_mesh_init (mesh);
 
@@ -43,7 +43,7 @@ void generate_mesh (struct rex_mesh *mesh)
 
 void generate_material (struct rex_material_standard *mat)
 {
-    ck_assert (mat);
+    ck_assert (mat != NULL);
 
     mat->ka_red = 1.0f;
     mat->ka_green = 0.0f;
@@ -63,7 +63,7 @@ void generate_material (struct rex_material_standard *mat)
 
 void generate_lineset (struct rex_lineset *ls)
 {
-    ck_assert (ls);
+    ck_assert (ls != NULL);
     ls->red = 0.7f;
     ls->green = 0.0f;
     ls->blue = 0.0f;
@@ -82,6 +82,12 @@ void generate_lineset (struct rex_lineset *ls)
     memcpy (&ls->vertices[12], v1, 12);
 }
 
+START_TEST (test_general)
+{
+    ck_assert (strcmp (rex_name, "REX") == 0);
+}
+END_TEST
+
 START_TEST (test_rex_writer_mesh)
 {
     struct rex_header *header = rex_header_create();
@@ -90,13 +96,13 @@ START_TEST (test_rex_writer_mesh)
     generate_material (&mat);
     long mat_sz;
     uint8_t *mat_ptr = rex_block_write_material (0 /*id*/, header, &mat, &mat_sz);
-    ck_assert (mat_ptr);
+    ck_assert (mat_ptr != NULL);
 
     struct rex_mesh mesh;
     generate_mesh (&mesh);
     long mesh_sz;
     uint8_t *mesh_ptr = rex_block_write_mesh (1 /*id*/, header, &mesh, &mesh_sz);
-    ck_assert (mesh_ptr);
+    ck_assert (mesh_ptr != NULL);
 
     long header_sz;
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
@@ -121,7 +127,7 @@ START_TEST (test_rex_writer_lineset)
     uint8_t *ls_ptr = rex_block_write_lineset (0 /*id*/, header, &ls, &ls_sz);
     ck_assert (ls_sz == 92);
     ck_assert (header->sz_all_datablocks == 92);
-    ck_assert (ls_ptr);
+    ck_assert (ls_ptr != NULL);
 
     long header_sz;
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
@@ -188,17 +194,22 @@ END_TEST
 Suite *test_suite()
 {
     Suite *s;
+    TCase *tc_general;
     TCase *tc_io;
 
     s = suite_create ("main");
 
+    /* general test case */
+    tc_general = tcase_create ("general");
+    tcase_add_test (tc_general, test_general);
+
     /* io test case */
     tc_io = tcase_create ("io");
-
     tcase_add_test (tc_io, test_rex_reader);
     tcase_add_test (tc_io, test_rex_writer_mesh);
     tcase_add_test (tc_io, test_rex_writer_lineset);
 
+    suite_add_tcase (s, tc_general);
     suite_add_tcase (s, tc_io);
     return s;
 }
