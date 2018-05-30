@@ -70,7 +70,7 @@ uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct re
     rexcpyr (&start_colors, ptr, sizeof (uint32_t));
     rexcpyr (&start_triangles, ptr, sizeof (uint32_t));
 
-    rexcpy (&mesh->material_id, ptr, sizeof (uint64_t));
+    rexcpyr (&mesh->material_id, ptr, sizeof (uint64_t));
 
     uint16_t name_sz = strlen (mesh->name);
     rexcpyr (&name_sz, ptr, sizeof (uint16_t));

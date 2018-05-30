@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include "global.h"
+#include "linmath.h"
 #include "util.h"
 
 #include "rex-header.h"

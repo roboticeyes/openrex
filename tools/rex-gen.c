@@ -12,18 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.*
+ *
+ * This file generates a sample cube with texture and normal information.
  */
+
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
-#include "core.h"
-#include "global.h"
-#include "linmath.h"
-#include "util.h"
+#include "rex.h"
+#include "texture.h"
 
 float cube_vertices[] =
 {
@@ -126,7 +126,7 @@ uint32_t cube_elements[] =
 
 void usage (const char *exec)
 {
-    die ("usage: %s texturefile.png filename.rex\n", exec);
+    die ("usage: %s filename.rex\n", exec);
 }
 
 int main (int argc, char **argv)
@@ -135,39 +135,26 @@ int main (int argc, char **argv)
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 3)
+    if (argc < 2)
         usage (argv[0]);
 
-    FILE *fp = fopen (argv[2], "wb");
+    FILE *fp = fopen (argv[1], "wb");
     if (!fp)
-        die ("Cannot open REX file %s for writing\n", argv[2]);
-
-    struct rex_header *header = rex_header_create();
-    rex_header_write (fp, header);
+        die ("Cannot open REX file %s for writing\n", argv[1]);
 
     // setup all texture coordinates for each side
     for (int i = 1; i < 6; i++)
         memcpy (&cube_texcoords[i * 4 * 2], &cube_texcoords[0], 2 * 4 * sizeof (float));
 
-    // write texture file
-    FILE *t = fopen (argv[1], "rb");
-    if (!t)
-        die ("Cannot open texture file %s\n", argv[1]);
-    fseek (t, 0, SEEK_END);
-    uint64_t sz = ftell (t);
-    fseek (t, 0, SEEK_SET);
-    uint8_t *img = malloc (sz);
-    if (fread (img, sz, 1, t) != 1)
-        die ("Cannot read image content");
-    fclose (t);
+    struct rex_header *header = rex_header_create();
 
-    if (rex_write_image_bock (fp, header, img, sz, Png, 0))
-    {
-        warn ("Error during file write %d\n", errno);
-        FREE (img);
-        fclose (fp);
-        return -1;
-    }
+    // write texture
+    struct rex_image img;
+    img.compression = Png;
+    img.data = texture_png;
+    img.sz = texture_png_len;
+    long img_sz;
+    uint8_t *img_ptr = rex_block_write_image (0 /*id*/, header, &img, &img_sz);
 
     // write material
     struct rex_material_standard mat =
@@ -187,37 +174,39 @@ int main (int argc, char **argv)
         .ns = 0,
         .alpha = 1
     };
+    long mat_sz;
+    uint8_t *mat_ptr = rex_block_write_material (1 /*id*/, header, &mat, &mat_sz);
 
-    if (rex_write_material_block (fp, header, &mat, 1))
-    {
-        warn ("Error during file write %d\n", errno);
-        fclose (fp);
-        return -1;
-    }
-
+    // write mesh
     struct rex_mesh mesh =
     {
-        .id = 2,
-        .name = "test",
+        .lod = 0,
+        .max_lod = 0,
+        .name = "Cube",
+        .material_id = 1,
         .nr_vertices = LEN (cube_vertices) / 3,
         .nr_triangles = LEN (cube_elements) / 3,
         .positions = cube_vertices,
         .normals = cube_normals,
-        .tex_coords = NULL, //& (texels[0][0]),
+        .tex_coords = cube_texcoords,
         .colors = NULL,
         .triangles = cube_elements
     };
+    long mesh_sz;
+    uint8_t *mesh_ptr = rex_block_write_mesh (2 /*id*/, header, &mesh, &mesh_sz);
 
-    if (rex_write_mesh_block (fp, header, &mesh, 1 /* material_id */))
-    {
-        warn ("Error during file read %d\n", errno);
-        fclose (fp);
-        return -1;
-    }
-    rex_header_write (fp, header);
+    long header_sz;
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (img_ptr, img_sz, 1, fp);
+    fwrite (mat_ptr, mat_sz, 1, fp);
+    fwrite (mesh_ptr, mesh_sz, 1, fp);
     fclose (fp);
-    FREE (img);
-    FREE (header);
+
+    FREE (img_ptr);
+    FREE (mat_ptr);
+    FREE (mesh_ptr);
+    FREE (header_ptr);
     return 0;
 }

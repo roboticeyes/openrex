@@ -71,7 +71,7 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
         case Image:
             {
                 struct rex_image *img = malloc (sizeof (struct rex_image));
-                img->sz = block->sz - sizeof (uint32_t);
+                img->sz = block->sz - sizeof (uint32_t); // subtract compression
                 ptr = rex_block_read_image (ptr, img);
                 block->data = img;
                 break;

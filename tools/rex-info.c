@@ -127,7 +127,7 @@ int main (int argc, char **argv)
         {
             struct rex_image *img = block.data;
             printf ("compression %31s\n", rex_image_types[img->compression]);
-            printf ("image size  %31d\n", block.sz);
+            printf ("image size  %31ld\n", block.sz - sizeof(uint32_t));
             FREE (img->data);
             FREE (block.data);
         }
@@ -136,7 +136,7 @@ int main (int argc, char **argv)
             struct rex_unitypackage *unity = block.data;
             printf ("target platform  %26d\n", unity->target_platform);
             printf ("unity version    %26d\n", unity->unity_version);
-            printf ("package size     %26d\n", block.sz);
+            printf ("package size     %26ld\n", block.sz - sizeof(uint16_t) - sizeof(uint16_t));
             FREE (unity->data);
             FREE (block.data);
         }
