@@ -16,6 +16,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "rex-header.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,6 +52,12 @@ struct rex_mesh
  * Please note that memory will be allocated for the mesh data.
 */
 uint8_t *rex_block_read_mesh (uint8_t *ptr, struct rex_mesh *mesh);
+
+/**
+ * Writes the given rex_mesh block in a buffer. The buffer will be allocated, so the caller
+ * must take care of releasing the memory. The rex_header can be NULL.
+ */
+uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct rex_mesh *mesh, long *sz);
 
 void rex_mesh_init (struct rex_mesh *mesh);
 void rex_mesh_free (struct rex_mesh *mesh);

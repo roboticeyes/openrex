@@ -16,6 +16,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "rex-header.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,6 +45,12 @@ struct rex_material_standard
  * else the pointer after the block is returned.
  */
 uint8_t *rex_block_read_material (uint8_t *ptr, struct rex_material_standard *mat);
+
+/**
+ * Writes a material block to a binary stream. Memory will be allocated and the caller
+ * must take care of releasing the memory. The rex_header can be NULL.
+ */
+uint8_t *rex_block_write_material (uint64_t id, struct rex_header *header, struct rex_material_standard *mat, long *sz);
 
 #ifdef __cplusplus
 }

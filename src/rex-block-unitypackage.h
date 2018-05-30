@@ -22,35 +22,25 @@
 extern "C" {
 #endif
 
-/**
- * This is a list of supported image compressions
- */
-enum rex_image_compression
+struct rex_unitypackage
 {
-    Raw24 = 0,
-    Jpeg = 1,
-    Png = 2
-};
-
-struct rex_image
-{
-    uint32_t compression;
+    uint16_t target_platform;
+    uint16_t unity_version;
     uint8_t *data;
-    uint64_t sz; // size in bytes of the image
+    uint64_t sz; // size in bytes of the package
 };
 
 /*
- * Reads an image block from the given pointer. This call will allocate memory
- * for the image. The caller is responsible to free this memory! The sz parameter
- * is required for the number of bytes to read.
+ * Reads an Unity asset bundle block from the data pointer. NULL is returned in case of error,
+ * else the pointer after the block is returned.
  */
-uint8_t *rex_block_read_image (uint8_t *ptr, struct rex_image *img);
+uint8_t *rex_block_read_unitypackage (uint8_t *ptr, struct rex_unitypackage *unity);
 
 /**
- * Writes an imagel block to binary. Memory will be allocated and the caller
+ * Writes a Unity asset bundle block to a binary stream. Memory will be allocated and the caller
  * must take care of releasing the memory. The rex_header can be NULL.
  */
-uint8_t *rex_block_write_image (uint64_t id, struct rex_header *header, struct rex_image *img, long *sz);
+uint8_t *rex_block_write_unitypackage (uint64_t id, struct rex_header *header, struct rex_unitypackage *unity, long *sz);
 
 #ifdef __cplusplus
 }

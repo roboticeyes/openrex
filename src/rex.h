@@ -15,28 +15,14 @@
  */
 #pragma once
 
-#include <stdint.h>
+#include "config.h"
+#include "global.h"
+#include "linmath.h"
+#include "util.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-struct rex_header
-{
-    char       magic[4];
-    uint16_t   version;
-    uint32_t   crc;
-    uint16_t   nr_datablocks;
-    uint16_t   start_addr;
-    uint64_t   sz_all_datablocks;
-    char       reserved[42];
-};
-
-struct rex_header *rex_header_create ();
-uint8_t *rex_header_read (uint8_t *buf, struct rex_header *header);
-
-uint8_t *rex_header_write (struct rex_header *header, long *sz);
-
-#ifdef __cplusplus
-}
-#endif
+#include "rex-header.h"
+#include "rex-block.h"
+#include "rex-block-mesh.h"
+#include "rex-block-material.h"
+#include "rex-block-image.h"
+#include "rex-block-unitypackage.h"

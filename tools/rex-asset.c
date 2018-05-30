@@ -20,14 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
-#include "core.h"
-#include "global.h"
-#include "util.h"
+#include "rex.h"
 
 void usage (const char *exec)
 {
-    die ("usage: %s <rex_asset_file> filename.rex\n", exec);
+    die ("usage: %s <rex_asset_file> filename.rex <5_digit_unity_version>\n", exec);
 }
 
 int main (int argc, char **argv)
@@ -36,41 +33,41 @@ int main (int argc, char **argv)
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 3)
+    if (argc < 4)
         usage (argv[0]);
+
+    uint16_t unity_version = atoi (argv[3]);
+
+    if (unity_version < 20180)
+        die ("Unity version has to be at least 20180");
 
     FILE *fp = fopen (argv[2], "wb");
     if (!fp)
         die ("Cannot open REX file %s for writing\n", argv[2]);
 
+    // read asset bundle file
+    long sz;
+    uint8_t *buf = read_file_binary (argv[1], &sz);
+
+    // write REX file
     struct rex_header *header = rex_header_create();
-    rex_header_write (fp, header);
+    struct rex_unitypackage unity;
+    unity.target_platform = 2; // only WSA is currently supported
+    unity.unity_version = unity_version;
+    unity.data = buf;
+    unity.sz = sz;
+    long unity_sz;
+    uint8_t *unity_ptr = rex_block_write_unitypackage (0 /*id*/, header, &unity, &unity_sz);
 
-    // write texture file
-    FILE *t = fopen (argv[1], "rb");
-    if (!t)
-        die ("Cannot open rex asset file %s\n", argv[1]);
-    fseek (t, 0, SEEK_END);
-    uint64_t sz = ftell (t);
-    fseek (t, 0, SEEK_SET);
-    uint8_t *blob = malloc (sz);
-    if (fread (blob, sz, 1, t) != 1)
-        die ("Cannot read rexasset content");
-    fclose (t);
+    long header_sz;
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
-    if (rex_write_rexasset_bock (fp, header, blob, sz, "rexasset", 0))
-    {
-        warn ("Error during file write %d\n", errno);
-        free (blob);
-        fclose (fp);
-        return -1;
-    }
-
-    rex_header_write (fp, header);
-
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (unity_ptr, unity_sz, 1, fp);
     fclose (fp);
-    FREE (blob);
-    FREE (header);
+
+    FREE (buf);
+    FREE (unity_ptr);
+    FREE (header_ptr);
     return 0;
 }
-

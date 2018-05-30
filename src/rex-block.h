@@ -51,6 +51,14 @@ struct rex_block
  */
 uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block);
 
+/**
+ * Writes the block header to the given pointer and returns the pointer to the
+ * data after the block. The ptr must point to allocated memory. The data pointer
+ * will not be written!
+ */
+uint8_t *rex_block_header_write (uint8_t *ptr, struct rex_block *block);
+
+
 #ifdef __cplusplus
 }
 #endif

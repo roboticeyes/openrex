@@ -16,12 +16,24 @@
 
 #include <stdio.h>
 
+#include "global.h"
 #include "rex-block-image.h"
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
+#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "status.h"
 #include "util.h"
+
+uint8_t *rex_block_header_write (uint8_t *ptr, struct rex_block *block)
+{
+    MEM_CHECK (block)
+    rexcpyr (&block->type, ptr, sizeof (uint16_t));
+    rexcpyr (&block->version, ptr, sizeof (uint16_t));
+    rexcpyr (&block->sz, ptr, sizeof (uint32_t));
+    rexcpyr (&block->id, ptr, sizeof (uint64_t));
+    return ptr;
+}
 
 uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
 {
@@ -59,7 +71,8 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
         case Image:
             {
                 struct rex_image *img = malloc (sizeof (struct rex_image));
-                ptr = rex_block_read_image (ptr, img, block->sz);
+                img->sz = block->sz - sizeof (uint32_t); // subtract compression
+                ptr = rex_block_read_image (ptr, img);
                 block->data = img;
                 break;
             }
@@ -75,9 +88,13 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
             return  data_start + block->sz;
             break;
         case UnityPackage:
-            warn ("UnityPackage is not yet implemented");
-            return  data_start + block->sz;
-            break;
+            {
+                struct rex_unitypackage *unity = malloc (sizeof (struct rex_unitypackage));
+                unity->sz = block->sz - sizeof (uint16_t) - sizeof (uint16_t);
+                ptr = rex_block_read_unitypackage (ptr, unity);
+                block->data = unity;
+                break;
+            }
         default:
             warn ("Not supported REX block, skipping.");
             return  data_start + block->sz;

@@ -1,10 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "global.h"
 #include "rex-header.h"
 #include "util.h"
+
+uint8_t *rex_header_write (struct rex_header *header, long *sz)
+{
+    *sz = 64 + 22; // we also allocate for the CSB which is currently unused
+    uint8_t *buf = malloc (*sz);
+    memset (buf, 0, *sz);
+    uint8_t *addr = buf;
+
+    // fixed due to fixed CSB
+    header->start_addr = 86;
+
+    rexcpyr (header->magic, buf, 4);
+    rexcpyr (&header->version, buf, sizeof (uint16_t));
+    rexcpyr (&header->crc, buf, sizeof (uint32_t));
+    rexcpyr (&header->nr_datablocks, buf, sizeof (uint16_t));
+    rexcpyr (&header->start_addr, buf, sizeof (uint16_t));
+    rexcpyr (&header->sz_all_datablocks, buf, sizeof (uint64_t));
+    rexcpyr (header->reserved, buf, 42);
+
+    // write dummy CSB
+    uint32_t srid = 3876;
+    uint16_t name_sz = 4;
+    char name[] = "EPSG";
+    float ofs_x = 0.0f;
+    float ofs_y = 0.0f;
+    float ofs_z = 0.0f;
+
+    rexcpyr (&srid, buf, sizeof (uint32_t));
+    rexcpyr (&name_sz, buf, sizeof (uint16_t));
+    rexcpyr (name, buf, 4);
+    rexcpyr (&ofs_x, buf, sizeof (float));
+    rexcpyr (&ofs_y, buf, sizeof (float));
+    rexcpyr (&ofs_z, buf, sizeof (float));
+
+    assert ( (buf - *sz) == addr);
+
+    return addr;
+}
 
 struct rex_header *rex_header_create ()
 {
@@ -15,7 +54,7 @@ struct rex_header *rex_header_create ()
     header->start_addr = 0;
     header->sz_all_datablocks = 0;
 
-    memcpy (header->magic, REX_FILE_MAGIC, sizeof (REX_FILE_MAGIC));
+    memcpy (header->magic, REX_FILE_MAGIC, 4);
     memset (header->reserved, 0, 42);
     return header;
 }

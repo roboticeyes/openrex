@@ -14,8 +14,46 @@
  * limitations under the License.*
  */
 
+#include "global.h"
 #include "rex-block-material.h"
+#include "rex-block.h"
 #include "util.h"
+
+uint8_t *rex_block_write_material (uint64_t id, struct rex_header *header, struct rex_material_standard *mat, long *sz)
+{
+    MEM_CHECK (mat)
+
+    *sz = REX_BLOCK_HEADER_SIZE + REX_MATERIAL_STANDARD_SIZE;
+
+    uint8_t *ptr = malloc (*sz);
+    memset (ptr, 0, *sz);
+    uint8_t *addr = ptr;
+
+    struct rex_block block = { .type = 5, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    ptr = rex_block_header_write (ptr, &block);
+
+    rexcpyr (&mat->ka_red, ptr, sizeof (float));
+    rexcpyr (&mat->ka_green, ptr, sizeof (float));
+    rexcpyr (&mat->ka_blue, ptr, sizeof (float));
+    rexcpyr (&mat->ka_textureId, ptr, sizeof (uint64_t));
+    rexcpyr (&mat->kd_red, ptr, sizeof (float));
+    rexcpyr (&mat->kd_green, ptr, sizeof (float));
+    rexcpyr (&mat->kd_blue, ptr, sizeof (float));
+    rexcpyr (&mat->kd_textureId, ptr, sizeof (uint64_t));
+    rexcpyr (&mat->ks_red, ptr, sizeof (float));
+    rexcpyr (&mat->ks_green, ptr, sizeof (float));
+    rexcpyr (&mat->ks_blue, ptr, sizeof (float));
+    rexcpyr (&mat->ks_textureId, ptr, sizeof (uint64_t));
+    rexcpyr (&mat->ns, ptr, sizeof (float));
+    rexcpyr (&mat->alpha, ptr, sizeof (float));
+
+    if (header)
+    {
+        header->nr_datablocks += 1;
+        header->sz_all_datablocks += *sz;
+    }
+    return addr;
+}
 
 uint8_t *rex_block_read_material (uint8_t *ptr, struct rex_material_standard *mat)
 {

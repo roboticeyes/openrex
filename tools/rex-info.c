@@ -22,6 +22,7 @@
 #include "rex-block-image.h"
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
+#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "rex-header.h"
 #include "status.h"
@@ -79,6 +80,7 @@ void rex_dump_mesh_block (struct rex_mesh *mesh)
     printf ("normals                %20s\n", (mesh->normals) ? "yes" : "no");
     printf ("texture coords         %20s\n", (mesh->tex_coords) ? "yes" : "no");
     printf ("vertex colors          %20s\n", (mesh->colors) ? "yes" : "no");
+    printf ("material id            %20lu\n", mesh->material_id);
 }
 
 int main (int argc, char **argv)
@@ -125,8 +127,17 @@ int main (int argc, char **argv)
         {
             struct rex_image *img = block.data;
             printf ("compression %31s\n", rex_image_types[img->compression]);
-            printf ("image size  %31d\n", block.sz);
+            printf ("image size  %31ld\n", block.sz - sizeof(uint32_t));
             FREE (img->data);
+            FREE (block.data);
+        }
+        else if (block.type == UnityPackage)
+        {
+            struct rex_unitypackage *unity = block.data;
+            printf ("target platform  %26d\n", unity->target_platform);
+            printf ("unity version    %26d\n", unity->unity_version);
+            printf ("package size     %26ld\n", block.sz - sizeof(uint16_t) - sizeof(uint16_t));
+            FREE (unity->data);
             FREE (block.data);
         }
     }
