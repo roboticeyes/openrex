@@ -117,7 +117,7 @@ START_TEST (test_rex_writer_mesh)
 }
 END_TEST
 
-START_TEST (test_rex_writer_lineset)
+START_TEST (test_rex_writer_lineset_and_text)
 {
     struct rex_header *header = rex_header_create();
 
@@ -129,15 +129,28 @@ START_TEST (test_rex_writer_lineset)
     ck_assert (header->sz_all_datablocks == 92);
     ck_assert (ls_ptr != NULL);
 
+    struct rex_text text =
+    {
+        .position = { 0.0, 1.0, 0.0 },
+        .font_size = 24.0f,
+        .data = "1 Meter"
+    };
+    long text_sz;
+    uint8_t *text_ptr = rex_block_write_text (1 /*id*/, header, &text, &text_sz);
+    ck_assert_msg (text_sz == 41, "actual %d", text_sz);
+    ck_assert (header->sz_all_datablocks == 133);
+    ck_assert (text_ptr != NULL);
+
     long header_sz;
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
     ck_assert (header_sz == 86);
 
-    const char *filename = "test_lineset.rex";
+    const char *filename = "test_lineset_and_text.rex";
     FILE *fp = fopen (filename, "wb");
 
     fwrite (header_ptr, header_sz, 1, fp);
     fwrite (ls_ptr, ls_sz, 1, fp);
+    fwrite (text_ptr, text_sz, 1, fp);
     fclose (fp);
 }
 END_TEST
@@ -207,7 +220,7 @@ Suite *test_suite()
     tc_io = tcase_create ("io");
     tcase_add_test (tc_io, test_rex_reader);
     tcase_add_test (tc_io, test_rex_writer_mesh);
-    tcase_add_test (tc_io, test_rex_writer_lineset);
+    tcase_add_test (tc_io, test_rex_writer_lineset_and_text);
 
     suite_add_tcase (s, tc_general);
     suite_add_tcase (s, tc_io);
