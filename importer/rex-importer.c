@@ -14,6 +14,7 @@
  * limitations under the License.*
  *
  * This tool takes a REX Unity Asset file and generates a REX file.
+ * This is a pre-liminary work, assimp does not properly support some formats!
  */
 #include "rex.h"
 
@@ -43,7 +44,6 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
 
     mesh->lod = mesh->max_lod = 0;
     snprintf (mesh->name, REX_MESH_NAME_MAX_SIZE - 1, "%s", input->mName.data);
-    mesh->material_id = 0; // TODO .. currently only using default material
     mesh->nr_vertices = input->mNumVertices;
     mesh->nr_triangles = input->mNumFaces;
 
@@ -81,7 +81,6 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
             mesh->normals[i + 2] = input->mNormals[j].z;
         }
     }
-#if 0
     if (input->mTextureCoords[0] != NULL)
     {
         mesh->tex_coords = malloc (sizeof (float) * 2 * mesh->nr_vertices);
@@ -91,8 +90,8 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
             mesh->tex_coords[i + 1] = input->mTextureCoords[0][j].y;
         }
     }
-#endif
-    // TODO currently not supported
+
+    // TODO currently not supported by assimp
     /* mesh->colors = malloc (sizeof (float) * 3 * mesh->nr_vertices); */
 
     mesh->triangles = malloc (sizeof (uint32_t) * 3 * mesh->nr_triangles);
@@ -108,47 +107,46 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
     }
 }
 
-void process_material (struct aiMaterial *mat)
+void convert_material (struct aiMaterial *mat, struct rex_material_standard *rex_mat)
 {
     struct aiString name;
     aiGetMaterialString (mat, AI_MATKEY_NAME, &name);
     printf ("Material Name:     %s\n", name.data);
 
-#if 0
-    int max = 1;
-    float x;
-    if (aiGetMaterialFloatArray (mat, AI_MATKEY_SHININESS, &x, &max) == AI_SUCCESS)
-        model->mat.specularPower = x;
-    if (aiGetMaterialFloatArray (mat, AI_MATKEY_SHININESS_STRENGTH, &x, &max) == AI_SUCCESS)
-        model->mat.specularIntensity = x;
-
-    printf ("POWER: %.2f, INTENSITY %.2f\n", model->mat.specularPower, model->mat.specularIntensity);
-
-    struct aiString path;
-
-    SDL_Surface *image;
-    if (texturePath != NULL)
-        mesh_textureFromFile (model, texturePath);
-    else if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_DIFFUSE, 0), &path) == AI_SUCCESS)
+    struct aiColor4D color;
+    if (aiGetMaterialColor (mat, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
     {
-        char filename[9 + path.length];
-        char r[] = "res/obj/";
-
-        int i;
-        for (i = 0; i < 8 + path.length; i++)
-        {
-            if (i < 8)
-                filename[i] = r[i];
-            else
-                filename[i] = path.data[i - 8];
-        }
-        filename[i] = 0;
-
-        mesh_textureFromFile (model, texturePath);
+        rex_mat->kd_red = color.r;
+        rex_mat->kd_green = color.g;
+        rex_mat->kd_blue = color.b;
     }
+
+    if (aiGetMaterialColor (mat, AI_MATKEY_COLOR_AMBIENT, &color) == AI_SUCCESS)
+    {
+        rex_mat->ka_red = color.r;
+        rex_mat->ka_green = color.g;
+        rex_mat->ka_blue = color.b;
+    }
+
+    if (aiGetMaterialColor (mat, AI_MATKEY_COLOR_SPECULAR, &color) == AI_SUCCESS)
+    {
+        rex_mat->ks_red = color.r;
+        rex_mat->ks_green = color.g;
+        rex_mat->ks_blue = color.b;
+    }
+
+    unsigned int max = 1;
+    float val;
+    if (aiGetMaterialFloatArray (mat, AI_MATKEY_OPACITY, &val, &max) == AI_SUCCESS)
+        rex_mat->alpha = val;
     else
-        return;
-#endif
+        rex_mat->alpha = 1.0f;
+
+    // TODO textures needs to be read out
+    rex_mat->ka_textureId = REX_NOT_SET;
+    rex_mat->kd_textureId = REX_NOT_SET;
+    rex_mat->ks_textureId = REX_NOT_SET;
+    rex_mat->ns = 0;
 }
 
 int main (int argc, char **argv)
@@ -161,9 +159,8 @@ int main (int argc, char **argv)
         usage (argv[0]);
 
     /* Import Assimp file and perform post-triangulation */
-    /* const struct aiScene *scene = aiImportFile (argv[1], aiProcess_Triangulate); */
     const struct aiScene *scene = aiImportFile (argv[1],
-            aiProcessPreset_TargetRealtime_Quality
+                                  aiProcessPreset_TargetRealtime_Quality
                                   /* aiProcess_JoinIdenticalVertices | */
                                   /* aiProcess_Triangulate | */
                                   /* aiProcess_SortByPType | */
@@ -176,44 +173,32 @@ int main (int argc, char **argv)
 
     struct rex_header *header = rex_header_create();
 
-    // write a default material
-    struct rex_material_standard mat =
-    {
-        .ka_red = 0,
-        .ka_green = 0,
-        .ka_blue = 0,
-        .ka_textureId = REX_NOT_SET,
-        .kd_red = 1,
-        .kd_green = 0,
-        .kd_blue = 0,
-        .kd_textureId = REX_NOT_SET,
-        .ks_red = 0,
-        .ks_green = 0,
-        .ks_blue = 0,
-        .ks_textureId = REX_NOT_SET,
-        .ns = 0,
-        .alpha = 1
-    };
-    long mat_sz;
-    uint8_t *mat_ptr = rex_block_write_material (0 /*id*/, header, &mat, &mat_sz);
-
     int i;
     uint8_t *mesh_data[scene->mNumMeshes];
-    long mesh_block_sizes[scene->mNumMeshes];
+    long mesh_data_sz[scene->mNumMeshes];
+    uint8_t *mat_data[scene->mNumMeshes];
+    long mat_data_sz[scene->mNumMeshes];
+
+    long block_id = 0;
 
     for (i = 0; i < scene->mNumMeshes; i++)
     {
         struct rex_mesh rex_mesh;
+        struct rex_material_standard rex_mat;
+
         rex_mesh_init (&rex_mesh);
-        process_material (scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]);
+
+        convert_material (scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], &rex_mat);
         convert_mesh (scene->mMeshes[i], &rex_mesh);
-        uint8_t *mesh_ptr = rex_block_write_mesh (i + 1 /*id*/, header, &rex_mesh, &mesh_block_sizes[i]);
+
+        uint8_t *mat_ptr = rex_block_write_material (block_id, header, &rex_mat, &mat_data_sz[i]);
+        rex_mesh.material_id = block_id;
+        block_id++;
+        uint8_t *mesh_ptr = rex_block_write_mesh (block_id, header, &rex_mesh, &mesh_data_sz[i]);
+        block_id++;
         rex_mesh_free (&rex_mesh);
         mesh_data[i] = mesh_ptr;
-
-        /* mesh_setData (scene->mMeshes[i], model); */
-        /* mesh_setMaterialData (scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], model, texturePath); */
-        /* list_insert (meshList, model); */
+        mat_data[i] = mat_ptr;
     }
 
     // write header blob
@@ -223,11 +208,13 @@ int main (int argc, char **argv)
     // write data to file
     FILE *fp = fopen (argv[2], "wb");
     fwrite (header_ptr, header_sz, 1, fp);
-    fwrite (mat_ptr, mat_sz, 1, fp);
 
-    // write all mesh data
+    // write all mesh and material data
     for (i = 0; i < scene->mNumMeshes; i++)
-        fwrite (mesh_data[i], mesh_block_sizes[i], 1, fp);
+    {
+        fwrite (mat_data[i], mat_data_sz[i], 1, fp);
+        fwrite (mesh_data[i], mesh_data_sz[i], 1, fp);
+    }
     fclose (fp);
     return 0;
 }
