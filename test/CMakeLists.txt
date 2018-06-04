@@ -23,10 +23,17 @@ add_test(
     COMMAND test_all
     )
 
+if (APPLE)
+target_link_libraries(test_all
+    openrex-static
+    check
+    pthread
+    m)
+else()
 target_link_libraries(test_all
     openrex-static
     check
     pthread
     m
-    rt
-    )
+    rt)
+endif()

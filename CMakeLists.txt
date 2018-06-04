@@ -15,7 +15,7 @@ endif("${CMAKE_BUILD_TYPE}" STREQUAL "")
 set(CMAKE_COLOR_MAKEFILE ON)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -DVERSION=\"${VERSION}\")
+add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -Wno-format-truncation -DVERSION=\"${VERSION}\")
 
 include(CMakeOptions.txt)
 
@@ -32,6 +32,10 @@ add_subdirectory(src)
 
 if (TOOLS)
     add_subdirectory(tools)
+endif()
+
+if (IMPORTER)
+    add_subdirectory(importer)
 endif()
 
 if (VIEWER)
@@ -57,4 +61,5 @@ message (STATUS "Summary build options:
     Build static libs: ${STATICLIBS}
     Build tools: ${TOOLS}
     Build viewer: ${VIEWER}
+    Build importer: ${IMPORTER}
     ")

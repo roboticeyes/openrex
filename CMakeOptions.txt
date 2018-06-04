@@ -1,4 +1,5 @@
 option ( STATICLIBS "Build static libraries" ON )
 option ( TOOLS "Build tools" ON )
 option ( VIEWER "Build viewer (requires GLEW and SDL2)" OFF )
+option ( IMPORTER "Build the importer (requires assimp)" OFF )
 option ( DOCUMENTATION "Build documentation with Doxygen" OFF )
