@@ -186,7 +186,7 @@ void render()
             else if (!mouse_moved && event.type == SDL_MOUSEMOTION)
                 mouse_moved = true;
             else if (event.type == SDL_MOUSEWHEEL)
-                set_zoom (-event.wheel.y*10.0);
+                set_zoom (-event.wheel.y * 10.0);
         }
 
         if (mouse_pressed && mouse_moved)
