@@ -33,8 +33,10 @@
 
 #define NEAR 0.1
 #define FAR 1000.0
-#define WIDTH 1918
-#define HEIGHT 2136
+#define WIDTH 800
+#define HEIGHT 600
+/* #define WIDTH 1918 */
+/* #define HEIGHT 2136 */
 #define FOV (45 * 0.0174533f)
 
 SDL_Window *win = NULL;

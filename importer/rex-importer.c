@@ -42,7 +42,7 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
     }
 
     mesh->lod = mesh->max_lod = 0;
-    snprintf (mesh->name, REX_MESH_NAME_MAX_SIZE - 1, input->mName.data);
+    snprintf (mesh->name, REX_MESH_NAME_MAX_SIZE - 1, "%s", input->mName.data);
     mesh->material_id = 0; // TODO .. currently only using default material
     mesh->nr_vertices = input->mNumVertices;
     mesh->nr_triangles = input->mNumFaces;

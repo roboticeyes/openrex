@@ -4,6 +4,8 @@ in vec3 color;
 in vec3 normal;
 in vec3 fragPos;
 
+out vec4 FragColor;
+
 uniform vec3 lightPos;
 
 void main(void) {
@@ -17,5 +19,5 @@ void main(void) {
     vec3 diffuse = diff * lightCol;
 
     vec3 result = (ambient + diffuse) * color;
-    gl_FragColor = vec4(result, 1.0); // full opaque
+    FragColor = vec4(result, 1.0); // full opaque
 }
