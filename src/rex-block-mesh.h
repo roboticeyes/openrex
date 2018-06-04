@@ -17,6 +17,7 @@
 
 #include <stdint.h>
 #include "rex-header.h"
+#include "global.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,8 +43,8 @@ struct rex_mesh
     float *colors;
     uint32_t *triangles;
 
-    char name[74];           // the mesh name (user-readable)
-    uint64_t material_id;    // id which refers to the corresponding material block in this file
+    char name[REX_MESH_NAME_MAX_SIZE]; // the mesh name (user-readable)
+    uint64_t material_id;     // id which refers to the corresponding material block in this file
 };
 
 /**

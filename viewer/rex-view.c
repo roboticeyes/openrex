@@ -89,6 +89,7 @@ int init()
 
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT);
+
     glEnable (GL_CULL_FACE);
     glEnable (GL_DEPTH_TEST);
     glCullFace (GL_BACK);
@@ -108,7 +109,7 @@ static void set_zoom (int value)
 {
     cam.distance += value;
     if (cam.distance < 1) cam.distance = 1;
-    if (cam.distance > 100) cam.distance = 100;
+    if (cam.distance > 1000) cam.distance = 1000;
     camera_update (&cam);
 }
 
@@ -183,7 +184,7 @@ void render()
             else if (!mouse_moved && event.type == SDL_MOUSEMOTION)
                 mouse_moved = true;
             else if (event.type == SDL_MOUSEWHEEL)
-                set_zoom (-event.wheel.y);
+                set_zoom (-event.wheel.y*10.0);
         }
 
         if (mouse_pressed && mouse_moved)

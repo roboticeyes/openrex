@@ -34,6 +34,10 @@ if (TOOLS)
     add_subdirectory(tools)
 endif()
 
+if (IMPORTER)
+    add_subdirectory(importer)
+endif()
+
 if (VIEWER)
     add_subdirectory(viewer)
 endif()
@@ -57,4 +61,5 @@ message (STATUS "Summary build options:
     Build static libs: ${STATICLIBS}
     Build tools: ${TOOLS}
     Build viewer: ${VIEWER}
+    Build importer: ${IMPORTER}
     ")
