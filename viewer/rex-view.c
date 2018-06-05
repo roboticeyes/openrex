@@ -20,16 +20,11 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "config.h"
-#include "global.h"
+#include "rex.h"
+#include "points.h"
 #include "mesh.h"
 #include "mesh_group.h"
-#include "rex-block-mesh.h"
-#include "rex-block.h"
-#include "rex-header.h"
 #include "shader.h"
-#include "status.h"
-#include "util.h"
 
 #define NEAR 0.1
 #define FAR 1000.0
@@ -46,6 +41,8 @@ struct mesh_group root;
 struct camera cam;
 mat4x4 projection;
 struct shader *s;
+// Point cloud
+struct points pointcloud;
 
 void usage (const char *exec)
 {
@@ -95,6 +92,7 @@ int init()
     glEnable (GL_CULL_FACE);
     glEnable (GL_DEPTH_TEST);
     glCullFace (GL_BACK);
+    glEnable(GL_PROGRAM_POINT_SIZE);
 
     SDL_GL_SwapWindow (win);
 
@@ -103,6 +101,7 @@ int init()
     mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, NEAR, FAR);
     vec3 initial_pos = {0.0, 0.0, 10.0};
     camera_init (&cam, initial_pos);
+    points_init(&pointcloud);
 
     return 0;
 }
@@ -211,6 +210,9 @@ void render()
         if (wireframe)
             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
+        // render point cloud
+        points_render(&pointcloud, s, &cam, projection);
+
         SDL_GL_SwapWindow (win);
         SDL_Delay (1);
     }
@@ -219,6 +221,7 @@ void render()
 void cleanup()
 {
     mesh_group_destroy (&root);
+    points_free(&pointcloud);
     SDL_GL_DeleteContext (ctx);
     SDL_DestroyWindow (win);
     SDL_Quit();
@@ -242,6 +245,18 @@ void loadmesh (struct rex_mesh *mesh)
     mesh_set_rex_mesh (m, mesh);
     mesh_group_add_mesh (&root, m);
     rex_mesh_free (mesh);
+}
+
+void loadpoints (struct rex_pointlist *plist)
+{
+    if (!plist)
+        return;
+
+
+    printf ("vertices               %20u\n", plist->nr_vertices);
+    printf ("colors                 %20u\n", plist->nr_colors);
+
+    points_set_rex_pointlist (&pointcloud, plist);
 }
 
 int loadrex (const char *file)
@@ -271,6 +286,12 @@ int loadrex (const char *file)
             FREE (block.data);
             meshes++;
         }
+        else if (block.type == PointList)
+        {
+            loadpoints(block.data);
+            FREE(block.data);
+            meshes++;
+        }
     }
 
     if (!meshes)
@@ -280,6 +301,8 @@ int loadrex (const char *file)
     }
 
     mesh_group_center (&root);
+    points_center(&pointcloud);
+
     return 0;
 }
 
