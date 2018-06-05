@@ -20,16 +20,11 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "config.h"
-#include "global.h"
+#include "rex.h"
+#include "points.h"
 #include "mesh.h"
 #include "mesh_group.h"
-#include "rex-block-mesh.h"
-#include "rex-block.h"
-#include "rex-header.h"
 #include "shader.h"
-#include "status.h"
-#include "util.h"
 
 #define NEAR 0.1
 #define FAR 1000.0
@@ -42,10 +37,19 @@
 SDL_Window *win = NULL;
 SDL_GLContext *ctx = NULL;
 
+// Geometry nodes
 struct mesh_group root;
+struct points pointcloud;
+
+int render_mesh = 0;
+int render_pointcloud = 0;
+
 struct camera cam;
 mat4x4 projection;
-struct shader *s;
+
+struct shader *mesh_shader;
+struct shader *pointcloud_shader;
+
 
 void usage (const char *exec)
 {
@@ -95,14 +99,17 @@ int init()
     glEnable (GL_CULL_FACE);
     glEnable (GL_DEPTH_TEST);
     glCullFace (GL_BACK);
+    glEnable (GL_PROGRAM_POINT_SIZE);
 
     SDL_GL_SwapWindow (win);
 
-    s = shader_load ("../viewer/shader.vert", "../viewer/shader.frag");
+    mesh_shader       = shader_load ("../viewer/mesh.vert", "../viewer/mesh.frag");
+    pointcloud_shader = shader_load ("../viewer/pointcloud.vert", "../viewer/pointcloud.frag");
 
     mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, NEAR, FAR);
     vec3 initial_pos = {0.0, 0.0, 10.0};
     camera_init (&cam, initial_pos);
+    points_init (&pointcloud);
 
     return 0;
 }
@@ -202,14 +209,24 @@ void render()
 
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // update camera position for light position
-        glUniform3fv (s->lightPos, 1, (GLfloat *) cam.pos);
+        // render mesh
+        if (render_mesh)
+        {
+            glUniform3fv (mesh_shader->lightPos, 1, (GLfloat *) cam.pos);
 
-        if (wireframe)
-            glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-        mesh_group_render (&root, s, &cam, projection);
-        if (wireframe)
-            glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+            if (wireframe)
+                glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+            mesh_group_render (&root, mesh_shader, &cam, projection);
+            if (wireframe)
+                glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+        }
+
+        // render point cloud
+        if (render_pointcloud)
+        {
+            glUniform3fv (pointcloud_shader->lightPos, 1, (GLfloat *) cam.pos);
+            points_render (&pointcloud, pointcloud_shader, &cam, projection);
+        }
 
         SDL_GL_SwapWindow (win);
         SDL_Delay (1);
@@ -219,6 +236,7 @@ void render()
 void cleanup()
 {
     mesh_group_destroy (&root);
+    points_free (&pointcloud);
     SDL_GL_DeleteContext (ctx);
     SDL_DestroyWindow (win);
     SDL_Quit();
@@ -244,6 +262,18 @@ void loadmesh (struct rex_mesh *mesh)
     rex_mesh_free (mesh);
 }
 
+void loadpoints (struct rex_pointlist *plist)
+{
+    if (!plist)
+        return;
+
+
+    printf ("vertices               %20u\n", plist->nr_vertices);
+    printf ("colors                 %20u\n", plist->nr_colors);
+
+    points_set_rex_pointlist (&pointcloud, plist);
+}
+
 int loadrex (const char *file)
 {
     long sz;
@@ -258,7 +288,7 @@ int loadrex (const char *file)
     struct rex_header header;
     uint8_t *ptr = rex_header_read (buf, &header);
 
-    int meshes = 0;
+    int geometry = 0;
     for (int i = 0; i < header.nr_datablocks; i++)
     {
         struct rex_block block;
@@ -269,17 +299,30 @@ int loadrex (const char *file)
             loadmesh (block.data);
             rex_mesh_free (block.data);
             FREE (block.data);
-            meshes++;
+            geometry++;
+            render_mesh = 1;
+        }
+        else if (block.type == PointList)
+        {
+            loadpoints (block.data);
+            FREE (block.data);
+            geometry++;
+            render_pointcloud = 1;
         }
     }
 
-    if (!meshes)
+    if (!geometry)
     {
         printf ("Nothing found to render, go home!\n");
         return 1;
     }
 
-    mesh_group_center (&root);
+    if (render_mesh)
+        mesh_group_center (&root);
+
+    if (render_pointcloud)
+        points_center (&pointcloud);
+
     return 0;
 }
 

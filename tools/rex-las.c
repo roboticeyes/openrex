@@ -30,7 +30,7 @@
 #define MAX_VAL (1000.0f)
 
 /* Current limitation for point list */
-#define MAX_POINTS (1000000)
+#define MAX_POINTS (100000)
 
 void usage (const char *exec)
 {
@@ -64,14 +64,33 @@ int main (int argc, char **argv)
     pointlist.positions = malloc (12 * pointlist.nr_vertices);
     pointlist.colors = malloc (12 * pointlist.nr_colors);
 
+    mat4x4 mat =
+    {
+        {1,  0,  0,  0},
+        {0,  0,  1,  0},
+        {0,  1,  0,  0},
+        {0,  0,  0,  1}
+    };
     while (las_read (las))
     {
         double x, y, z;
         if (c++ > max_points - 1)
             break;
-        x = las_x (las) - las->x_offset;
-        y = las_y (las) - las->y_offset;
-        z = las_z (las) - las->z_offset;
+
+        // transform into our REX internal coordinate system
+        vec4 r;
+        vec4 v =
+        {
+            las_x (las) - las->x_offset,
+            las_y (las) - las->y_offset,
+            las_z (las) - las->z_offset,
+            1.0f
+        };
+        mat4x4_mul_vec4 (r, mat, v);
+
+        x = r[0];
+        y = r[1];
+        z = r[2];
         LAS_NRGB col = las_colour (las);
         // x
         pointlist.positions[i] = x;
