@@ -84,6 +84,8 @@ void rex_dump_pointlist_block (struct rex_pointlist *p)
 
     /* for (int i = 0; i < p->nr_vertices * 3; i += 3) */
     /*     printf ("%f %f %f\n", p->positions[i], p->positions[i + 1], p->positions[i + 2]); */
+    /* for (int i = 0; i < p->nr_colors * 3; i += 3) */
+    /*     printf ("%f %f %f\n", p->colors[i], p->colors[i + 1], p->colors[i + 2]); */
 }
 
 void rex_dump_mesh_block (struct rex_mesh *mesh)

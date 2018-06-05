@@ -82,25 +82,38 @@ void generate_lineset (struct rex_lineset *ls)
     memcpy (&ls->vertices[12], v1, 12);
 }
 
-void generate_pointlist_no_color (struct rex_pointlist *p)
+void generate_pointlist (struct rex_pointlist *p, int color)
 {
     ck_assert (p != NULL);
-    rex_pointlist_init(p);
+    rex_pointlist_init (p);
 
     p->nr_vertices = 100;
-    p->nr_colors = 0;
 
     p->positions = malloc (12 * p->nr_vertices);
-    int i=0;
+    int i = 0;
     for (int y = 0; y < 10; y++)
     {
         for (int x = 0; x < 10; x++)
         {
-            p->positions[i++] = (float)x;
-            p->positions[i++] = (float)y;
+            p->positions[i++] = (float) x;
+            p->positions[i++] = (float) y;
             p->positions[i++] = 1.0f;
         }
     }
+
+    if (color)
+    {
+        p->nr_colors = 100;
+        p->colors = malloc (12 * p->nr_colors);
+        for (int i = 0; i < p->nr_colors * 3; i += 3)
+        {
+            p->colors[i] = 0.8f;
+            p->colors[i + 1] = 0.0f;
+            p->colors[i + 2] = 0.0f;
+        }
+    }
+    else
+        p->nr_colors = 0;
 }
 
 START_TEST (test_general)
@@ -109,12 +122,12 @@ START_TEST (test_general)
 }
 END_TEST
 
-START_TEST (test_rex_writer_pointlist)
+START_TEST (test_rex_writer_pointlist_nocolor)
 {
     struct rex_header *header = rex_header_create();
 
     struct rex_pointlist p;
-    generate_pointlist_no_color (&p);
+    generate_pointlist (&p, 0);
     long p_sz;
     uint8_t *p_ptr = rex_block_write_pointlist (0 /*id*/, header, &p, &p_sz);
     ck_assert (p_ptr != NULL);
@@ -122,7 +135,29 @@ START_TEST (test_rex_writer_pointlist)
     long header_sz;
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
-    const char *filename = "test_pointlist.rex";
+    const char *filename = "test_pointlist_nocolor.rex";
+    FILE *fp = fopen (filename, "wb");
+
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (p_ptr, p_sz, 1, fp);
+    fclose (fp);
+}
+END_TEST
+
+START_TEST (test_rex_writer_pointlist_color)
+{
+    struct rex_header *header = rex_header_create();
+
+    struct rex_pointlist p;
+    generate_pointlist (&p, 1);
+    long p_sz;
+    uint8_t *p_ptr = rex_block_write_pointlist (0 /*id*/, header, &p, &p_sz);
+    ck_assert (p_ptr != NULL);
+
+    long header_sz;
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
+
+    const char *filename = "test_pointlist_color.rex";
     FILE *fp = fopen (filename, "wb");
 
     fwrite (header_ptr, header_sz, 1, fp);
@@ -264,7 +299,8 @@ Suite *test_suite()
     tcase_add_test (tc_io, test_rex_reader);
     tcase_add_test (tc_io, test_rex_writer_mesh);
     tcase_add_test (tc_io, test_rex_writer_lineset_and_text);
-    tcase_add_test (tc_io, test_rex_writer_pointlist);
+    tcase_add_test (tc_io, test_rex_writer_pointlist_color);
+    tcase_add_test (tc_io, test_rex_writer_pointlist_nocolor);
 
     suite_add_tcase (s, tc_general);
     suite_add_tcase (s, tc_io);

@@ -71,8 +71,8 @@ uint8_t *rex_block_read_pointlist (uint8_t *ptr, struct rex_pointlist *plist)
     // read colors
     if (plist->nr_colors)
     {
-        plist->positions = malloc (plist->nr_colors * 12);
-        rexcpy (plist->positions, ptr, plist->nr_colors * 12);
+        plist->colors = malloc (plist->nr_colors * 12);
+        rexcpy (plist->colors, ptr, plist->nr_colors * 12);
     }
 
     return ptr;
