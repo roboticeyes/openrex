@@ -43,7 +43,7 @@ uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct re
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 3, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = Mesh, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
     // block data

@@ -30,7 +30,7 @@ uint8_t *rex_block_write_unitypackage (uint64_t id, struct rex_header *header, s
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 7, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = UnityPackage, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
     rexcpyr (&unity->target_platform, ptr, sizeof (uint16_t));

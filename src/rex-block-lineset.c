@@ -34,7 +34,7 @@ uint8_t *rex_block_write_lineset (uint64_t id, struct rex_header *header, struct
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 0, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = LineSet, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
     rexcpyr (&lineset->red, ptr, sizeof (float));

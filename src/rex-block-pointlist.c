@@ -33,7 +33,7 @@ uint8_t *rex_block_write_pointlist (uint64_t id, struct rex_header *header, stru
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 2, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = PointList, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
     rexcpyr (&plist->nr_vertices, ptr, sizeof (uint32_t));
@@ -41,6 +41,14 @@ uint8_t *rex_block_write_pointlist (uint64_t id, struct rex_header *header, stru
 
     if (plist->nr_vertices)
         rexcpyr (plist->positions, ptr, plist->nr_vertices * 12);
+
+    // check if length are matching
+    if (plist->nr_colors && plist->nr_colors != plist->nr_vertices)
+    {
+        warn ("Number of colors does not match number of vertices");
+        FREE (addr);
+        return NULL;
+    }
 
     if (plist->nr_colors)
         rexcpyr (plist->colors, ptr, plist->nr_colors * 12);
