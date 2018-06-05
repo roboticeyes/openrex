@@ -44,7 +44,6 @@ void points_free (struct points *p)
 
 static void points_load_vao (struct points *p, GLuint elem_size, GLfloat *vertices)
 {
-    printf("Binding VAO %d\n", p->vao);
     glBindVertexArray (p->vao);
 
     glBindBuffer (GL_ARRAY_BUFFER, p->vbo);
