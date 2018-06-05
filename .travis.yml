@@ -1,14 +1,10 @@
 language: c
-env:
-    CC=gcc-4.9 && CXX=g++-4.9
+compiler: clang
 script:
     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DVIEWER=On .. && cmake --build . && ctest
 addons:
     apt:
-        sources:
-            - ubuntu-toolchain-r-test
         packages:
             - libglew-dev
             - libsdl2-dev
             - check
-            - g++-4.9
