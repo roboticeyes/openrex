@@ -29,7 +29,7 @@ uint8_t *rex_block_write_material (uint64_t id, struct rex_header *header, struc
     memset (ptr, 0, *sz);
     uint8_t *addr = ptr;
 
-    struct rex_block block = { .type = 5, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
+    struct rex_block block = { .type = MaterialStandard, .version = 1, .sz = *sz - REX_BLOCK_HEADER_SIZE, .id = id };
     ptr = rex_block_header_write (ptr, &block);
 
     rexcpyr (&mat->ka_red, ptr, sizeof (float));

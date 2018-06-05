@@ -92,3 +92,10 @@ Your contribution is welcome. Here are some ideas:
 * Make sure to format the code according to our style (see above)
 * Check your code for memory leaks using `valgrind`
 * Your code should run cross-platform (Windows/Linux/Mac)
+
+## Contributions
+
+* [linmath.h](https://github.com/datenwolf/linmath.h) for linear math operations
+* [slash.h](https://bitbucket.org/busstop/helios) for reading LAS files
+
+Please see the copyright notice in the according files.

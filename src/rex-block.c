@@ -21,6 +21,7 @@
 #include "rex-block-lineset.h"
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
+#include "rex-block-pointlist.h"
 #include "rex-block-text.h"
 #include "rex-block-unitypackage.h"
 #include "rex-block.h"
@@ -65,10 +66,13 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
                 block->data = text;
                 break;
             }
-        case Vertex:
-            warn ("Vertex is not yet implemented");
-            return  data_start + block->sz;
-            break;
+        case PointList:
+            {
+                struct rex_pointlist *p = malloc (sizeof (struct rex_pointlist));
+                ptr = rex_block_read_pointlist (ptr, p);
+                block->data = p;
+                break;
+            }
         case Mesh:
             {
                 struct rex_mesh *mesh = malloc (sizeof (struct rex_mesh));

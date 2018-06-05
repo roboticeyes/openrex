@@ -1,6 +1,7 @@
 language: c
+compiler: gcc
 script:
-    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DVIEWER=On .. && cmake --build . && ctest
 addons:
     apt:
         packages:
