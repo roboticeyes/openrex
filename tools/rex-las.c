@@ -30,7 +30,7 @@
 #define MAX_VAL (1000.0f)
 
 /* Current limitation for point list */
-#define MAX_POINTS (1000000)
+#define MAX_POINTS (100000)
 
 void usage (const char *exec)
 {

@@ -15,6 +15,7 @@ add_executable(rex-view
     rex-view.c
     shader.c
     mesh.c
+    points.c
     mesh_group.c
     )
 
