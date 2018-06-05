@@ -82,9 +82,52 @@ void generate_lineset (struct rex_lineset *ls)
     memcpy (&ls->vertices[12], v1, 12);
 }
 
+void generate_pointlist_no_color (struct rex_pointlist *p)
+{
+    ck_assert (p != NULL);
+    rex_pointlist_init(p);
+
+    p->nr_vertices = 100;
+    p->nr_colors = 0;
+
+    p->positions = malloc (12 * p->nr_vertices);
+    int i=0;
+    for (int y = 0; y < 10; y++)
+    {
+        for (int x = 0; x < 10; x++)
+        {
+            p->positions[i++] = (float)x;
+            p->positions[i++] = (float)y;
+            p->positions[i++] = 1.0f;
+        }
+    }
+}
+
 START_TEST (test_general)
 {
     ck_assert (strcmp (rex_name, "REX") == 0);
+}
+END_TEST
+
+START_TEST (test_rex_writer_pointlist)
+{
+    struct rex_header *header = rex_header_create();
+
+    struct rex_pointlist p;
+    generate_pointlist_no_color (&p);
+    long p_sz;
+    uint8_t *p_ptr = rex_block_write_pointlist (0 /*id*/, header, &p, &p_sz);
+    ck_assert (p_ptr != NULL);
+
+    long header_sz;
+    uint8_t *header_ptr = rex_header_write (header, &header_sz);
+
+    const char *filename = "test_pointlist.rex";
+    FILE *fp = fopen (filename, "wb");
+
+    fwrite (header_ptr, header_sz, 1, fp);
+    fwrite (p_ptr, p_sz, 1, fp);
+    fclose (fp);
 }
 END_TEST
 
@@ -221,6 +264,7 @@ Suite *test_suite()
     tcase_add_test (tc_io, test_rex_reader);
     tcase_add_test (tc_io, test_rex_writer_mesh);
     tcase_add_test (tc_io, test_rex_writer_lineset_and_text);
+    tcase_add_test (tc_io, test_rex_writer_pointlist);
 
     suite_add_tcase (s, tc_general);
     suite_add_tcase (s, tc_io);

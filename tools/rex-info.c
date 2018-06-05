@@ -20,7 +20,7 @@
 #include "rex.h"
 
 static const char *rex_data_types[]
-    = { "LineSet", "Text", "Vertex", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
+    = { "LineSet", "Text", "PointList", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
 
 static const char *rex_image_types[] = { "Raw", "Jpg", "Png" };
 
@@ -74,6 +74,18 @@ void rex_dump_lineset_block (struct rex_lineset *ls)
     /*     printf ("%f %f %f\n", ls->vertices[i], ls->vertices[i + 1], ls->vertices[i + 2]); */
 }
 
+void rex_dump_pointlist_block (struct rex_pointlist *p)
+{
+    if (!p)
+        return;
+
+    printf ("nr_positions           %20d\n", p->nr_vertices);
+    printf ("nr_colors              %20d\n", p->nr_colors);
+
+    /* for (int i = 0; i < p->nr_vertices * 3; i += 3) */
+    /*     printf ("%f %f %f\n", p->positions[i], p->positions[i + 1], p->positions[i + 2]); */
+}
+
 void rex_dump_mesh_block (struct rex_mesh *mesh)
 {
     if (!mesh)
@@ -122,6 +134,13 @@ int main (int argc, char **argv)
             struct rex_lineset *ls = block.data;
             rex_dump_lineset_block (ls);
             FREE (ls->vertices);
+            FREE (block.data);
+        }
+        else if (block.type == PointList)
+        {
+            struct rex_pointlist *p = block.data;
+            rex_dump_pointlist_block (p);
+            FREE (p->positions);
             FREE (block.data);
         }
         else if (block.type == Text)

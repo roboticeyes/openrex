@@ -25,7 +25,7 @@ enum rex_block_type
 {
     LineSet          = 0,
     Text             = 1,
-    Vertex           = 2,
+    PointList        = 2,
     Mesh             = 3,
     Image            = 4,
     MaterialStandard = 5,
