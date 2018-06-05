@@ -12,6 +12,10 @@ This repository contains
 * native reader/writer (in progress, contribution welcome!)
 * tools for working with REX files
 
+<p align="center">
+<img src="doc/teaser.jpg" />
+</p>
+
 # Development
 
 In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and
