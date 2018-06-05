@@ -3,7 +3,10 @@ script:
     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest
 addons:
     apt:
+        sources:
+            - ubuntu-toolchain-r-test
         packages:
             - libglew-dev
             - libsdl2-dev
             - check
+            - gcc-4.9
