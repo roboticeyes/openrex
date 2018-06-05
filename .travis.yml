@@ -10,3 +10,5 @@ addons:
             - libsdl2-dev
             - check
             - gcc-4.9
+env:
+    CC=gcc-4.9 && CXX=g++-4.9
