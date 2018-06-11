@@ -15,6 +15,21 @@
  */
 #pragma once
 
+/**
+ * \file
+ * \brief REX image block storing any image or texture data
+ *
+ * The Image data block can either contain an arbitrary image or a texture for a given 3D mesh. If a texture is stored,
+ * the 3D mesh will refer to it by the `dataId`.  The data block size in the header refers to the total size of
+ * this block (compression + data_size).
+ *
+ * | **size [bytes]** | **name**    | **type** | **description**                        |
+ * |------------------|-------------|----------|----------------------------------------|
+ * | 4                | compression | uint32_t | id for supported compression algorithm |
+ * |                  | data        | bytes    | data of the file content               |
+ *
+ */
+
 #include <stdint.h>
 #include "rex-header.h"
 
@@ -23,7 +38,8 @@ extern "C" {
 #endif
 
 /**
- * This is a list of supported image compressions
+ * This is a list of supported image compressions. The compression can be used
+ * to get the correct encoding format of the image.
  */
 enum rex_image_compression
 {
@@ -32,23 +48,36 @@ enum rex_image_compression
     Png = 2
 };
 
+/**
+ * Stores all the properties for a REX image
+ */
 struct rex_image
 {
-    uint32_t compression;
-    uint8_t *data;
-    uint64_t sz; // size in bytes of the image
+    uint32_t compression; //!< stores the rex_image_compression
+    uint8_t *data;        //!< the binary data of the image
+    uint64_t sz;          //!< the size of the image data stored in data
 };
 
-/*
+/**
  * Reads an image block from the given pointer. This call will allocate memory
  * for the image. The caller is responsible to free this memory! The sz parameter
  * is required for the number of bytes to read.
+ *
+ * \param ptr pointer to the block start
+ * \param img the rex_image structure which gets filled
+ * \return the pointer to the memory block after the rex_image block
  */
 uint8_t *rex_block_read_image (uint8_t *ptr, struct rex_image *img);
 
 /**
- * Writes an imagel block to binary. Memory will be allocated and the caller
- * must take care of releasing the memory. The rex_header can be NULL.
+ * Writes an image block to a binary stream. Memory will be allocated and the caller
+ * must take care of releasing the memory.
+ *
+ * \param id the data block ID
+ * \param header the REX header which gets modified according the the new block, can be NULL
+ * \param img the image which should get serialized
+ * \param sz the total size of the of the data block which is returned
+ * \return a pointer to the data block
  */
 uint8_t *rex_block_write_image (uint64_t id, struct rex_header *header, struct rex_image *img, long *sz);
 

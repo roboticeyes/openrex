@@ -15,6 +15,11 @@
  */
 #pragma once
 
+/**
+ * \file
+ * \brief Various utility functions
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,12 +29,22 @@
 
 #define LEN(x) (sizeof (x) / sizeof *(x))
 
+/**
+ * Dumps a warning to stderr
+ */
 void warn (const char *, ...);
+
+/**
+ * Dumps the error to stderr and exits the program
+ * This should only be called if some severe errors occur
+ */
 void die (const char *, ...);
 
 /**
  * Reads the content of a file as ASCII text. The caller must make sure
  * that the memory gets freed!
+ *
+ * \param filename the absolute path to the file
  */
 char *read_file_ascii (const char *filename);
 
@@ -37,6 +52,9 @@ char *read_file_ascii (const char *filename);
  * Reads the content of a file as binary blob. The caller must make sure
  * that the memory gets freed! The total size of allocated memory is returned
  * as sz.
+ *
+ * \param filename the absolute path to the file
+ * \param sz the size of the allocated memory
  */
 uint8_t *read_file_binary (const char *filename, long *sz);
 
@@ -70,7 +88,7 @@ if (buf == NULL) \
         return REX_ERROR_FILE_WRITE; \
 }
 
-/*
+/**
  * Copies the src into the destination with the given size sz
  * and advances the src pointer.
  */
@@ -80,7 +98,7 @@ if (buf == NULL) \
     src += sz; \
 }
 
-/*
+/**
  * Copies the src into the destination with the given size sz
  * and advances the dest pointer.
  */

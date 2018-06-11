@@ -1,25 +1,28 @@
 <p align="center">
-<img src="doc/openrex.png" />
+<img src="https://raw.githubusercontent.com/roboticeyes/openrex/master/doc/openrex.png"/>
 </p>
 
 [![Build Status](https://travis-ci.org/roboticeyes/openrex.svg?branch=master)](https://travis-ci.org/roboticeyes/openrex)
 
-OpenREX provides the specification for a binary file format which is used for the Robotic Eyes REX platform.
+OpenREX is the open source toolkit for the <a href="https://rex.robotic-eyes.com">REX platform</a>. This repository
+contains all the necessary ingredients supporting REX develpers for getting started with REX.
 
-This repository contains
+REX is an Augmented Reality platform enabling users to simple embed your 3D content into the real world. REX is
+cross-platform and supports a variety of different devices (e.g. iPhone, Android phones, Microsoft HoloLens). Once the
+3D content is ingested, the models can easily be viewed by any devices using our free app <a
+href="https://www.robotic-eyes.com/download">REX Go</a> and <a href="https://www.robotic-eyes.com/download">REX Holographic</a>
 
-* the [complete specification](doc/rex-spec-v1.md)
-* native reader/writer (in progress, contribution welcome!)
-* tools for working with REX files
+This repository contains the <a href="https://github.com/roboticeyes/openrex/blob/master/doc/rex-spec-v1.md">REX format specification</a>,
+native reader/writer written in C, tools for working with REX files, and debug viewer for displaying REX files.
 
 <p align="center">
-<img src="doc/teaser.jpg" />
+<img src="https://raw.githubusercontent.com/roboticeyes/openrex/master/doc/teaser.jpg" />
 </p>
 
-# Development
+# Getting started
 
-In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and
-`cmake` installed on your system. The code should work for Linux, MacOS, and Windows.
+In order to compile the code, you need at least a C11 compiler (e.g. gcc, clang) and `cmake` installed on your system.
+The code should work for Linux, MacOS, and Windows.
 
 For compiling all tests, you also need to install [check](https://github.com/libcheck/check). You can simply use your
 package manager to install the test library (e.g. `apt-get install check`).
@@ -39,7 +42,12 @@ make
 make install
 ```
 
-## Additional tools
+## Documentation
+
+The code uses <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> as documentation engine. To generate the documentation install doxygen and execute `doxygen` in
+the project's root folder. The output will be stored under `doc/doxygen`.
+
+## REX tools
 
 ### Debug viewer
 
@@ -67,7 +75,6 @@ If you plan a contribution, please make sure to format your code according to th
 
 ```
 --style=allman --indent=spaces=4 --align-pointer=name --align-reference=name --indent-switches --indent-cases --pad-oper --pad-paren-out --pad-header --unpad-paren --indent-namespaces --remove-braces --convert-tabs --mode=c
-
 ```
 
 ## Windows build

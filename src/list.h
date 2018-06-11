@@ -15,6 +15,11 @@
  */
 #pragma once
 
+/**
+ * \file
+ * \brief Simple linked list storing an arbitrary payload
+ */
+
 struct node
 {
     void *data;
