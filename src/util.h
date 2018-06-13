@@ -58,6 +58,12 @@ char *read_file_ascii (const char *filename);
  */
 uint8_t *read_file_binary (const char *filename, long *sz);
 
+/**
+ * Checks if a directory exists, if so, return != 0.
+ * If it does not exist, return 0
+ */
+int dir_exists (const char *);
+
 #define FP_CHECK(fp) \
 if (!fp) \
 { \

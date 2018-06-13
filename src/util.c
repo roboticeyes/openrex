@@ -58,6 +58,14 @@ void die (const char *fmt, ...)
     exit (1);
 }
 
+int dir_exists (const char *folder)
+{
+    struct stat sb;
+    if (stat (folder, &sb) == 0 && S_ISDIR (sb.st_mode))
+        return 1;
+    return 0;
+}
+
 char *read_file_ascii (const char *filename)
 {
     FILE *f = fopen (filename, "rt");
