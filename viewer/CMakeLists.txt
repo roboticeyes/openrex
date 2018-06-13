@@ -12,11 +12,19 @@ find_package(GLEW REQUIRED)
 # Target
 add_executable(rex-view
     camera.c
+    engine.c
+    mesh.c
+    mesh_group.c
+    points.c
     rex-view.c
     shader.c
-    mesh.c
-    points.c
-    mesh_group.c
+    )
+
+set(shaders
+    shaders/mesh.fs
+    shaders/mesh.vs
+    shaders/pointcloud.fs
+    shaders/pointcloud.vs
     )
 
 # Linkage
@@ -37,3 +45,9 @@ include_directories(rex-view
 
 install(TARGETS rex-view
     RUNTIME DESTINATION bin)
+
+
+install (FILES ${shaders}
+    DESTINATION share/${PROJECT_NAME}
+    )
+

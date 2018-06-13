@@ -18,12 +18,19 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+
 #include <string.h>
+#ifndef WIN32
+#include <libgen.h>
+#include <unistd.h>
+#endif
 
 #include "rex.h"
-#include "points.h"
+
+#include "engine.h"
 #include "mesh.h"
 #include "mesh_group.h"
+#include "points.h"
 #include "shader.h"
 
 #define NEAR 0.1
@@ -50,10 +57,35 @@ mat4x4 projection;
 struct shader *mesh_shader;
 struct shader *pointcloud_shader;
 
+// This is the search path for the resources
+char resource_search_path[256];
 
 void usage (const char *exec)
 {
     die ("usage: %s filename.rex\n", exec);
+}
+
+char *get_valid_resource_path()
+{
+#ifndef WIN32
+    // get the path of the executable
+    char binary_dir[256];
+    readlink ("/proc/self/exe", binary_dir, 256);
+
+    // check if we are in development mode
+    sprintf (resource_search_path, "%s/../../viewer/shaders", dirname (binary_dir));
+    if (dir_exists (resource_search_path))
+        return resource_search_path;
+
+    // take global path
+    sprintf (resource_search_path, "%s/share/libopenrex", dirname (binary_dir));
+    if (dir_exists (resource_search_path))
+        return resource_search_path;
+#else
+    // TODO find a nice way to get the resource path
+    sprintf (resource_search_path, ".\\");
+#endif
+    return "";
 }
 
 int init()
@@ -103,8 +135,8 @@ int init()
 
     SDL_GL_SwapWindow (win);
 
-    mesh_shader       = shader_load ("../viewer/mesh.vert", "../viewer/mesh.frag");
-    pointcloud_shader = shader_load ("../viewer/pointcloud.vert", "../viewer/pointcloud.frag");
+    mesh_shader       = shader_load ("../viewer/shaders/mesh.vs", "../viewer/shaders/mesh.fs");
+    pointcloud_shader = shader_load ("../viewer/shaders/pointcloud.vs", "../viewer/shaders/pointcloud.fs");
 
     mat4x4_perspective (projection, FOV, (float) WIDTH / (float) HEIGHT, NEAR, FAR);
     vec3 initial_pos = {0.0, 0.0, 10.0};
@@ -132,6 +164,7 @@ void render()
 
     while (loop)
     {
+        frame_begin();
         SDL_Event event;
         while (SDL_PollEvent (&event))
         {
@@ -230,6 +263,9 @@ void render()
 
         SDL_GL_SwapWindow (win);
         SDL_Delay (1);
+
+        frame_end();
+        SDL_SetWindowTitle (win, frame_rate_string());
     }
 }
 
@@ -266,7 +302,6 @@ void loadpoints (struct rex_pointlist *plist)
 {
     if (!plist)
         return;
-
 
     printf ("vertices               %20u\n", plist->nr_vertices);
     printf ("colors                 %20u\n", plist->nr_colors);
@@ -331,6 +366,9 @@ int main (int argc, char **argv)
     printf ("═══════════════════════════════════════════\n");
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
+
+    char *resource_path = get_valid_resource_path();
+    printf ("Resource path: %s\n", resource_path);
 
     if (argc < 2)
         usage (argv[0]);
