@@ -15,28 +15,10 @@
  */
 #pragma once
 
-#include <GL/glew.h>
-#include <stdbool.h>
-
 #include "linmath.h"
+#include "camera.h"
+#include "shader.h"
 
-/**
-    This function will load a shader from the disk, compile, attach and then link it.
-
-    @param vs vertex shader file
-    @param fs fragment shader file
-    @return allocated shader struct (NULL if not successful)
-*/
-
-struct shader
-{
-    GLuint program;
-    GLuint projection;
-    GLuint view;
-    GLuint model;
-    GLuint lightPos;
-    GLuint rgb;
-};
-
-struct shader *shader_load (const char *resource_path, const char *vs, const char *fs);
-void shader_use (struct shader *s);
+void axis_init();
+void axis_render (struct shader *s, struct camera *cam, mat4x4 projection);
+void axis_destroy();

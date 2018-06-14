@@ -16,27 +16,28 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <stdbool.h>
 
+#include "camera.h"
+#include "rex-block-lineset.h"
 #include "linmath.h"
+#include "shader.h"
 
 /**
-    This function will load a shader from the disk, compile, attach and then link it.
-
-    @param vs vertex shader file
-    @param fs fragment shader file
-    @return allocated shader struct (NULL if not successful)
-*/
-
-struct shader
+ * This is the data for a polyline
+ */
+struct polyline
 {
-    GLuint program;
-    GLuint projection;
-    GLuint view;
-    GLuint model;
-    GLuint lightPos;
-    GLuint rgb;
+    GLuint vao;
+    GLuint vbo; // vertex data
+    GLuint nr_vertices;
+    mat4x4 model; // model matrix
+    mat4x4 transform;
+    vec3 color;
 };
 
-struct shader *shader_load (const char *resource_path, const char *vs, const char *fs);
-void shader_use (struct shader *s);
+void polyline_init (struct polyline *);
+void polyline_free (struct polyline *);
+
+void polyline_render (struct polyline *, struct shader *, struct camera *, mat4x4 projection);
+
+void polyline_set_rex_lineset (struct polyline *p, struct rex_lineset *data);
