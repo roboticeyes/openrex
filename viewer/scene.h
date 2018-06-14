@@ -26,6 +26,7 @@
 #include "mesh.h"
 #include "mesh_group.h"
 #include "points.h"
+#include "polyline.h"
 
 enum render_mode
 {
@@ -41,7 +42,6 @@ struct scene
     struct mesh_group meshes;
     struct points pointcloud;
     struct camera cam;
-
 };
 
 struct scene *scene_create (const char *);

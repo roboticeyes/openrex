@@ -15,10 +15,12 @@
  */
 
 #include "scene.h"
+#include "axis.h"
 
 // Shaders are currently fixed
 struct shader *shader_mesh;
 struct shader *shader_pointcloud;
+struct shader *shader_lines;
 
 enum render_mode mode = SOLID;
 
@@ -42,6 +44,9 @@ struct scene *scene_create (const char *resource_path)
     // Initialize/load shaders
     shader_mesh       = shader_load (resource_path, "mesh.vs", "mesh.fs");
     shader_pointcloud = shader_load (resource_path, "pointcloud.vs", "pointcloud.fs");
+    shader_lines      = shader_load (resource_path, "polyline.vs", "polyline.fs");
+
+    axis_init();
 
     return s;
 }
@@ -50,6 +55,7 @@ void scene_destroy (struct scene *s)
 {
     mesh_group_destroy (&s->meshes);
     points_free (&s->pointcloud);
+    axis_destroy();
 }
 
 void scene_update (struct scene *s)
@@ -59,6 +65,9 @@ void scene_update (struct scene *s)
 
 void scene_render (struct scene *s, mat4x4 projection)
 {
+    // Axis
+    axis_render (shader_lines, &s->cam, projection);
+
     if (mode == WIREFRAME)
         glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
 

@@ -11,8 +11,10 @@ find_package(GLEW REQUIRED)
 
 # Target
 add_executable(rex-view
+    axis.c
     camera.c
     gameengine.c
+    polyline.c
     mesh.c
     mesh_group.c
     points.c
