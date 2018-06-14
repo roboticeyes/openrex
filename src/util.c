@@ -99,3 +99,13 @@ uint8_t *read_file_binary (const char *filename, long *sz)
     fclose (f);
     return buffer;
 }
+
+inline char separator()
+{
+#ifdef WIN32
+    return '\\';
+#else
+    return '/';
+#endif
+}
+

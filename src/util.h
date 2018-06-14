@@ -113,3 +113,8 @@ if (buf == NULL) \
     memcpy(dest, src, sz); \
     dest += sz; \
 }
+
+/**
+ * Path separator which handles the platform
+ */
+char separator();

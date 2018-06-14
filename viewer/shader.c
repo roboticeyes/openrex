@@ -19,19 +19,23 @@
 #include "shader.h"
 #include "util.h"
 
-struct shader *shader_load (const char *vs, const char *fs)
+struct shader *shader_load (const char *resource_path, const char *vs, const char *fs)
 {
-    char *vertex_source = read_file_ascii (vs);
+    char filename[1024];
+
+    sprintf (filename, "%s%c%s", resource_path, separator(), vs);
+    char *vertex_source = read_file_ascii (filename);
     if (!vertex_source)
     {
-        warn ("Failed to open file %s\n", vs);
+        warn ("Failed to open file %s\n", filename);
         return NULL;
     }
 
-    char *fragment_source = read_file_ascii (fs);
+    sprintf (filename, "%s%c%s", resource_path, separator(), fs);
+    char *fragment_source = read_file_ascii (filename);
     if (!fragment_source)
     {
-        warn ("Failed to open file %s\n", fs);
+        warn ("Failed to open file %s\n", filename);
         return NULL;
     }
 

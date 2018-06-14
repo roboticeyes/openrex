@@ -37,5 +37,5 @@ struct shader
     GLuint lightPos;
 };
 
-struct shader *shader_load (const char *vs, const char *fs);
+struct shader *shader_load (const char *resource_path, const char *vs, const char *fs);
 void shader_use (struct shader *s);
