@@ -15,7 +15,13 @@
  */
 #pragma once
 
-void frame_begin();
-void frame_end();
-char* frame_rate_string();
+/**
+ * \file
+ * \brief The main game engine which hosts the main loop
+ */
 
+#include "scene.h"
+
+void gameengine_init();
+void gameengine_start (struct scene *s);
+void gameengine_cleanup();
