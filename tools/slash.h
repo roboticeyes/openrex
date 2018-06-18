@@ -148,7 +148,7 @@ gcc -DTESTslash -W -Wall -pedantic -Wno-long-long -O2 -x c -o slash slash.h
 #endif
 
 /** breiting - if compiled with Debug and C11, inline is not working and spits out a linker error */
-#ifdef DEBUG
+#if defined DEBUG || defined __APPLE__
 #define inline
 #endif
 
