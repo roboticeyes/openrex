@@ -104,5 +104,6 @@ Your contribution is welcome. Here are some ideas:
 
 * [linmath.h](https://github.com/datenwolf/linmath.h) for linear math operations
 * [slash.h](https://bitbucket.org/busstop/helios) for reading LAS files
+* [argparse](https://github.com/cofyc/argparse) for parsing command line arguments
 
 Please see the copyright notice in the according files.

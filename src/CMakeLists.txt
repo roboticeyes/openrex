@@ -1,4 +1,5 @@
 set(c_sources
+    ${CMAKE_CURRENT_SOURCE_DIR}/argparse.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-header.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block.c
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block-image.c
@@ -13,6 +14,7 @@ set(c_sources
     )
 
 set(c_headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/argparse.h
     ${CMAKE_CURRENT_SOURCE_DIR}/config.h
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-header.h
     ${CMAKE_CURRENT_SOURCE_DIR}/rex-block.h

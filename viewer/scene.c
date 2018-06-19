@@ -90,8 +90,14 @@ void scene_render (struct scene *s, mat4x4 projection)
 void scene_add_mesh (struct scene *s, struct mesh *m)
 {
     mesh_group_add_mesh (&s->meshes, m);
-    mesh_group_center (&s->meshes);
     has_mesh = 1;
+}
+
+void scene_center(struct scene *s)
+{
+    int center_height = 0; // do not center the height value (z)
+    mesh_group_center (&s->meshes, center_height);
+    points_center (&s->pointcloud, center_height);
 }
 
 void scene_set_render_mode (enum render_mode m)
@@ -101,6 +107,5 @@ void scene_set_render_mode (enum render_mode m)
 
 void scene_activate_pointcloud (struct scene *s)
 {
-    points_center (&s->pointcloud);
     has_pointcloud = 1;
 }
