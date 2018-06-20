@@ -33,7 +33,7 @@ The geometry in REX is defined by a right-handed 3D
 [cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
 
 <p align="center">
-<img src="https://commons.wikimedia.org/wiki/File:Right-handed_coordinate_system_(z_to_front).png"/>
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/right-handed.png"/>
 </p>
 
 Please make sure that your input geometry is tranformed according to our coordinate system specification. As an example,
