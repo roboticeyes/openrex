@@ -47,14 +47,9 @@ The triangle orientation is required to be counter-clockwise (CCW), see the exam
 simple example which shows the `coordsys.obj` file from the `data` directory in the viewer, and in real world with the
 REX Go app.
 
- <div class="row">
-  <div class="column">
-    <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png" alt="Viewer" style="width:100%">
-  </div>
-  <div class="column">
-    <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example_realworld.png" alt="Real-world" style="width:100%">
-  </div>
-</div>
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
+</p>
 
 ## File layout
 
