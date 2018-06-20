@@ -182,6 +182,14 @@ void convert_material (struct aiMaterial *mat, struct rex_material_standard *rex
     else
         rex_mat->alpha = 1.0f;
 
+    struct aiString path;
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_DIFFUSE, 0), &path) == AI_SUCCESS)
+        printf ("Found diffuse texture: %s\n", path.data);
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_AMBIENT, 0), &path) == AI_SUCCESS)
+        printf ("Found ambient texture: %s\n", path.data);
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_SPECULAR, 0), &path) == AI_SUCCESS)
+        printf ("Found specular texture: %s\n", path.data);
+
     // TODO textures needs to be read out
     rex_mat->ka_textureId = REX_NOT_SET;
     rex_mat->kd_textureId = REX_NOT_SET;
