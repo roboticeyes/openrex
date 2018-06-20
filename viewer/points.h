@@ -39,7 +39,7 @@ struct points
 void points_init (struct points *);
 void points_free (struct points *);
 
-void points_center (struct points *p);
+void points_center (struct points *p, int center_height);
 
 void points_render (struct points *, struct shader *, struct camera *, mat4x4 projection);
 

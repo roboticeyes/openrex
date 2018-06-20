@@ -57,3 +57,9 @@ void scene_add_mesh (struct scene *s, struct mesh *m);
 void scene_set_render_mode (enum render_mode m);
 
 void scene_activate_pointcloud (struct scene *s);
+
+/**
+ * Centers the complete scene ignoring the height information
+ */
+void scene_center(struct scene *s);
+

@@ -13,20 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.*
  *
- * This tool takes a REX Unity Asset file and generates a REX file.
+ * This tool uses Assimp to convert geometry into the REX file format
  * This is a pre-liminary work, assimp does not properly support some formats!
  */
 #include "rex.h"
+#include "argparse.h"
 
 #include <assimp/cimport.h>        // Plain-C interface
 #include <assimp/postprocess.h>    // Post processing flags
 #include <assimp/scene.h>          // Output data structure
+#include <stdbool.h>
 #include <string.h>
 
-void usage (const char *exec)
+struct settings_s
 {
-    die ("usage: %s inputfile outputfile\n", exec);
-}
+    char *input;
+    char *output;
+    bool transform;
+    float scale;
+};
+
+struct settings_s settings =
+{
+    .input = NULL,
+    .output = NULL,
+    .transform = true,
+    .scale = 1.0f
+};
+
+struct argparse_option options[] =
+{
+    OPT_HELP(),
+    OPT_GROUP ("Basic flags"),
+    OPT_STRING ('i', "input", &settings.input, "input file"),
+    OPT_STRING ('o', "output", &settings.output, "output file"),
+    OPT_GROUP ("Geometric transformations"),
+    OPT_BOOLEAN ('\0', "transform", &settings.transform, "apply transformation to have Z pointing upwards [default=true], use no- prefix to disable"),
+    OPT_FLOAT ('s', "scale", &settings.scale, "apply coordinate scale (e.g. if input is not in unit meters)"),
+    OPT_END(),
+};
+
+static const char *const usage[] =
+{
+    "rex-importer [options] -i inputfile -o outputfile",
+    NULL,
+};
 
 void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
 {
@@ -48,19 +79,28 @@ void convert_mesh (struct aiMesh *input, struct rex_mesh *mesh)
     mesh->nr_triangles = input->mNumFaces;
 
     mesh->positions = malloc (sizeof (float) * 3 * mesh->nr_vertices);
+
+    mat4x4 mat =
+    {
+        {1,  0,  0,  0},
+        {0,  0,  1,  0},
+        {0,  1,  0,  0},
+        {0,  0,  0,  1}
+    };
     for (i = 0, j = 0; j < input->mNumVertices; i += 3, j++)
     {
-        // transform input (Z is up)
-        mat4x4 mat =
-        {
-            {1,  0,  0,  0},
-            {0,  0,  1,  0},
-            {0,  1,  0,  0},
-            {0,  0,  0,  1}
-        };
         vec4 r;
-        vec4 v = {input->mVertices[j].x, input->mVertices[j].y, input->mVertices[j].z, 1.0f };
-        mat4x4_mul_vec4 (r, mat, v);
+        vec4 v =
+        {
+            input->mVertices[j].x * settings.scale,
+            input->mVertices[j].y * settings.scale,
+            input->mVertices[j].z * settings.scale,
+            1.0f
+        };
+        if (settings.transform)
+            vec4_dup (r, v);
+        else
+            mat4x4_mul_vec4 (r, mat, v);
 
         mesh->positions[i]     = r[0];
         mesh->positions[i + 1] = r[1];
@@ -142,6 +182,14 @@ void convert_material (struct aiMaterial *mat, struct rex_material_standard *rex
     else
         rex_mat->alpha = 1.0f;
 
+    struct aiString path;
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_DIFFUSE, 0), &path) == AI_SUCCESS)
+        printf ("Found diffuse texture: %s\n", path.data);
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_AMBIENT, 0), &path) == AI_SUCCESS)
+        printf ("Found ambient texture: %s\n", path.data);
+    if (aiGetMaterialString (mat, AI_MATKEY_TEXTURE (aiTextureType_SPECULAR, 0), &path) == AI_SUCCESS)
+        printf ("Found specular texture: %s\n", path.data);
+
     // TODO textures needs to be read out
     rex_mat->ka_textureId = REX_NOT_SET;
     rex_mat->kd_textureId = REX_NOT_SET;
@@ -149,17 +197,26 @@ void convert_material (struct aiMaterial *mat, struct rex_material_standard *rex
     rex_mat->ns = 0;
 }
 
-int main (int argc, char **argv)
+int main (int argc, const char **argv)
 {
     printf ("═══════════════════════════════════════════\n");
     printf ("        %s %s (c) Robotic Eyes\n", rex_name, VERSION);
     printf ("═══════════════════════════════════════════\n\n");
 
-    if (argc < 3)
-        usage (argv[0]);
+    struct argparse argparse;
+    argparse_init (&argparse, options, usage, 0);
+    argparse_describe (&argparse,
+                       "\nConvert 3D geometry file using Assimp into a REX file.",
+                       "\nThis importer uses Assimp to convert 3D geometry.\n");
+    argc = argparse_parse (&argparse, argc, argv);
 
+    if (settings.input == NULL || settings.output == NULL)
+    {
+        argparse_usage (&argparse);
+        return 1;
+    }
     /* Import Assimp file and perform post-triangulation */
-    const struct aiScene *scene = aiImportFile (argv[1],
+    const struct aiScene *scene = aiImportFile (settings.input,
                                   aiProcessPreset_TargetRealtime_Quality
                                   /* aiProcess_JoinIdenticalVertices | */
                                   /* aiProcess_Triangulate | */
@@ -206,7 +263,7 @@ int main (int argc, char **argv)
     uint8_t *header_ptr = rex_header_write (header, &header_sz);
 
     // write data to file
-    FILE *fp = fopen (argv[2], "wb");
+    FILE *fp = fopen (settings.output, "wb");
     fwrite (header_ptr, header_sz, 1, fp);
 
     // write all mesh and material data

@@ -100,12 +100,12 @@ static void points_calc_bbox (struct points *p, struct rex_pointlist *rp)
     vec3_dump ("  max", p->bb.max);
 }
 
-void points_center (struct points *p)
+void points_center (struct points *p, int center_height)
 {
     if (!p) return;
 
     float tx = - (p->bb.min[0] + (p->bb.max[0] - p->bb.min[0]) / 2.0);
-    float ty = - (p->bb.min[1] + (p->bb.max[1] - p->bb.min[1]) / 2.0);
+    float ty = (center_height) ? - (p->bb.min[1] + (p->bb.max[1] - p->bb.min[1]) / 2.0) : 0.0f;
     float tz = - (p->bb.min[2] + (p->bb.max[2] - p->bb.min[2]) / 2.0);
 
     mat4x4_translate (p->transform, tx, ty, tz);

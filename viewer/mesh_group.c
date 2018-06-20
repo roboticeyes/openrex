@@ -82,12 +82,12 @@ void mesh_group_calc_bbox (struct mesh_group *g)
     vec3_dump ("  max", g->bb.max);
 }
 
-void mesh_group_center (struct mesh_group *g)
+void mesh_group_center (struct mesh_group *g, int center_height)
 {
     if (!g) return;
 
     float tx = - (g->bb.min[0] + (g->bb.max[0] - g->bb.min[0]) / 2.0);
-    float ty = - (g->bb.min[1] + (g->bb.max[1] - g->bb.min[1]) / 2.0);
+    float ty = (center_height) ? - (g->bb.min[1] + (g->bb.max[1] - g->bb.min[1]) / 2.0) : 0.0f;
     float tz = - (g->bb.min[2] + (g->bb.max[2] - g->bb.min[2]) / 2.0);
 
     mat4x4_translate (g->transform, tx, ty, tz);

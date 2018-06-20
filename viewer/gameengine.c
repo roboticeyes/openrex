@@ -129,6 +129,9 @@ static void render()
                         render_scene->cam.orbit += 5;
                         camera_update (&render_scene->cam);
                         break;
+                    case SDLK_c:
+                        scene_center(render_scene);
+                        break;
                     case SDLK_k:
                     case SDLK_RIGHT:
                         render_scene->cam.orbit -= 5;
