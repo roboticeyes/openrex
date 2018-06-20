@@ -44,11 +44,17 @@ Please note, that the y-coordinate is pointing upwards, which means that the "he
 REX file format. However, if you position the REX model in the real world, the `y` coordinate is pointing to the sky.
 
 The triangle orientation is required to be counter-clockwise (CCW), see the example in the data directory. Here is a
-simple example which shows the `coordsys.obj` file from the `data` directory:
+simple example which shows the `coordsys.obj` file from the `data` directory in the viewer, and in real world with the
+REX Go app.
 
-<p align="center">
-<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
-</p>
+ <div class="row">
+  <div class="column">
+    <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png" alt="Viewer" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example_realworld.png" alt="Real-world" style="width:100%">
+  </div>
+</div>
 
 ## File layout
 
