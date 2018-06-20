@@ -43,6 +43,13 @@ required right-handed system. Other systems may require a transformation (see th
 Please note, that the y-coordinate is pointing upwards, which means that the "height" in CAD is encoded as `y` in the
 REX file format. However, if you position the REX model in the real world, the `y` coordinate is pointing to the sky.
 
+The triangle orientation is required to be counter-clockwise (CCW), see the example in the data directory. Here is a
+simple example which shows the `coordsys.obj` file from the `data` directory:
+
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
+</p>
+
 ## File layout
 
 ### General file structure
