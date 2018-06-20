@@ -24,6 +24,25 @@ A file format which is related to the rex format is the
 Another similar file format is the [OpenCTM](http://openctm.sourceforge.net) specification. This is pretty much
 tailored to 3D meshes only but proposes a nice compression algorithm.
 
+## Coordinate system
+
+Coordinate systems are the most crucuial parts in computer graphics and computer vision. Every application may have its
+own definition of the coordinate system, so does REX.
+
+The geometry in REX is defined by a right-handed 3D
+[cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
+
+<p align="center">
+<img src="https://commons.wikimedia.org/wiki/File:Right-handed_coordinate_system_(z_to_front).png"/>
+</p>
+
+Please make sure that your input geometry is tranformed according to our coordinate system specification. As an example,
+if you export FBX from Revit directly, no transformation is required because all the coordinates are already in the
+required right-handed system. Other systems may require a transformation (see the transformation option in `rex-importer`).
+
+Please note, that the y-coordinate is pointing upwards, which means that the "height" in CAD is encoded as `y` in the
+REX file format. However, if you position the REX model in the real world, the `y` coordinate is pointing to the sky.
+
 ## File layout
 
 ### General file structure
