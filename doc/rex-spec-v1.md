@@ -51,6 +51,20 @@ REX Go app.
 <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
 </p>
 
+### SketchUp
+
+[SketchUp](https://www.sketchup.com/) has a right-handed coordinate system with a 90 degrees rotation around the X axis.
+This means that `z` is pointing upwards and y is pointing backwards. We have drawn a cube in SketchUp where the green
+face is pointing towards the user and the red face is pointing to the right side (see screenshot below).
+
+If you export this model using the standard Collada export from SketchUp and import this data in REX, you will get the
+same visualization in REX Go (see screenshot). The automated REX importer takes care that the coordinates are converted
+as expected.
+
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/sketchup_example.jpg"/>
+</p>
+
 ## File layout
 
 ### General file structure
