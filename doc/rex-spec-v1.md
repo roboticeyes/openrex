@@ -24,6 +24,48 @@ A file format which is related to the rex format is the
 Another similar file format is the [OpenCTM](http://openctm.sourceforge.net) specification. This is pretty much
 tailored to 3D meshes only but proposes a nice compression algorithm.
 
+## Coordinate system
+
+Coordinate systems are the most crucial parts in computer graphics and computer vision. Every application may have its
+own definition of the coordinate system, so does REX.
+
+The geometry in REX is defined by a right-handed 3D
+[Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
+
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/right-handed.png"/>
+</p>
+
+Please make sure that your input geometry is transformed according to our coordinate system specification. As an example,
+if you export FBX from Revit directly, no transformation is required because all the coordinates are already in the
+required right-handed system. Other systems may require a transformation (see the transformation option in `rex-importer`).
+
+Please note, that the y-coordinate is pointing upwards, which means that the "height" in CAD is encoded as `y` in the
+REX file format. However, if you position the REX model in the real world, the `y` coordinate is pointing to the sky.
+
+The triangle orientation is required to be counter-clockwise (CCW), see the example in the data directory. Here is a
+simple example which shows the `coordsys.obj` file from the `data` directory in the viewer, and in real world with the
+REX Go app.
+
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
+</p>
+
+### SketchUp
+
+[SketchUp](https://www.sketchup.com/) has a right-handed coordinate system with a 90 degrees rotation around the `x` axis.
+This means that `z` is pointing upwards and `y` is pointing backwards. We have created a cube in SketchUp where the green
+face is pointing towards the user and the red face is pointing to the right side (see screenshot below).
+
+If you export this model from SketchUp using the standard COLLADA export and import this data in REX, you will get the
+same visualization in REX Go (see screenshot). COLLADA defines the model's coordinate system within the file (the
+included COLLADA file in the `data` directory has the `up_axis` is defined as `Z_UP`).  This information is interpreted
+and the coordinate transformation of the REX importer is activated accordingly.
+
+<p align="center">
+<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/sketchup_example.jpg"/>
+</p>
+
 ## File layout
 
 ### General file structure

@@ -1,0 +1,13 @@
+mtllib coordsys.mtl
+
+v 0.0 0.0 0.0
+v 1.0 0.0 0.0
+v 0.0 1.0 0.0
+v 0.0 0.0 1.0
+
+usemtl blue
+f 1 2 3
+usemtl red
+f 1 3 4
+usemtl green
+f 1 4 2
