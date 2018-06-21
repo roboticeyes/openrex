@@ -53,15 +53,14 @@ REX Go app.
 
 ### SketchUp
 
-[SketchUp](https://www.sketchup.com/) has a right-handed coordinate system with a 90 degrees rotation around the X axis.
-This means that `z` is pointing upwards and y is pointing backwards. We have drawn a cube in SketchUp where the green
+[SketchUp](https://www.sketchup.com/) has a right-handed coordinate system with a 90 degrees rotation around the `x` axis.
+This means that `z` is pointing upwards and `y` is pointing backwards. We have created a cube in SketchUp where the green
 face is pointing towards the user and the red face is pointing to the right side (see screenshot below).
 
-If you export this model using the standard COLLADA export from SketchUp and import this data in REX, you will get the
-same visualization in REX Go (see screenshot). The automated REX importer takes care that the coordinates are converted
-as expected. The COLLADA file can be found in the `data` directory. You will notice that the `up_axis` is defined
-as `Z_UP`. This information is interpreted and the coordinate transformation of the REX importer is activated
-accordingly.
+If you export this model from SketchUp using the standard COLLADA export and import this data in REX, you will get the
+same visualization in REX Go (see screenshot). COLLADA defines the model's coordinate system within the file (the
+included COLLADA file in the `data` directory has the `up_axis` is defined as `Z_UP`).  This information is interpreted
+and the coordinate transformation of the REX importer is activated accordingly.
 
 <p align="center">
 <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/sketchup_example.jpg"/>
