@@ -26,17 +26,17 @@ tailored to 3D meshes only but proposes a nice compression algorithm.
 
 ## Coordinate system
 
-Coordinate systems are the most crucuial parts in computer graphics and computer vision. Every application may have its
+Coordinate systems are the most crucial parts in computer graphics and computer vision. Every application may have its
 own definition of the coordinate system, so does REX.
 
 The geometry in REX is defined by a right-handed 3D
-[cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
+[Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
 
 <p align="center">
 <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/right-handed.png"/>
 </p>
 
-Please make sure that your input geometry is tranformed according to our coordinate system specification. As an example,
+Please make sure that your input geometry is transformed according to our coordinate system specification. As an example,
 if you export FBX from Revit directly, no transformation is required because all the coordinates are already in the
 required right-handed system. Other systems may require a transformation (see the transformation option in `rex-importer`).
 
@@ -57,9 +57,11 @@ REX Go app.
 This means that `z` is pointing upwards and y is pointing backwards. We have drawn a cube in SketchUp where the green
 face is pointing towards the user and the red face is pointing to the right side (see screenshot below).
 
-If you export this model using the standard Collada export from SketchUp and import this data in REX, you will get the
+If you export this model using the standard COLLADA export from SketchUp and import this data in REX, you will get the
 same visualization in REX Go (see screenshot). The automated REX importer takes care that the coordinates are converted
-as expected.
+as expected. The COLLADA file can be found in the `data` directory. You will notice that the `up_axis` is defined
+as `Z_UP`. This information is interpreted and the coordinate transformation of the REX importer is activated
+accordingly.
 
 <p align="center">
 <img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/sketchup_example.jpg"/>
