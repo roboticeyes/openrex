@@ -162,8 +162,14 @@ can be interpreted as 0 being the highest level. As data type we use 32bit for b
 
 #### DataType Text (1)
 
+This data type allows to position a (colored) text somewhere in space. The unit
+is again meters.
+
 | **size [bytes]** | **name**  | **type** | **description**                   |
 |------------------|-----------|----------|-----------------------------------|
+| 4                | red       | float    | red channel                       |
+| 4                | green     | float    | green channel                     |
+| 4                | blue      | float    | blue channel                      |
 | 4                | positionX | float    | x-coordinate of the position      |
 | 4                | positionY | float    | y-coordinate of the position      |
 | 4                | positionZ | float    | z-coordinate of the position      |

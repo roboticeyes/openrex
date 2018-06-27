@@ -27,11 +27,17 @@
 struct rex_text data[] =
 {
     {
+        .red = 1.0f,
+        .green = 0.0f,
+        .blue = 0.0f,
         .position = {0.0f, 0.0f, 0.0f},
         .font_size = 32,
         .data = "Welcome to Robotic Eyes"
     },
     {
+        .red = 1.0f,
+        .green = 1.0f,
+        .blue = 1.0f,
         .position = {0.0f, 1.0f, 0.0f},
         .font_size = 24,
         .data = "OpenREX is great!"
