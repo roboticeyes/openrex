@@ -226,7 +226,8 @@ int main (int argc, const char **argv)
     if (!scene)
         die ("Cannot import scene: %s", aiGetErrorString());
 
-    printf ("Found %d scenes in input file.\n", scene->mNumMeshes);
+    printf ("Found %d scenes.\n", scene->mNumMeshes);
+    printf ("Found %d materials.\n", scene->mNumMaterials);
 
     struct rex_header *header = rex_header_create();
 
