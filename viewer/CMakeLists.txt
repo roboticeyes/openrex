@@ -28,6 +28,8 @@ set(shaders
     shaders/mesh.vs
     shaders/pointcloud.fs
     shaders/pointcloud.vs
+    shaders/polyline.fs
+    shaders/polyline.vs
     )
 
 # Linkage
