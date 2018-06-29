@@ -203,8 +203,8 @@ START_TEST (test_rex_writer_lineset_and_text)
     generate_lineset (&ls);
     long ls_sz;
     uint8_t *ls_ptr = rex_block_write_lineset (0 /*id*/, header, &ls, &ls_sz);
-    ck_assert (ls_sz == 92);
-    ck_assert (header->sz_all_datablocks == 92);
+    ck_assert (ls_sz == 96);
+    ck_assert (header->sz_all_datablocks == 96);
     ck_assert (ls_ptr != NULL);
 
     struct rex_text text =
@@ -218,8 +218,8 @@ START_TEST (test_rex_writer_lineset_and_text)
     };
     long text_sz;
     uint8_t *text_ptr = rex_block_write_text (1 /*id*/, header, &text, &text_sz);
-    ck_assert_msg (text_sz == 53, "actual %d", text_sz);
-    ck_assert (header->sz_all_datablocks == 145);
+    ck_assert_msg (text_sz == 57, "actual %d", text_sz);
+    ck_assert_msg (header->sz_all_datablocks == 153, "actual %d", header->sz_all_datablocks);
     ck_assert (text_ptr != NULL);
 
     long header_sz;

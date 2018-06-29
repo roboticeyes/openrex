@@ -24,6 +24,7 @@
  * | 4                | red          | float    | red channel                   |
  * | 4                | green        | float    | green channel                 |
  * | 4                | blue         | float    | blue channel                  |
+ * | 4                | alpha        | float    | alpha channel                 |
  * | 4                | nrOfVertices | uint32_t | number of vertices            |
  * | 4                | x0           | float    | x-coordinate of first vertex  |
  * | 4                | y0           | float    | y-coordinate of first vertex  |
@@ -47,6 +48,7 @@ struct rex_lineset
     float red;              //!< the red color value between 0..1
     float green;            //!< the green color value between 0..1
     float blue;             //!< the blue color value between 0..1
+    float alpha;            //!< the alpha value between 0..1
     uint32_t nr_vertices;   //!< the number of vertices stored in vertices
     float *vertices;        //!< the raw data of all vertices (x0y0z0x1y1...)
 };

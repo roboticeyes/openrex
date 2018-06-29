@@ -27,7 +27,7 @@ uint8_t *rex_block_write_text (uint64_t id, struct rex_header *header, struct re
     uint16_t text_len = strlen (text->data);
 
     *sz = REX_BLOCK_HEADER_SIZE
-          + sizeof (float) * 3 // color
+          + sizeof (float) * 4 // RGBA
           + sizeof (float) * 3 // position
           + sizeof (float)     // font size
           + sizeof (uint16_t)  // text size
@@ -43,6 +43,7 @@ uint8_t *rex_block_write_text (uint64_t id, struct rex_header *header, struct re
     rexcpyr (&text->red, ptr, sizeof (float));
     rexcpyr (&text->green, ptr, sizeof (float));
     rexcpyr (&text->blue, ptr, sizeof (float));
+    rexcpyr (&text->alpha, ptr, sizeof (float));
     rexcpyr (text->position, ptr, sizeof (float) * 3);
     rexcpyr (&text->font_size, ptr, sizeof (float));
     rexcpyr (&text_len, ptr, sizeof (uint16_t));
@@ -66,6 +67,7 @@ uint8_t *rex_block_read_text (uint8_t *ptr, struct rex_text *text)
     rexcpy (&text->red, ptr, sizeof (float));
     rexcpy (&text->green, ptr, sizeof (float));
     rexcpy (&text->blue, ptr, sizeof (float));
+    rexcpy (&text->alpha, ptr, sizeof (float));
     rexcpy (text->position, ptr, sizeof (float) * 3);
     rexcpy (&text->font_size, ptr, sizeof (float));
     rexcpy (&text_len, ptr, sizeof (uint16_t));

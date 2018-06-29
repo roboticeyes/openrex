@@ -24,6 +24,7 @@
  * | 4                | red       | float    | red channel                       |
  * | 4                | green     | float    | green channel                     |
  * | 4                | blue      | float    | blue channel                      |
+ * | 4                | alpha     | float    | alpha channel                     |
  * | 4                | positionX | float    | x-coordinate of the position      |
  * | 4                | positionY | float    | y-coordinate of the position      |
  * | 4                | positionZ | float    | z-coordinate of the position      |
@@ -47,6 +48,7 @@ struct rex_text
     float red;        //!< the red color value between 0..1
     float green;      //!< the green color value between 0..1
     float blue;       //!< the blue color value between 0..1
+    float alpha;      //!< the alpha value between 0..1
     vec3 position;    //!< the position of the text in space (unit meters)
     float font_size;  //!< the font size in font units (e.g. 24)
     char *data;       //!< null terminated string
