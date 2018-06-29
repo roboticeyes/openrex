@@ -152,6 +152,7 @@ can be interpreted as 0 being the highest level. As data type we use 32bit for b
 | 4                | red          | float    | red channel                   |
 | 4                | green        | float    | green channel                 |
 | 4                | blue         | float    | blue channel                  |
+| 4                | alpha        | float    | alpha channel                 |
 | 4                | nrOfVertices | uint32_t | number of vertices            |
 | 4                | x0           | float    | x-coordinate of first vertex  |
 | 4                | y0           | float    | y-coordinate of first vertex  |
@@ -159,17 +160,26 @@ can be interpreted as 0 being the highest level. As data type we use 32bit for b
 | 4                | x1           | float    | x-coordinate of second vertex |
 | ...              |              |          |                               |
 
+Alpha value of `1.0` means fully opaque.
 
 #### DataType Text (1)
 
+This data type allows to position a (colored) text somewhere in space. The unit
+is again meters.
+
 | **size [bytes]** | **name**  | **type** | **description**                   |
 |------------------|-----------|----------|-----------------------------------|
+| 4                | red       | float    | red channel                       |
+| 4                | green     | float    | green channel                     |
+| 4                | blue      | float    | blue channel                      |
+| 4                | alpha     | float    | alpha channel                     |
 | 4                | positionX | float    | x-coordinate of the position      |
 | 4                | positionY | float    | y-coordinate of the position      |
 | 4                | positionZ | float    | z-coordinate of the position      |
 | 4                | fontSize  | float    | font size in font units (e.g. 24) |
 | 2+sz             | text      | string   | text for the label                |
 
+Alpha value of `1.0` means fully opaque.
 
 #### DataType PointList (2)
 

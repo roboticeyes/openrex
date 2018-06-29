@@ -203,20 +203,23 @@ START_TEST (test_rex_writer_lineset_and_text)
     generate_lineset (&ls);
     long ls_sz;
     uint8_t *ls_ptr = rex_block_write_lineset (0 /*id*/, header, &ls, &ls_sz);
-    ck_assert (ls_sz == 92);
-    ck_assert (header->sz_all_datablocks == 92);
+    ck_assert (ls_sz == 96);
+    ck_assert (header->sz_all_datablocks == 96);
     ck_assert (ls_ptr != NULL);
 
     struct rex_text text =
     {
+        .red = 1.0f,
+        .green = 0.0f,
+        .blue = 0.0f,
         .position = { 0.0, 1.0, 0.0 },
         .font_size = 24.0f,
         .data = "1 Meter"
     };
     long text_sz;
     uint8_t *text_ptr = rex_block_write_text (1 /*id*/, header, &text, &text_sz);
-    ck_assert_msg (text_sz == 41, "actual %d", text_sz);
-    ck_assert (header->sz_all_datablocks == 133);
+    ck_assert_msg (text_sz == 57, "actual %d", text_sz);
+    ck_assert_msg (header->sz_all_datablocks == 153, "actual %d", header->sz_all_datablocks);
     ck_assert (text_ptr != NULL);
 
     long header_sz;

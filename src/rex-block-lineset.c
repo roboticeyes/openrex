@@ -26,8 +26,8 @@ uint8_t *rex_block_write_lineset (uint64_t id, struct rex_header *header, struct
     MEM_CHECK (lineset->vertices)
 
     *sz = REX_BLOCK_HEADER_SIZE
-          + sizeof (uint32_t)
-          + sizeof (float) * 3
+          + sizeof (uint32_t)  // nr_vertices
+          + sizeof (float) * 4 // RGBA
           + lineset->nr_vertices * 3 * sizeof (float);
 
     uint8_t *ptr = malloc (*sz);
@@ -40,6 +40,7 @@ uint8_t *rex_block_write_lineset (uint64_t id, struct rex_header *header, struct
     rexcpyr (&lineset->red, ptr, sizeof (float));
     rexcpyr (&lineset->green, ptr, sizeof (float));
     rexcpyr (&lineset->blue, ptr, sizeof (float));
+    rexcpyr (&lineset->alpha, ptr, sizeof (float));
     rexcpyr (&lineset->nr_vertices, ptr, sizeof (uint32_t));
     rexcpyr (lineset->vertices, ptr, sizeof (float) * lineset->nr_vertices * 3);
 
@@ -60,6 +61,7 @@ uint8_t *rex_block_read_lineset (uint8_t *ptr, struct rex_lineset *lineset)
     rexcpy (&lineset->red, ptr, sizeof (float));
     rexcpy (&lineset->green, ptr, sizeof (float));
     rexcpy (&lineset->blue, ptr, sizeof (float));
+    rexcpy (&lineset->alpha, ptr, sizeof (float));
     rexcpy (&lineset->nr_vertices, ptr, sizeof (uint32_t));
 
     lineset->vertices = malloc (lineset->nr_vertices * sizeof (float) * 3);
