@@ -100,10 +100,11 @@ Your contribution is welcome. Here are some ideas:
 * Check your code for memory leaks using `valgrind`
 * Your code should run cross-platform (Windows/Linux/Mac)
 
-## Contributions
+## Contributions and external sources
 
 * [linmath.h](https://github.com/datenwolf/linmath.h) for linear math operations
 * [slash.h](https://bitbucket.org/busstop/helios) for reading LAS files
 * [argparse](https://github.com/cofyc/argparse) for parsing command line arguments
+* [cJSON](https://github.com/DaveGamble/cJSON) for parsing JSON files (currently used in tools)
 
 Please see the copyright notice in the according files.
