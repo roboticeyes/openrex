@@ -108,3 +108,6 @@ Your contribution is welcome. Here are some ideas:
 * [cJSON](https://github.com/DaveGamble/cJSON) for parsing JSON files (currently used in tools)
 
 Please see the copyright notice in the according files.
+
+The `osm_polygons.json` sample is extracted from Microsoft's building footprint
+which can be downloaded from: https://github.com/Microsoft/USBuildingFootprint
