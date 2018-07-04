@@ -68,11 +68,11 @@ int main (int argc, char **argv)
 
     struct rex_header *header = rex_header_create();
 
-    uint8_t *text_data[LEN(data)];
-    long text_data_sz[LEN(data)];
-    for (int i = 0; i < LEN(data); i++)
+    uint8_t *text_data[LEN (data)];
+    long text_data_sz[LEN (data)];
+    for (int i = 0; i < LEN (data); i++)
     {
-        printf("Adding text: %s\n", data[i].data);
+        printf ("Adding text: %s\n", data[i].data);
         uint8_t *text_ptr = rex_block_write_text (i, header, &data[i], &text_data_sz[i]);
         text_data[i] = text_ptr;
     }
@@ -82,10 +82,10 @@ int main (int argc, char **argv)
 
     fwrite (header_ptr, header_sz, 1, fp);
 
-    for (int i = 0; i < LEN(data); i++)
+    for (int i = 0; i < LEN (data); i++)
     {
         fwrite (text_data[i], text_data_sz[i], 1, fp);
-        FREE(text_data[i]);
+        FREE (text_data[i]);
     }
 
     fclose (fp);

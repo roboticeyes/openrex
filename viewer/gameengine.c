@@ -130,7 +130,7 @@ static void render()
                         camera_update (&render_scene->cam);
                         break;
                     case SDLK_c:
-                        scene_center(render_scene);
+                        scene_center (render_scene);
                         break;
                     case SDLK_k:
                     case SDLK_RIGHT:
