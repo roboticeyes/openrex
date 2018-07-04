@@ -68,6 +68,7 @@ void rex_dump_lineset_block (struct rex_lineset *ls)
     printf ("red                    %20f\n", ls->red);
     printf ("green                  %20f\n", ls->green);
     printf ("blue                   %20f\n", ls->blue);
+    printf ("alpha                  %20f\n", ls->alpha);
     printf ("vertices               %20u\n", ls->nr_vertices);
 
     /* for (int i = 0; i < ls->nr_vertices * 3; i += 3) */
@@ -151,6 +152,10 @@ int main (int argc, char **argv)
             printf ("position %22.2f %5.2f %5.2f\n", text->position[0], text->position[1], text->position[2]);
             printf ("fontSize    %31.1f\n", text->font_size);
             printf ("text        %31s\n", text->data);
+            printf ("red         %31.1f\n", text->red);
+            printf ("green       %31.1f\n", text->green);
+            printf ("blue        %31.1f\n", text->blue);
+            printf ("alpha       %31.1f\n", text->alpha);
             FREE (block.data);
         }
         else if (block.type == Mesh)
