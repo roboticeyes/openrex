@@ -67,6 +67,7 @@ void generate_lineset (struct rex_lineset *ls)
     ls->red = 0.7f;
     ls->green = 0.0f;
     ls->blue = 0.0f;
+    ls->alpha = 0.8f;
     ls->nr_vertices = 5;
     vec3 v1 = { 0.0, 0.0, 0.0 };
     vec3 v2 = { 1.0, 0.0, 0.0 };
