@@ -89,7 +89,18 @@ void addpoints (struct rex_pointlist *plist, struct scene *s)
     printf ("colors                 %20u\n", plist->nr_colors);
 
     points_set_rex_pointlist (&s->pointcloud, plist);
-    scene_activate_pointcloud (s);
+    scene_activate_pointcloud ();
+}
+
+void addlines (struct rex_lineset *ls, struct scene *s)
+{
+    if (!ls)
+        return;
+
+    struct polyline *p = malloc (sizeof (struct polyline));
+    polyline_init (p);
+    polyline_set_rex_lineset (p, ls);
+    scene_add_polyline (s, p);
 }
 
 /**
@@ -123,6 +134,12 @@ int loadrex (const char *file, struct scene *s)
         else if (block.type == PointList)
         {
             addpoints (block.data, s);
+            FREE (block.data);
+            geometry++;
+        }
+        else if (block.type == LineSet)
+        {
+            addlines (block.data, s);
             FREE (block.data);
             geometry++;
         }

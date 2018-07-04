@@ -41,6 +41,7 @@ struct scene
 {
     struct mesh_group meshes;
     struct points pointcloud;
+    struct list *lines;
     struct camera cam;
 };
 
@@ -53,13 +54,14 @@ void scene_update (struct scene *);
 void scene_render (struct scene *s, mat4x4 projection);
 
 void scene_add_mesh (struct scene *s, struct mesh *m);
+void scene_add_polyline (struct scene *s, struct polyline *p);
 
 void scene_set_render_mode (enum render_mode m);
 
-void scene_activate_pointcloud (struct scene *s);
+void scene_activate_pointcloud ();
 
 /**
  * Centers the complete scene ignoring the height information
  */
-void scene_center(struct scene *s);
+void scene_center (struct scene *s);
 

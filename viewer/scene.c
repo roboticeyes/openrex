@@ -14,6 +14,7 @@
  * limitations under the License.*
  */
 
+#include "list.h"
 #include "scene.h"
 #include "axis.h"
 
@@ -26,6 +27,7 @@ enum render_mode mode = SOLID;
 
 int has_mesh = 0;
 int has_pointcloud = 0;
+int has_lines = 0;
 
 struct scene *scene_create (const char *resource_path)
 {
@@ -40,6 +42,9 @@ struct scene *scene_create (const char *resource_path)
 
     // Initialize pointcloud
     points_init (&s->pointcloud);
+
+    // Initialize lineset
+    s->lines = list_create();
 
     // Initialize/load shaders
     shader_mesh       = shader_load (resource_path, "mesh.vs", "mesh.fs");
@@ -56,6 +61,7 @@ void scene_destroy (struct scene *s)
     mesh_group_destroy (&s->meshes);
     points_free (&s->pointcloud);
     axis_destroy();
+    list_destroy (s->lines);
 }
 
 void scene_update (struct scene *s)
@@ -83,6 +89,16 @@ void scene_render (struct scene *s, mat4x4 projection)
         points_render (&s->pointcloud, shader_pointcloud, &s->cam, projection);
     }
 
+    if (has_lines)
+    {
+        struct node *cur = s->lines->head;
+        while (cur)
+        {
+            polyline_render (cur->data, shader_lines, &s->cam, projection);
+            cur = cur->next;
+        }
+    }
+
     if (mode == WIREFRAME)
         glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 }
@@ -93,7 +109,13 @@ void scene_add_mesh (struct scene *s, struct mesh *m)
     has_mesh = 1;
 }
 
-void scene_center(struct scene *s)
+void scene_add_polyline (struct scene *s, struct polyline *p)
+{
+    list_insert (s->lines, p);
+    has_lines = 1;
+}
+
+void scene_center (struct scene *s)
 {
     int center_height = 0; // do not center the height value (z)
     mesh_group_center (&s->meshes, center_height);
@@ -105,7 +127,7 @@ void scene_set_render_mode (enum render_mode m)
     mode = m;
 }
 
-void scene_activate_pointcloud (struct scene *s)
+void scene_activate_pointcloud ()
 {
     has_pointcloud = 1;
 }
