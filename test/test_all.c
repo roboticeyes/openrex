@@ -213,6 +213,7 @@ START_TEST (test_rex_writer_lineset_and_text)
         .red = 1.0f,
         .green = 0.0f,
         .blue = 0.0f,
+        .alpha = 0.8f,
         .position = { 0.0, 1.0, 0.0 },
         .font_size = 24.0f,
         .data = "1 Meter"
