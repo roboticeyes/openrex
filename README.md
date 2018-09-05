@@ -4,13 +4,13 @@
 
 [![Build Status](https://travis-ci.org/roboticeyes/openrex.svg?branch=master)](https://travis-ci.org/roboticeyes/openrex)
 
-OpenREX is the open source toolkit for the <a href="https://rex.robotic-eyes.com">REX platform</a>. This repository
-contains all the necessary ingredients supporting REX develpers for getting started with REX.
-
 REX is an Augmented Reality platform enabling users to simple embed your 3D content into the real world. REX is
 cross-platform and supports a variety of different devices (e.g. iPhone, Android phones, Microsoft HoloLens). Once the
 3D content is ingested, the models can easily be viewed by any devices using our free app <a
 href="https://www.robotic-eyes.com/download">REX Go</a> and <a href="https://www.robotic-eyes.com/download">REX Holographic</a>
+
+OpenREX is the open source toolkit for the <a href="https://rex.robotic-eyes.com">REX platform</a>. This repository
+contains all the necessary ingredients supporting REX develpers for getting started with REX.
 
 This repository contains the <a href="https://github.com/roboticeyes/openrex/blob/master/doc/rex-spec-v1.md">REX format specification</a>,
 native reader/writer written in C, tools for working with REX files, and debug viewer for displaying REX files.
@@ -51,7 +51,7 @@ the project's root folder. The output will be stored under `doc/doxygen`.
 
 ### Debug viewer
 
-OpenREX contains a simple debug viewer which is able to show the geometry information of a REX file. Currenlty not materials
+OpenREX contains a simple debug viewer which is able to show the geometry information of a REX file. Currently not materials
 are supported! Enable the viewer by
 
 ```
@@ -62,7 +62,7 @@ The debug viewer requires **SDL2** installed on your system including **GLEW**. 
 
 ### Importer (experimental)
 
-There is an experimental REX importer using the Assimp library which is currently not in full production yet. Contribution
+There is an experimental REX importer using the **Assimp** library which is currently not in full production yet. Contribution
 is welcome. To enable the importer use
 
 ```

@@ -32,9 +32,7 @@ own definition of the coordinate system, so does REX.
 The geometry in REX is defined by a right-handed 3D
 [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
 
-<p align="center">
-<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/right-handed.png"/>
-</p>
+![Right handed coordinates](/openrex/doc/right-handed.jpg?raw=true "REX coordinate system")
 
 Please make sure that your input geometry is transformed according to our coordinate system specification. As an example,
 if you export FBX from Revit directly, no transformation is required because all the coordinates are already in the
@@ -47,9 +45,7 @@ The triangle orientation is required to be counter-clockwise (CCW), see the exam
 simple example which shows the `coordsys.obj` file from the `data` directory in the viewer, and in real world with the
 REX Go app.
 
-<p align="center">
-<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/coordinate_example.png"/>
-</p>
+![Coordinate example](/doc/coordinate_example.png?raw=true "Coordinate example")
 
 ### SketchUp
 
@@ -62,9 +58,7 @@ same visualization in REX Go (see screenshot). COLLADA defines the model's coord
 included COLLADA file in the `data` directory has the `up_axis` is defined as `Z_UP`).  This information is interpreted
 and the coordinate transformation of the REX importer is activated accordingly.
 
-<p align="center">
-<img src="https://github.com/roboticeyes/openrex/raw/coordinate_system/doc/sketchup_example.jpg"/>
-</p>
+![Sketchup example](/doc/sketchup_example.jpg?raw=true "Sketchup example")
 
 ## File layout
 
