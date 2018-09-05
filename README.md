@@ -90,6 +90,7 @@ Your contribution is welcome. Here are some ideas:
 * rex-view: allow pipe input from commandline getting a certain data block
 * Extend rex-info to support filtering (e.g. only show meshes, or materials)
 * Save images from REX to files
+* Add support for material in rex-view
 * Continue to integrate assimp for data conversion
 
 ### Guidelines and pre-requisite(s)
