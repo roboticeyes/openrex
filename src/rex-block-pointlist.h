@@ -55,7 +55,7 @@ extern "C" {
 struct rex_pointlist
 {
     uint32_t nr_vertices; //<! the number of vertices
-    uint32_t nr_colors;   //<! the number of colors, can either be NULL or match nr_vertices
+    uint32_t nr_colors;   //<! the number of colors, can either be 0 or match nr_vertices
 
     float *positions;     //<! the byte array storing the coordinates (xyzxyzxyz...)
     float *colors;        //<! the byte array storing the color information (rgbrgbrgb...)

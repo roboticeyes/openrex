@@ -77,7 +77,7 @@ struct rex_mesh
     float *normals;          //<! float array with normals or NULL
     float *tex_coords;       //<! float array with texture coordinates or NULL
     float *colors;           //<! float array with colors or NULL
-    uint32_t *triangles;     //<! indices pointing to the coordiates spanning a triangle
+    uint32_t *triangles;     //<! indices pointing to the coordinates spanning a triangle
 
     char name[REX_MESH_NAME_MAX_SIZE]; //<! the mesh name (user-readable)
     uint64_t material_id;              //<! id which refers to the corresponding material block in this file
