@@ -47,3 +47,6 @@ build/*
 
 # Doxygen
 doc/doxygen
+
+# User-dependent files
+CMakeLists.txt.user
