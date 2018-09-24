@@ -230,7 +230,7 @@ texture information is equally sized to the nrOfVtxCoords. If not available the 
 
 The mesh references a separate material block which is identified by the materialId (dataId of the material block).
 Each DataMesh can only have one material block. This is similar to the `usemtl` in the OBJ file format. **If the
-materialId is `INT64_MAX` (`Long.MAX_VALUE` in Java), then no material is available.**
+materialId is `0x7fffffffffffffffL`, then no material is available.**
 
 The mesh header size is fixed with **128** bytes.
 
@@ -326,7 +326,7 @@ The standard material block is used to set the material for the geometry specifi
 | 4                | Ns           | float    | specular exponent                                       |
 | 4                | alpha        | float    | alpha between 0..1, 1 means full opaque                 |
 
-If no texture is available/set, then the `textureId` is set to `INT64_MAX` (`Long.MAX_VALUE` in Java) value.
+If no texture is available/set, then the `textureId` is set to `0x7fffffffffffffffL` value.
 
 #### DataType PeopleSimulation (6)
 
