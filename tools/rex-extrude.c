@@ -70,9 +70,9 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
     rex_mesh_init (mesh);
 
     int closed = 0;
-    if (fabsf (points[0] - points[3 * (numpoints - 1)])     < 0.000001f
-     && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < 0.000001f
-     && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < 0.000001f)
+    if (fabsf (points[0] - points[3 * (numpoints - 1)])     < REX_EPSILON
+     && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < REX_EPSILON
+     && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < REX_EPSILON)
         closed = 1;
 
     if (closed == 1) //remove the last repeated point now that we've flagged that it's closed
@@ -184,7 +184,7 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
 struct rex_pointlist* create_anchors (float *anchorpoints, uint32_t numanchors)
 {    
     struct rex_pointlist* pointlist = malloc (sizeof (struct rex_pointlist));
-    if (!pointlist) //TODO should we die or just critical?
+    if (!pointlist)
         die ("Allocating pointlist failed");
     rex_pointlist_init (pointlist);
 
@@ -198,7 +198,7 @@ struct rex_pointlist* create_anchors (float *anchorpoints, uint32_t numanchors)
 }
 
 /**
- * @brief Print the givne mesh in OFF format on stdout
+ * @brief Print the given mesh in OFF format on stdout
  */
 void off_print(struct rex_mesh *mesh)
 {
@@ -233,7 +233,6 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
 {
     struct rex_header *header = rex_header_create();
 
-    //FIXME setting the material give the ring of death!
     uint64_t material_id = REX_NOT_SET;
 
     struct rex_mesh* mesh;
