@@ -70,9 +70,9 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
     rex_mesh_init (mesh);
 
     int closed = 0;
-    if (fabsf (points[0] - points[3 * (numpoints - 1)])     < REX_EPSILON
-     && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < REX_EPSILON
-     && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < REX_EPSILON)
+    if (fabsf (points[0] - points[3 * (numpoints - 1)])     < REX_EPSILON_FLOAT
+     && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < REX_EPSILON_FLOAT
+     && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < REX_EPSILON_FLOAT)
         closed = 1;
 
     if (closed == 1) //remove the last repeated point now that we've flagged that it's closed
