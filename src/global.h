@@ -25,3 +25,4 @@
 #define REX_VERTEX_SIZE                 11
 
 #define REX_NOT_SET                     0x7fffffffffffffffL
+#define REX_EPSILON_FLOAT               0.000001f
