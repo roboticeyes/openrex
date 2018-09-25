@@ -199,6 +199,8 @@ struct rex_pointlist* create_anchors (float *anchorpoints, uint32_t numanchors)
 
 /**
  * @brief Print the given mesh in OFF format on stdout
+ *
+ * @TODO make the rex -> off converter standalone
  */
 void off_print(struct rex_mesh *mesh)
 {
