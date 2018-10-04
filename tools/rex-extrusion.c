@@ -190,13 +190,15 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
                                        float* anchorpoints, uint32_t numanchors, char* name,
                                        struct rex_material_standard* material, FILE *fp)
 {
+    if(numpoints == 0)
+        die("No points given\n");
+
     struct rex_header *header = rex_header_create();
 
     uint64_t material_id = REX_NOT_SET;
 
     struct rex_mesh* mesh;
     mesh = rex_extrude (points, numpoints, height, material_id, name);
-
 
     struct rex_pointlist* pointlist = NULL;
     if (numanchors > 0)
