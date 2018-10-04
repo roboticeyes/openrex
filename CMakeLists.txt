@@ -42,7 +42,9 @@ if (VIEWER)
     add_subdirectory(viewer)
 endif()
 
-add_subdirectory(test)
+if (TESTS)
+    add_subdirectory(test)
+endif()
 
 set ( LIBOPENREX_INCLUDE_DIR ${includedir} )
 set ( LIBOPENREX_INCLUDE_DIRS ${LIBOPENREX_INCLUDE_DIR} )
