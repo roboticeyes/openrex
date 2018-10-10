@@ -34,18 +34,18 @@ void compute_normal (float ux, float uy, float uz,
                      float vx, float vy, float vz,
                      float *nx, float *ny, float *nz)
 {
-    *nx = uy*vz - uz*vy;
-    *ny = uz*vx - ux*vz;
-    *nz = ux*vy - uy*vx;
+    *nx = uy * vz - uz * vy;
+    *ny = uz * vx - ux * vz;
+    *nz = ux * vy - uy * vx;
 
     //normalize
     float normsq = *nx * *nx + *ny * *ny + *nz * *nz;
 
     //floating point error at the 7th decimal at least
     float norm = sqrtf (normsq);
-    *nx = *nx/norm;
-    *ny = *ny/norm;
-    *nz = *nz/norm;
+    *nx = *nx / norm;
+    *ny = *ny / norm;
+    *nz = *nz / norm;
 }
 
 /**
@@ -61,8 +61,8 @@ void compute_normal (float ux, float uy, float uz,
  * @material_id id of the material to use. The material has to be present in the rex file
  * @name char array with the desidred name of the mesh.
  */
-struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
-                              float height, uint64_t material_id, char* name)
+struct rex_mesh *rex_extrude (float *points, uint32_t numpoints,
+                              float height, uint64_t material_id, char *name)
 {
     struct rex_mesh *mesh = malloc (sizeof (struct rex_mesh));
     if (!mesh)
@@ -71,8 +71,8 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
 
     int closed = 0;
     if (fabsf (points[0] - points[3 * (numpoints - 1)])     < REX_EPSILON_FLOAT
-     && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < REX_EPSILON_FLOAT
-     && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < REX_EPSILON_FLOAT)
+            && fabsf (points[1] - points[3 * (numpoints - 1) + 1]) < REX_EPSILON_FLOAT
+            && fabsf (points[2] - points[3 * (numpoints - 1) + 2]) < REX_EPSILON_FLOAT)
         closed = 1;
 
     if (closed == 1) //remove the last repeated point now that we've flagged that it's closed
@@ -83,7 +83,7 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
     mesh->nr_triangles = 2 * 2 * numpoints; //2x because both orientations
 
     //eew and not null-terminated if overflow
-    strncpy (mesh->name, name, strlen (name) + 1 < REX_MESH_NAME_MAX_SIZE? strlen (name) + 1 : REX_MESH_NAME_MAX_SIZE);
+    strncpy (mesh->name, name, strlen (name) + 1 < REX_MESH_NAME_MAX_SIZE ? strlen (name) + 1 : REX_MESH_NAME_MAX_SIZE);
 
     mesh->positions = malloc (3 * mesh->nr_vertices * sizeof (float));
     if (!mesh->positions)
@@ -147,21 +147,21 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
         triangle_vertex_id++;
         mesh->triangles[triangle_vertex_id] = i + numpoints; //current extruded point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1 + numpoints)%numpoints + numpoints; //next extruded point
+        mesh->triangles[triangle_vertex_id] = (i + 1 + numpoints) % numpoints + numpoints; //next extruded point
         triangle_vertex_id++;
 
         //downside up interior next triangle
         mesh->triangles[triangle_vertex_id] = i; //current point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1 + numpoints)%numpoints + numpoints; //next extruded point
+        mesh->triangles[triangle_vertex_id] = (i + 1 + numpoints) % numpoints + numpoints; //next extruded point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1)%numpoints; //next point
+        mesh->triangles[triangle_vertex_id] = (i + 1) % numpoints; //next point
         triangle_vertex_id++;
 
         //upside down exterior next triangle
         mesh->triangles[triangle_vertex_id] = i; //current point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1 + numpoints)%numpoints + numpoints; //next extruded point
+        mesh->triangles[triangle_vertex_id] = (i + 1 + numpoints) % numpoints + numpoints; //next extruded point
         triangle_vertex_id++;
         mesh->triangles[triangle_vertex_id] = i + numpoints; //current extruded point
         triangle_vertex_id++;
@@ -169,9 +169,9 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
         //downside up exterior next triangle
         mesh->triangles[triangle_vertex_id] = i; //current point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1)%numpoints; //next point
+        mesh->triangles[triangle_vertex_id] = (i + 1) % numpoints; //next point
         triangle_vertex_id++;
-        mesh->triangles[triangle_vertex_id] = (i+1 + numpoints)%numpoints + numpoints; //next extruded point
+        mesh->triangles[triangle_vertex_id] = (i + 1 + numpoints) % numpoints + numpoints; //next extruded point
         triangle_vertex_id++;
     }
 
@@ -181,9 +181,9 @@ struct rex_mesh* rex_extrude (float *points, uint32_t numpoints,
 /**
  * @brief Creates a Rex pointlist given an array of 3d points
  */
-struct rex_pointlist* create_anchors (float *anchorpoints, uint32_t numanchors)
-{    
-    struct rex_pointlist* pointlist = malloc (sizeof (struct rex_pointlist));
+struct rex_pointlist *create_anchors (float *anchorpoints, uint32_t numanchors)
+{
+    struct rex_pointlist *pointlist = malloc (sizeof (struct rex_pointlist));
     if (!pointlist)
         die ("Allocating pointlist failed");
     rex_pointlist_init (pointlist);
@@ -202,19 +202,15 @@ struct rex_pointlist* create_anchors (float *anchorpoints, uint32_t numanchors)
  *
  * @TODO make the rex -> off converter standalone
  */
-void off_print(struct rex_mesh *mesh)
+void off_print (struct rex_mesh *mesh)
 {
     //off format for debugging
     printf ("\nOFF\n");
-    printf ("%d %d %d\n", mesh->nr_vertices, mesh->nr_triangles, mesh->nr_triangles*3);
+    printf ("%d %d %d\n", mesh->nr_vertices, mesh->nr_triangles, mesh->nr_triangles * 3);
     for (uint32_t i = 0; i < 3 * mesh->nr_vertices; i = i + 3)
-    {
         printf ("%.20f %.20f %.20f\n", mesh->positions[i], mesh->positions[i + 1], mesh->positions[i + 2]);
-    }
     for (uint32_t i = 0; i < 3 * mesh->nr_triangles; i = i + 3)
-    {
         printf ("3 %d %d %d\n", mesh->triangles[i], mesh->triangles[i + 1], mesh->triangles[i + 2]);
-    }
 }
 
 /**
@@ -229,19 +225,19 @@ void off_print(struct rex_mesh *mesh)
  * @param name name of the mesh
  * @param fp output file to write to
  */
-void rex_extruded_with_material_write (float* points, uint32_t numpoints, float height,
-                                       float* anchorpoints, uint32_t numanchors, char* name,
-                                       struct rex_material_standard* material, FILE *fp)
+void rex_extruded_with_material_write (float *points, uint32_t numpoints, float height,
+                                       float *anchorpoints, uint32_t numanchors, char *name,
+                                       struct rex_material_standard *material, FILE *fp)
 {
     struct rex_header *header = rex_header_create();
 
     uint64_t material_id = REX_NOT_SET;
 
-    struct rex_mesh* mesh;
+    struct rex_mesh *mesh;
     mesh = rex_extrude (points, numpoints, height, material_id, name);
 
 
-    struct rex_pointlist* pointlist = NULL;
+    struct rex_pointlist *pointlist = NULL;
     if (numanchors > 0)
         pointlist = create_anchors (anchorpoints, numanchors);
 
@@ -296,9 +292,9 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
  * @param name name of the mesh
  * @param fp output file to write to
  */
-void rex_extruded_write(float* points, uint32_t numpoints, float height,
-                        float* anchorpoints, uint32_t numanchors, char* name,
-                        FILE *fp)
+void rex_extruded_write (float *points, uint32_t numpoints, float height,
+                         float *anchorpoints, uint32_t numanchors, char *name,
+                         FILE *fp)
 {
     //FIXME this values give me the ring of death
     struct rex_material_standard material =
@@ -330,16 +326,16 @@ void rex_extruded_write(float* points, uint32_t numpoints, float height,
  * @param numelements returns the number of elements read
  * @return array of floats read
  */
-float* read_csv_array (char *filename, unsigned int* numelements)
+float *read_csv_array (char *filename, unsigned int *numelements)
 {
-    FILE* fd = fopen (filename, "r");
+    FILE *fd = fopen (filename, "r");
 
     unsigned int num_read_elements = 0;
 
     char line[1024];
     if (fgets (line, 1024, fd))
     {
-        for (const char* tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
+        for (const char *tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
         {
             unsigned int elements = (unsigned int) atoi (tok);
             num_read_elements += 3 * elements;
@@ -347,15 +343,15 @@ float* read_csv_array (char *filename, unsigned int* numelements)
     }
 
     if (num_read_elements == 0)
-        die("error reading %s\n", filename);
+        die ("error reading %s\n", filename);
 
-    float* array = malloc (num_read_elements * sizeof (float));
+    float *array = malloc (num_read_elements * sizeof (float));
 
     unsigned int i = 0;
 
     while (fgets (line, 1024, fd))
     {
-        for (const char* tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
+        for (const char *tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
         {
             if (i >= num_read_elements)
                 die ("Number of elements read > number of points stated in the file header\n");
@@ -367,7 +363,7 @@ float* read_csv_array (char *filename, unsigned int* numelements)
     fclose (fd);
 
     if (i != num_read_elements)
-       die ("Number of elements read != number of points stated in the file header\n");
+        die ("Number of elements read != number of points stated in the file header\n");
 
     *numelements = num_read_elements;
     return array;
@@ -382,14 +378,14 @@ int main (int argc, char **argv)
     if (argc < 2 || 4 < argc)
         usage (argv[0]);
 
-    float* points                    = NULL;
+    float *points                    = NULL;
     uint32_t points_array_size       = 0;
-    float* anchorpoints              = NULL;
+    float *anchorpoints              = NULL;
     uint32_t anchorpoints_array_size = 0;
 
-    char* polygonfilename = NULL;
-    char* anchorsfilename = NULL;
-    char* outputfilename  = "extruded.rex";
+    char *polygonfilename = NULL;
+    char *anchorsfilename = NULL;
+    char *outputfilename  = "extruded.rex";
 
     //TODO check file extension
     //    if (argv[1])
@@ -421,14 +417,16 @@ int main (int argc, char **argv)
         static const float points_default[3 * 6] = {  1, 1, 2,
                                                       4, 1, 0,
                                                       4, 2, 0,
-                                                    2.5, 2, 1,
-                                                    2.5, 3, 1,
-                                                      1, 3, 2};
+                                                      2.5, 2, 1,
+                                                      2.5, 3, 1,
+                                                      1, 3, 2
+                                                   };
         points_array_size = sizeof (points_default) / sizeof (points_default[0]);
         static const float anchorpoints_default[3 * 4] = {1.5,   1,   2,
-                                                         1.33f, 2.5, 2.5,
-                                                         1.25,   3,   2,
-                                                          3.5,   1, 2.5};
+                                                          1.33f, 2.5, 2.5,
+                                                          1.25,   3,   2,
+                                                          3.5,   1, 2.5
+                                                         };
         anchorpoints_array_size = sizeof (anchorpoints_default) / sizeof (anchorpoints_default[0]);
 
         points = malloc (points_array_size * sizeof (float));
@@ -450,7 +448,7 @@ int main (int argc, char **argv)
     float height         = 3;
     uint32_t numpoints   = points_array_size / 3;
     uint32_t numanchors  = anchorpoints_array_size / 3;
-    char* name           = "Robotic Eyes Extruded Mesh";
+    char *name           = "Robotic Eyes Extruded Mesh";
 
     rex_extruded_write (points, numpoints, height, anchorpoints, numanchors, name, fp);
 

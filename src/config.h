@@ -21,7 +21,7 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
-static char *rex_name              = "REX";
+static const char *rex_name              = "REX";
 
 #ifndef WIN32
 #pragma GCC diagnostic pop

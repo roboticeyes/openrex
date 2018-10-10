@@ -148,6 +148,7 @@ void geojson_read_feature (const cJSON *f, struct rex_lineset *ls)
 void geojson_convert (const char *filename, const char *rexfile)
 {
     // Read input GeoJson file
+    FILE *fp = NULL;
     char *content = read_file_ascii (filename);
     if (content == NULL)
         die ("Cannot open GeoJson file %s\n", filename);
@@ -159,13 +160,15 @@ void geojson_convert (const char *filename, const char *rexfile)
         if (error_ptr != NULL)
         {
             fprintf (stderr, "Error before: %s\n", error_ptr);
-            goto end;
+            cJSON_Delete (json);
+            FREE (content);
+            return;
         }
     }
 
     // Prepare REX output file
     struct rex_header *header = rex_header_create();
-    FILE *fp = fopen (rexfile, "wb");
+    fp = fopen (rexfile, "wb");
     if (!fp)
         die ("Cannot open REX file %s for writing\n", rexfile);
 
@@ -221,7 +224,8 @@ end:
     cJSON_Delete (json);
     FREE (content);
     FREE (header);
-    fclose (fp);
+    if (fp != NULL)
+        fclose (fp);
 }
 int main (int argc, char **argv)
 {
