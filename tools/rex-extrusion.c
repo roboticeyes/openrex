@@ -195,7 +195,7 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
 
     struct rex_header *header = rex_header_create();
 
-    uint64_t material_id = REX_NOT_SET;
+    uint64_t material_id = material == NULL ? REX_NOT_SET : 2 /*id*/;
 
     struct rex_mesh* mesh;
     mesh = rex_extrude (points, numpoints, height, material_id, name);
