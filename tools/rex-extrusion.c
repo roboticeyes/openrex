@@ -195,7 +195,7 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
 
     struct rex_header *header = rex_header_create();
 
-    uint64_t material_id = material == NULL ? REX_NOT_SET : 2 /*id*/;
+    uint64_t material_id = material == NULL ? REX_NOT_SET : 1 /*id*/;
 
     struct rex_mesh* mesh;
     mesh = rex_extrude (points, numpoints, height, material_id, name);
@@ -211,7 +211,7 @@ void rex_extruded_with_material_write (float* points, uint32_t numpoints, float 
     long pointlist_sz = 0;
     uint8_t *pointlist_ptr = NULL;
     if (numanchors > 0)
-        pointlist_ptr = rex_block_write_pointlist (1 /*id*/, header, pointlist, &pointlist_sz);
+        pointlist_ptr = rex_block_write_pointlist (2 /*id*/, header, pointlist, &pointlist_sz);
 
     long material_sz = 0;
     uint8_t *material_ptr = NULL;
