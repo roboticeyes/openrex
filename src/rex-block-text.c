@@ -24,7 +24,7 @@ uint8_t *rex_block_write_text (uint64_t id, struct rex_header *header, struct re
     MEM_CHECK (text)
     MEM_CHECK (text->data)
 
-    uint16_t text_len = strlen (text->data);
+	uint16_t text_len = (uint16_t) strlen (text->data);
 
     *sz = REX_BLOCK_HEADER_SIZE
           + sizeof (float) * 4 // RGBA

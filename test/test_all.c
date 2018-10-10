@@ -4,6 +4,7 @@
 #include "rex.h"
 
 #define REX_TEMPLATE "template.rex"
+#define TEST_DATA_PATH "c:/test_rex/"
 
 char tmp[256];
 
@@ -106,7 +107,7 @@ void generate_pointlist (struct rex_pointlist *p, int color)
     {
         p->nr_colors = 100;
         p->colors = malloc (12 * p->nr_colors);
-        for (int i = 0; i < p->nr_colors * 3; i += 3)
+        for (int i = 0; i < (int)p->nr_colors * 3; i += 3)
         {
             p->colors[i] = 0.8f;
             p->colors[i + 1] = 0.0f;

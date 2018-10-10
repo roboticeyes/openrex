@@ -23,6 +23,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#if defined(WIN32) || defined(WIN64) || defined(_WINDOWS)
+	// Copied from linux libc sys/stat.h:
+	#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+	#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
+
 #include "util.h"
 
 static void verr (const char *fmt, va_list ap)

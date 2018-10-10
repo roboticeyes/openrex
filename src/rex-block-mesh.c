@@ -72,7 +72,7 @@ uint8_t *rex_block_write_mesh (uint64_t id, struct rex_header *header, struct re
 
     rexcpyr (&mesh->material_id, ptr, sizeof (uint64_t));
 
-    uint16_t name_sz = strlen (mesh->name);
+    uint16_t name_sz = (uint16_t) strlen (mesh->name);
     rexcpyr (&name_sz, ptr, sizeof (uint16_t));
     rexcpyr (mesh->name, ptr, 74);
 
@@ -218,14 +218,14 @@ void rex_mesh_dump_obj (struct rex_mesh *mesh)
     if (mesh->positions)
     {
         float *p = mesh->positions;
-        for (int i = 0; i < mesh->nr_vertices * 3; i += 3)
+        for (unsigned int i = 0; i < mesh->nr_vertices * 3; i += 3)
             printf ("v %f %f %f\n", p[i], p[i + 1], p[i + 2]);
     }
 
     if (mesh->triangles)
     {
         uint32_t *t = mesh->triangles;
-        for (int i = 0; i < mesh->nr_triangles * 3; i += 3)
+        for (unsigned int i = 0; i < mesh->nr_triangles * 3; i += 3)
             printf ("f %d %d %d\n", t[i] + 1, t[i + 1] + 1, t[i + 2] + 1);
     }
 }
