@@ -32,7 +32,7 @@ own definition of the coordinate system, so does REX.
 The geometry in REX is defined by a right-handed 3D
 [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system) as shown in the figure below.
 
-![Right handed coordinates](/openrex/doc/right-handed.jpg?raw=true "REX coordinate system")
+![Right handed coordinates](/doc/right-handed.png?raw=true "REX coordinate system")
 
 Please make sure that your input geometry is transformed according to our coordinate system specification. As an example,
 if you export FBX from Revit directly, no transformation is required because all the coordinates are already in the
@@ -276,7 +276,8 @@ The mesh header size is fixed with **128** bytes.
 ##### Triangle block
 
 This is a list of integers which form one triangle. Please make sure that normal and texture
-coordinates are inline with the vertex coordinates. One index refers to the same normal and texture position.
+coordinates are inline with the vertex coordinates. One index refers to the same normal and texture position.  
+**The triangle orientation is required to be counter-clockwise (CCW)**
 
 | **size [bytes]** | **name** | **type** | **description**                     |
 |------------------|----------|----------|-------------------------------------|

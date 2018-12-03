@@ -31,7 +31,7 @@ int main (int argc, char **argv)
 
     //Should we do proper parameters as input?
     //sanity check?
-    int64_t requested_id = atoi(argv[2]);
+    int64_t requested_id = atoi (argv[2]);
 
     long sz;
     uint8_t *buf = read_file_binary (argv[1], &sz);
@@ -52,10 +52,10 @@ int main (int argc, char **argv)
         //dump selected block
         if (block.id == (uint64_t) requested_id)
         {
-            if(block.type == Image)
+            if (block.type == Image)
             {
                 struct rex_image *img = block.data;
-                fwrite(img->data, sizeof(uint8_t), img->sz, stdout);
+                fwrite (img->data, sizeof (uint8_t), img->sz, stdout);
             }
         }
 

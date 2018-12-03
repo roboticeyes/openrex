@@ -32,16 +32,16 @@ void usage (const char *exec)
  * @param numelements returns the number of elements read
  * @return array of floats read
  */
-float* read_csv_array (char *filename, unsigned int* numelements)
+float *read_csv_array (char *filename, unsigned int *numelements)
 {
-    FILE* fd = fopen (filename, "r");
+    FILE *fd = fopen (filename, "r");
 
     unsigned int num_read_elements = 0;
 
     char line[1024];
     if (fgets (line, 1024, fd))
     {
-        for (const char* tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
+        for (const char *tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
         {
             unsigned int elements = (unsigned int) atoi (tok);
             num_read_elements += 3 * elements;
@@ -49,15 +49,15 @@ float* read_csv_array (char *filename, unsigned int* numelements)
     }
 
     if (num_read_elements == 0)
-        die("error reading %s\n", filename);
+        die ("error reading %s\n", filename);
 
-    float* array = malloc (num_read_elements * sizeof (float));
+    float *array = malloc (num_read_elements * sizeof (float));
 
     unsigned int i = 0;
 
     while (fgets (line, 1024, fd))
     {
-        for (const char* tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
+        for (const char *tok = strtok (line, " ,\n"); tok && *tok; tok = strtok (NULL, " ,\n"))
         {
             if (i >= num_read_elements)
                 die ("Number of elements read > number of points stated in the file header\n");
@@ -69,7 +69,7 @@ float* read_csv_array (char *filename, unsigned int* numelements)
     fclose (fd);
 
     if (i != num_read_elements)
-       die ("Number of elements read != number of points stated in the file header\n");
+        die ("Number of elements read != number of points stated in the file header\n");
 
     *numelements = num_read_elements;
     return array;
@@ -84,14 +84,14 @@ int main (int argc, char **argv)
     if (argc < 2 || 4 < argc)
         usage (argv[0]);
 
-    float* points                    = NULL;
+    float *points                    = NULL;
     uint32_t points_array_size       = 0;
-    float* anchorpoints              = NULL;
+    float *anchorpoints              = NULL;
     uint32_t anchorpoints_array_size = 0;
 
-    char* polygonfilename = NULL;
-    char* anchorsfilename = NULL;
-    char* outputfilename  = "extruded.rex";
+    char *polygonfilename = NULL;
+    char *anchorsfilename = NULL;
+    char *outputfilename  = "extruded.rex";
 
     //TODO check file extension
     //    if (argv[1])
@@ -123,14 +123,16 @@ int main (int argc, char **argv)
         static const float points_default[3 * 6] = {  1, 1, 2,
                                                       4, 1, 0,
                                                       4, 2, 0,
-                                                    2.5, 2, 1,
-                                                    2.5, 3, 1,
-                                                      1, 3, 2};
+                                                      2.5, 2, 1,
+                                                      2.5, 3, 1,
+                                                      1, 3, 2
+                                                   };
         points_array_size = sizeof (points_default) / sizeof (points_default[0]);
         static const float anchorpoints_default[3 * 4] = {1.5,   1,   2,
-                                                         1.33f, 2.5, 2.5,
-                                                         1.25,   3,   2,
-                                                          3.5,   1, 2.5};
+                                                          1.33f, 2.5, 2.5,
+                                                          1.25,   3,   2,
+                                                          3.5,   1, 2.5
+                                                         };
         anchorpoints_array_size = sizeof (anchorpoints_default) / sizeof (anchorpoints_default[0]);
 
         points = malloc (points_array_size * sizeof (float));
@@ -152,7 +154,7 @@ int main (int argc, char **argv)
     float height         = 3;
     uint32_t numpoints   = points_array_size / 3;
     uint32_t numanchors  = anchorpoints_array_size / 3;
-    char* name           = "Robotic Eyes Extruded Mesh";
+    char *name           = "Robotic Eyes Extruded Mesh";
 
     rex_extruded_file_write (points, numpoints, height, anchorpoints, numanchors, name, fp);
 
