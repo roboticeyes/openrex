@@ -2,6 +2,8 @@
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/extensions
     )
 
 # Targets
@@ -20,6 +22,7 @@ endif()
 
 # Linkage
 target_link_libraries(rex-dump openrex-static)
+target_link_libraries(rex-extrude rextension-static openrex-static m)
 target_link_libraries(rex-info openrex-static)
 target_link_libraries(rex-extrude openrex-static ${MLIB})
 target_link_libraries(rex-geojson openrex-static ${MLIB})
@@ -28,13 +31,6 @@ target_link_libraries(rex-gen openrex-static)
 target_link_libraries(rex-text openrex-static)
 target_link_libraries(rex-asset openrex-static)
 
-# Source includes
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/src)
-
-install( TARGETS rex-dump rex-info rex-gen rex-asset rex-las rex-text rex-geojson
+install( TARGETS rex-extrude rex-dump rex-info rex-gen rex-asset rex-las rex-text rex-geojson
     RUNTIME DESTINATION bin
     )
-install( TARGETS rex-info rex-gen rex-asset rex-las rex-text rex-geojson
-    RUNTIME DESTINATION bin
-    )
-
