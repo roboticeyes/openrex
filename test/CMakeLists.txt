@@ -23,15 +23,21 @@ add_test(
     COMMAND test_all
     )
 
+if(STATICLIB)
+    set(OPENREXLIB openrex-static)
+else()
+    set(OPENREXLIB openrex)
+endif()
+
 if (APPLE)
 target_link_libraries(test_all
-    openrex-static
+    ${OPENREXLIB}
     check
     pthread
     m)
 else()
 target_link_libraries(test_all
-    openrex-static
+    ${OPENREXLIB}
     check
     pthread
     m
