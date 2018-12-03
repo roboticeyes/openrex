@@ -29,17 +29,14 @@ else()
     set(OPENREXLIB openrex)
 endif()
 
-if (APPLE)
+if (NOT APPLE)
+    set(RTLIB rt)
+endif()
+
 target_link_libraries(test_all
     ${OPENREXLIB}
     check
-    pthread
-    m)
-else()
-target_link_libraries(test_all
-    ${OPENREXLIB}
-    check
+    subunit
     pthread
     m
-    rt)
-endif()
+    ${RTLIB})
