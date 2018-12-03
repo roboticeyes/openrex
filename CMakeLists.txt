@@ -29,6 +29,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
 endif(${CMAKE_BUILD_TYPE} STREQUAL Debug)
 
 add_subdirectory(src)
+add_subdirectory(extensions)
 
 if (TOOLS)
     add_subdirectory(tools)
