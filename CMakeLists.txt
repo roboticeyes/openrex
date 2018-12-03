@@ -16,7 +16,7 @@ set(CMAKE_COLOR_MAKEFILE ON)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 if(UNIX)
-	add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -Wno-format-truncation)
+	add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -Wno-format-truncation -fPIC)
 endif()
 
 add_definitions(-DVERSION=\"${VERSION}\")
