@@ -16,6 +16,10 @@ if (STATICLIBS)
             ARCHIVE DESTINATION lib${LIB_SUFFIX}
             COMPONENT staticlibs
           )
+
+  target_link_libraries(rextension openrex-static)
+else()
+  target_link_libraries(rextension openrex)
 endif()
 
 install( TARGETS rextension

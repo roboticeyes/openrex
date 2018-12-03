@@ -30,7 +30,7 @@ enable_testing()
 message("-- Build type: ${CMAKE_BUILD_TYPE}")
 if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
    add_definitions(-DDEBUG)
-endif(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+endif()
 
 add_subdirectory(src)
 add_subdirectory(extensions)
