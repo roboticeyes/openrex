@@ -36,7 +36,7 @@ endif()
 target_link_libraries(test_all
     ${OPENREXLIB}
     check
-    subunit
+#    subunit
     pthread
     m
     ${RTLIB})
