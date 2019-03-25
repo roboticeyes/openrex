@@ -7,13 +7,15 @@
 REX is an Augmented Reality platform enabling users to simple embed your 3D content into the real world. REX is
 cross-platform and supports a variety of different devices (e.g. iPhone, Android phones, Microsoft HoloLens). Once the
 3D content is ingested, the models can easily be viewed by any devices using our free app <a
-href="https://www.robotic-eyes.com/download">REX Go</a> and <a href="https://www.robotic-eyes.com/download">REX Holographic</a>
+href="https://www.robotic-eyes.com/download">REXview</a> and <a href="https://www.robotic-eyes.com/download">REX Holographic</a>
 
 OpenREX is the open source toolkit for the <a href="https://rex.robotic-eyes.com">REX platform</a>. This repository
 contains all the necessary ingredients supporting REX develpers for getting started with REX.
 
 This repository contains the <a href="https://github.com/roboticeyes/openrex/blob/master/doc/rex-spec-v1.md">REX format specification</a>,
 native reader/writer written in C, tools for working with REX files, and debug viewer for displaying REX files.
+
+Please also find a GO-based library [here](https://github.com/roboticeyes/gorex).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/roboticeyes/openrex/master/doc/teaser.jpg" />
