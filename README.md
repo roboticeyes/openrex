@@ -51,7 +51,7 @@ the project's root folder. The output will be stored under `doc/doxygen`.
 
 ## REX tools
 
-### Debug viewer
+### Debug viewer (deprecated)
 
 OpenREX contains a simple debug viewer which is able to show the geometry information of a REX file. Currently not materials
 are supported! Enable the viewer by
@@ -89,10 +89,8 @@ See https://channel9.msdn.com/Events/Visual-Studio/Visual-Studio-2017-Launch/T13
 Your contribution is welcome. Here are some ideas:
 
 * rex-dump: dumps a certain block to the stdout which can then be piped into other programs (e.g. feh)
-* rex-view: allow pipe input from commandline getting a certain data block
 * Extend rex-info to support filtering (e.g. only show meshes, or materials)
 * Save images from REX to files
-* Add support for material in rex-view
 * Continue to integrate assimp for data conversion
 
 ### Guidelines and pre-requisite(s)
