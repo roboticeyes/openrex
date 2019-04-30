@@ -22,9 +22,11 @@
 #endif
 
 #include "rex.h"
+#include "list.h"
 
 #include "gameengine.h"
 #include "mesh.h"
+#include "material.h"
 #include "mesh_group.h"
 #include "points.h"
 #include "shader.h"
@@ -103,6 +105,19 @@ void addlines (struct rex_lineset *ls, struct scene *s)
     scene_add_polyline (s, p);
 }
 
+void addmaterial (uint64_t id, struct rex_material_standard *mat, struct list *l)
+{
+    if (!mat)
+        return;
+
+    struct material_standard *m = malloc (sizeof (struct material_standard));
+    m->id = id;
+    m->kd_red = mat->kd_red;
+    m->kd_green = mat->kd_green;
+    m->kd_blue = mat->kd_blue;
+    list_insert(l, m);
+}
+
 /**
  * Load the complete REX file and generate geometry information
  * and store the information into the scene
@@ -117,6 +132,9 @@ int loadrex (const char *file, struct scene *s)
 
     struct rex_header header;
     uint8_t *ptr = rex_header_read (buf, &header);
+
+    struct list *materials;
+    materials = list_create();
 
     int geometry = 0;
     for (int i = 0; i < header.nr_datablocks; i++)
@@ -143,6 +161,34 @@ int loadrex (const char *file, struct scene *s)
             FREE (block.data);
             geometry++;
         }
+        else if (block.type == MaterialStandard)
+        {
+            addmaterial(block.id, block.data, materials);
+            FREE (block.data);
+        }
+    }
+
+    // Assign materials to meshes
+    struct node *cur = materials->head;
+    while (cur)
+    {
+        struct material_standard *material = cur->data;
+
+        // Assign material where materialID is matching
+        struct node *meshIterator = s->meshes.meshes->head;
+        while (meshIterator)
+        {
+            struct mesh *mesh = meshIterator->data;
+            if (mesh->material_id == material->id)
+            {
+                mesh->diffuse_color[0] = material->kd_red;
+                mesh->diffuse_color[1] = material->kd_green;
+                mesh->diffuse_color[2] = material->kd_blue;
+            }
+            meshIterator = meshIterator->next;
+        }
+
+        cur = cur->next;
     }
 
     if (!geometry)

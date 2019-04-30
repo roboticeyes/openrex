@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Robotic Eyes GmbH
+ * Copyright 2019 Robotic Eyes GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,26 +26,14 @@
 /**
  * This is the mesh which can be rendered
  */
-struct mesh
+struct material_standard
 {
-    GLuint vao;
-    GLuint vbo; // vertex data
-    GLuint ibo; // indexed triangle data
-    GLuint nr_vertices;
-    GLuint nr_triangles;
-    struct bbox bb;
-    mat4x4 model; // model matrix
-
-    uint64_t material_id; // REX materialID
-    vec3 diffuse_color; // from the attached REX materialID
+    uint64_t id;
+    float    kd_red;       //!< RED component for diffuse color (0..1)
+    float    kd_green;     //!< GREEN component for diffuse color (0..1)
+    float    kd_blue;      //!< BLUE component for diffuse color (0..1)
 };
 
-void mesh_init (struct mesh *);
-void mesh_free (struct mesh *);
+void material_standard_init (struct material_standard *);
+void material_standard_free (struct material_standard *);
 
-void mesh_render (struct mesh *, struct shader *, mat4x4 model, struct camera *, mat4x4 projection);
-
-/**
- * Set the actual mesh data and prepares the mesh for rendering
- */
-void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data);

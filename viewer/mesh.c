@@ -80,6 +80,7 @@ void mesh_render (struct mesh *m, struct shader *s, mat4x4 model, struct camera 
     glUniformMatrix4fv (s->projection, 1, GL_FALSE, (GLfloat *) projection);
     glUniformMatrix4fv (s->view, 1, GL_FALSE, (GLfloat *) cam->view);
     glUniformMatrix4fv (s->model, 1, GL_FALSE, (GLfloat *) model);
+    glUniform3fv (s->diffuse, 1, (GLfloat *) m->diffuse_color);
 
     glBindVertexArray (m->vao);
 
@@ -153,9 +154,9 @@ void mesh_set_rex_mesh (struct mesh *m, struct rex_mesh *data)
 {
     if (!m || !data) return;
 
-
     m->nr_triangles = data->nr_triangles;
     m->nr_vertices = data->nr_vertices;
+    m->material_id = data->material_id;
 
     mesh_calc_bbox (m, data);
 

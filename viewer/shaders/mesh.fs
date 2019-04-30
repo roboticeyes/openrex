@@ -7,6 +7,7 @@ in vec3 fragPos;
 out vec4 FragColor;
 
 uniform vec3 lightPos;
+uniform vec3 diffuse;
 
 void main(void) {
     vec3 lightCol = vec3(0.9, 0.9, 0.7);
@@ -16,8 +17,9 @@ void main(void) {
     vec3 lightDir = normalize(lightPos - fragPos);
 
     float diff = clamp(dot(norm, lightDir), 0.5, 1);
-    vec3 diffuse = diff * lightCol;
+    /* vec3 diffuse = diff * lightCol; */
 
-    vec3 result = (ambient + diffuse) * color;
+    /* vec3 result = (ambient + diffuse) * color; */
+    vec3 result = diffuse;
     FragColor = vec4(result, 1.0); // full opaque
 }

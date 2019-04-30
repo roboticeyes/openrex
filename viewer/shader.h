@@ -35,6 +35,7 @@ struct shader
     GLuint view;
     GLuint model;
     GLuint lightPos;
+    GLuint diffuse;
     GLuint rgb;
 };
 
