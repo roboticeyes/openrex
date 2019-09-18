@@ -53,12 +53,8 @@ REX Go app.
 This means that `z` is pointing upwards and `y` is pointing backwards. We have created a cube in SketchUp where the green
 face is pointing towards the user and the red face is pointing to the right side (see screenshot below).
 
-If you export this model from SketchUp using the standard COLLADA export and import this data in REX, you will get the
-same visualization in REX Go (see screenshot). COLLADA defines the model's coordinate system within the file (the
-included COLLADA file in the `data` directory has the `up_axis` is defined as `Z_UP`).  This information is interpreted
-and the coordinate transformation of the REX importer is activated accordingly.
-
-![Sketchup example](/doc/sketchup_example.jpg?raw=true "Sketchup example")
+We have developed a SketchUp plugin which automatically converts a SketchUp model into a REX file. You can download the
+plugin [here](https://extensions.sketchup.com/en/content/rex-exporter).
 
 ## File layout
 
@@ -80,17 +76,20 @@ one file.
 
 ### File header block
 
-| **size [bytes]** | **name**       | **type** | **description**           |
-|------------------|----------------|----------|---------------------------|
-| 4                | magic          | string   | REX1                      |
-| 2                | version        | uint16_t | file version              |
-| 4                | CRC32          | uint32_t | crc32 (auto calculated)   |
-| 2                | nrOfDataBlocks | uint16_t | number of data blocks     |
-| 2                | startData      | uint16_t | start of first data block |
-| 8                | sizeDataBlocks | uint64_t | size of all data blocks   |
-| 42               | reserved       | -        | reserved                  |
+| **size [bytes]** | **name**        | **type** | **description**                     |
+|------------------|-----------------|----------|-------------------------------------|
+| 4                | magic           | string   | REX1                                |
+| 2                | version         | uint16_t | file version                        |
+| 4                | CRC32           | uint32_t | crc32 (auto calculated)             |
+| 2                | nrOfDataBlocks  | uint16_t | number of data blocks               |
+| 2                | startData       | uint16_t | start of first data block           |
+| 8                | sizeDataBlocks  | uint64_t | size of all data blocks             |
+| 8                | startScenegraph | uint64_t | start addr of scenegraph (optional) |
+| 34               | reserved        | -        | reserved                            |
 
-The size of the header block is 64 bytes.
+The size of the header block is 64 bytes. The `startScenegraph` was introduced later in the
+specification, and is optional. If the value is zero, no scenegraph information is available.
+Please see the scenegraph block specification later in this document.
 
 ### Coordinate system block
 
@@ -135,6 +134,8 @@ Total size of the header is **16 bytes**.
 | 5      | MaterialStandard | A standard (mesh) material definition                               |
 | 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates       |
 | 7      | UnityPackage     | Stores a valid unity package (asset bundle)                         |
+| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph   |
+| 9      | SceneGraph       | Stores a scenegraph description referencing other data blocks       |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
@@ -276,7 +277,7 @@ The mesh header size is fixed with **128** bytes.
 ##### Triangle block
 
 This is a list of integers which form one triangle. Please make sure that normal and texture
-coordinates are inline with the vertex coordinates. One index refers to the same normal and texture position.  
+coordinates are inline with the vertex coordinates. One index refers to the same normal and texture position.
 **The triangle orientation is required to be counter-clockwise (CCW)**
 
 | **size [bytes]** | **name** | **type** | **description**                     |
@@ -389,3 +390,59 @@ The current values for target platform are:
 
 Please note that the **UnityPackage is only supported by REX Holo**. Android and iOS cannot be used because
 of some Unity bugs in the asset handling.
+
+#### DataType SceneNode (8)
+
+This data block can be used to describe scene node which is embedded into a scene graph.
+The scene node wraps a specific data block and puts its information into the specified
+scenegraph.
+
+The constant total size of a scenenode block is 80 bytes. This nodes can be used to simply instance
+geometry data, e.g. have the geometry of one object defined in a mesh block and have 500 scenenodes
+refering to the same geometry information.
+
+| **size [bytes]**   | **name**     | **type**   | **description**                                      |
+| ------------------ | ------------ | ---------- | -----------------------------------                  |
+| 8                  | geometryId   | uint64     | Id of a data block containing geometry (can be zero) |
+| 32                 | name         | string     | name of the node (can be empty)                      |
+| 4                  | tx           | float      | translation X                                        |
+| 4                  | ty           | float      | translation Y                                        |
+| 4                  | tz           | float      | translation Z                                        |
+| 4                  | rx           | float      | rotation X                                           |
+| 4                  | ry           | float      | rotation Y                                           |
+| 4                  | rz           | float      | rotation Z                                           |
+| 4                  | rw           | float      | rotation W                                           |
+| 4                  | sx           | float      | scale X                                              |
+| 4                  | sy           | float      | scale Y                                              |
+| 4                  | sz           | float      | scale Z                                              |
+
+The transformation is based on a local coordinate system. The transformation matrix is built by `T *
+R * S`; first the scale is applied to the vertices, then the rotation, and then the translation.
+
+The translation is given in unit meters. The rotation is given in quaternion (x,y,z,w), where w is
+the scalar. The scale vector contains the scale values in each direction given in unit meters.
+
+The `geometryId` can be zero which means that no geometry should be displayed. This indicates that
+the scenenode is an intermediate node in the scenegraph. All leafnodes in the scenegraph have to
+contain geometry information.
+
+#### DataType SceneGraph (9) - WORK IN PROGRESS !!!
+
+This data block can be used to describe a hierarchical scenegraph with instancing and transformations using blocks being
+defined in the REX file. The dataIDs are used to reference a specific scene node. The information is stored as JSON.
+The data block header size gives the number of bytes required for this string.
+
+| **size [bytes]** | **name**        | **type**  | **description**                                              |
+|------------------|-----------------|-----------|--------------------------------------------------------------|
+| arbitrary        | scene content   | bytes     | JSON description for the scene                               |
+
+```
+{
+    "root": <dataID of root scene node>,
+    children: [
+        <dataID 1>, <dataID 2>, <dataID 3>
+    ]
+}
+```
+
+
