@@ -328,6 +328,11 @@ The standard material block is used to set the material for the geometry specifi
 | 4                | alpha        | float    | alpha between 0..1, 1 means full opaque                 |
 
 If no texture is available/set, then the `textureId` is set to `0x7fffffffffffffffL` value.
+The Ns value specifies the specular exponent for the current material. A high exponent 
+results in a tight, concentrated highlight.  Ns values normally range from 0 to 1000.
+
+The material values can be used in combination with different shaders, and therefore the render result may vary. Most
+shaders and software packages treat the diffuse color information as most dominating.
 
 #### DataType PeopleSimulation (6)
 
