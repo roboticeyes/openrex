@@ -84,12 +84,7 @@ one file.
 | 2                | nrOfDataBlocks  | uint16_t | number of data blocks               |
 | 2                | startData       | uint16_t | start of first data block           |
 | 8                | sizeDataBlocks  | uint64_t | size of all data blocks             |
-| 8                | startScenegraph | uint64_t | start addr of scenegraph (optional) |
-| 34               | reserved        | -        | reserved                            |
-
-The size of the header block is 64 bytes. The `startScenegraph` was introduced later in the
-specification, and is optional. If the value is zero, no scenegraph information is available.
-Please see the scenegraph block specification later in this document.
+| 42               | reserved        | -        | reserved                            |
 
 ### Coordinate system block
 
@@ -135,10 +130,11 @@ Total size of the header is **16 bytes**.
 | 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates       |
 | 7      | UnityPackage     | Stores a valid unity package (asset bundle)                         |
 | 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph   |
-| 9      | SceneGraph       | Stores a scenegraph description referencing other data blocks       |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
+
+The SceneNode is a new concept, please make sure that your client supports this node type.
 
 #### DataType LineSet (0)
 
@@ -425,24 +421,3 @@ the scalar. The scale vector contains the scale values in each direction given i
 The `geometryId` can be zero which means that no geometry should be displayed. This indicates that
 the scenenode is an intermediate node in the scenegraph. All leafnodes in the scenegraph have to
 contain geometry information.
-
-#### DataType SceneGraph (9) - WORK IN PROGRESS !!!
-
-This data block can be used to describe a hierarchical scenegraph with instancing and transformations using blocks being
-defined in the REX file. The dataIDs are used to reference a specific scene node. The information is stored as JSON.
-The data block header size gives the number of bytes required for this string.
-
-| **size [bytes]** | **name**        | **type**  | **description**                                              |
-|------------------|-----------------|-----------|--------------------------------------------------------------|
-| arbitrary        | scene content   | bytes     | JSON description for the scene                               |
-
-```
-{
-    "root": <dataID of root scene node>,
-    children: [
-        <dataID 1>, <dataID 2>, <dataID 3>
-    ]
-}
-```
-
-
