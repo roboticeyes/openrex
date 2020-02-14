@@ -119,23 +119,23 @@ The currently supported data block types are as follows. Please make sure that t
 
 Total size of the header is **16 bytes**.
 
-| **Id** | **Type**         | **Description**                                                   | **C**              | **Go**             | **C#** |
-|--------|------------------|-------------------------------------------------------------------|--------------------|--------------------|--------|
-| 0      | LineSet          | A list of vertices which get connected by line segments           | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 1      | Text             | A position information and the actual text                        | :heavy_check_mark: | :x:                | :heavy_check_mark: |
-| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)     | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 3      | Mesh             | A triangle mesh datastructure                                     | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 4      | Image            | A single of arbitrary format can be stored in this block          | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 5      | MaterialStandard | A standard (mesh) material definition                             | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates     | :x:                | :x:                | :x:    |
-| 7      | UnityPackage     | Stores a valid unity package (asset bundle)                       | :heavy_check_mark: | :x:                | :x:    |
-| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph | :x:                | :heavy_check_mark: | :x:    |
-| 9      | Track            | A track is a tracked position and orientation of an AR device     | :x:                | :x:                | :x:    |
+| **Id**   | **Type**           | **Description**                                                     | **C**                | **Go**               | **C#**             |
+| -------- | ------------------ | ------------------------------------------------------------------- | -------------------- | -------------------- | --------           |
+| 0        | LineSet            | A list of vertices which get connected by line segments             | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
+| 1        | Text               | A position information and the actual text                          | :heavy_check_mark:   | :x:                  | :heavy_check_mark: |
+| 2        | PointList          | A list of 3D points with color information (e.g. point cloud)       | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
+| 3        | Mesh               | A triangle mesh datastructure                                       | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
+| 4        | Image              | A single of arbitrary format can be stored in this block            | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
+| 5        | MaterialStandard   | A standard (mesh) material definition                               | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
+| 6        | *PeopleSimulation* | *Stores people simulation data timestamp and x/y/z coordinates*     | :x:                  | :x:                  | :x:                |
+| 7        | *UnityPackage*     | *Stores a valid unity package (asset bundle)*                       | :heavy_check_mark:   | :x:                  | :x:                |
+| 8        | SceneNode          | A wrapper around a data block which can be used in the scenegraph   | :x:                  | :heavy_check_mark:   | :x:                |
+| 9        | Track              | A track is a tracked position and orientation of an AR device       | :x:                  | :x:                  | :x:                |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
 
-The SceneNode is a new concept, please make sure that your client supports this node type.
+*Italic* data blocks are deprecated and are not used anymore!
 
 #### DataType LineSet (0)
 
@@ -332,7 +332,7 @@ results in a tight, concentrated highlight.  Ns values normally range from 0 to 
 The material values can be used in combination with different shaders, and therefore the render result may vary. Most
 shaders and software packages treat the diffuse color information as most dominating.
 
-#### DataType PeopleSimulation (6)
+#### DataType PeopleSimulation - deprecated (6)
 
 ##### PeopleSimulation header
 
@@ -370,7 +370,7 @@ height 1m).
 | ...              |           |          |                                                              |
 
 
-#### DataType UnityPackage (7)
+#### DataType UnityPackage - deprecated (7)
 
 The UnityPackage data block contains an arbitrary pre-prepared Unity package. An example is to store animation data
 which can then directly be used by the Unity app to be included. The data block size in the header refers to the total
