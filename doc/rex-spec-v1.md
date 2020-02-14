@@ -76,21 +76,21 @@ one file.
 
 ### File header block
 
-| **size [bytes]** | **name**        | **type** | **description**                     |
-|------------------|-----------------|----------|-------------------------------------|
-| 4                | magic           | string   | REX1                                |
-| 2                | version         | uint16_t | file version                        |
-| 4                | CRC32           | uint32_t | crc32 (auto calculated)             |
-| 2                | nrOfDataBlocks  | uint16_t | number of data blocks               |
-| 2                | startData       | uint16_t | start of first data block           |
-| 8                | sizeDataBlocks  | uint64_t | size of all data blocks             |
-| 42               | reserved        | -        | reserved                            |
+| **size [bytes]** | **name**       | **type** | **description**           |
+|------------------|----------------|----------|---------------------------|
+| 4                | magic          | string   | REX1                      |
+| 2                | version        | uint16   | file version              |
+| 4                | CRC32          | uint32   | crc32 (auto calculated)   |
+| 2                | nrOfDataBlocks | uint16   | number of data blocks     |
+| 2                | startData      | uint16   | start of first data block |
+| 8                | sizeDataBlocks | uint64   | size of all data blocks   |
+| 42               | reserved       | -        | reserved                  |
 
 ### Coordinate system block
 
 | **size [bytes]** | **name** | **type** | **description**                     |
 |------------------|----------|----------|-------------------------------------|
-| 4                | srid     | uint32_t | spatial reference system identifier |
+| 4                | srid     | uint32   | spatial reference system identifier |
 | 2+sz             | authName | string   | name of the used system             |
 | 4                | offsetX  | float    | global x-offset                     |
 | 4                | offsetY  | float    | global y-offset                     |
@@ -110,26 +110,27 @@ The specific data block can still contain further header information, depending 
 
 | **size [bytes]** | **name** | **type** | **description**                  |
 |------------------|----------|----------|----------------------------------|
-| 2                | type     | uint16_t | data type                        |
-| 2                | version  | uint16_t | version for this data block      |
-| 4                | size     | uint32_t | data block size (without header) |
-| 8                | dataId   | uint64_t | id which is used in the database |
+| 2                | type     | uint16   | data type                        |
+| 2                | version  | uint16   | version for this data block      |
+| 4                | size     | uint32   | data block size (without header) |
+| 8                | dataId   | uint64   | id which is used in the database |
 
 The currently supported data block types are as follows. Please make sure that the IDs are not reordered.
 
 Total size of the header is **16 bytes**.
 
-| **Id** | **Type**         | **Description**                                                     |
-|--------|------------------|---------------------------------------------------------------------|
-| 0      | LineSet          | A list of vertices which get connected by line segments             |
-| 1      | Text             | A position information and the actual text                          |
-| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)       |
-| 3      | Mesh             | A triangle mesh datastructure                                       |
-| 4      | Image            | A single of arbitrary format can be stored in this block            |
-| 5      | MaterialStandard | A standard (mesh) material definition                               |
-| 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates       |
-| 7      | UnityPackage     | Stores a valid unity package (asset bundle)                         |
-| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph   |
+| **Id** | **Type**         | **Description**                                                   | **C**              | **Go**             | **C#** |
+|--------|------------------|-------------------------------------------------------------------|--------------------|--------------------|--------|
+| 0      | LineSet          | A list of vertices which get connected by line segments           | :heavy_check_mark: | :heavy_check_mark: |        |
+| 1      | Text             | A position information and the actual text                        | :heavy_check_mark: | :x:                |        |
+| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)     | :heavy_check_mark: | :heavy_check_mark: |        |
+| 3      | Mesh             | A triangle mesh datastructure                                     | :heavy_check_mark: | :heavy_check_mark: |        |
+| 4      | Image            | A single of arbitrary format can be stored in this block          | :heavy_check_mark: | :heavy_check_mark: |        |
+| 5      | MaterialStandard | A standard (mesh) material definition                             | :heavy_check_mark: | :heavy_check_mark: |        |
+| 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates     | :x:                | :x:                |        |
+| 7      | UnityPackage     | Stores a valid unity package (asset bundle)                       | :heavy_check_mark: | :x:                |        |
+| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph | :x:                | :heavy_check_mark: |        |
+| 9      | Track            | A track is a tracked position and orientation of an AR device     | :x:                | :x:                |        |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
@@ -144,7 +145,7 @@ The SceneNode is a new concept, please make sure that your client supports this 
 | 4                | green        | float    | green channel                 |
 | 4                | blue         | float    | blue channel                  |
 | 4                | alpha        | float    | alpha channel                 |
-| 4                | nrOfVertices | uint32_t | number of vertices            |
+| 4                | nrOfVertices | uint32   | number of vertices            |
 | 4                | x0           | float    | x-coordinate of first vertex  |
 | 4                | y0           | float    | y-coordinate of first vertex  |
 | 4                | z0           | float    | z-coordinate of first vertex  |
@@ -175,25 +176,25 @@ Alpha value of `1.0` means fully opaque.
 #### DataType PointList (2)
 
 This data type can be used to store a set of points (e.g. colored point clouds).
-The number of vertices  The number of colors can be zero. If this is the case the
+The number of colors can be zero. If this is the case the
 points are rendered with a pre-defined color (e.g. white). If color is provided
 the number of color entries must fit the number of vertices (i.e. every point needs
 to have an RGB color).
 
-| **size [bytes]** | **name**     | **type** | **description**                              |
-|------------------|--------------|----------|----------------------------------------------|
-| 4                | nrOfVertices | uint32_t | number of vertices                           |
-| 4                | nrOfColors   | uint32_t | number of colors                             |
-| 4                | x            | float    | x-coordinate of first vertex                 |
-| 4                | y            | float    | y-coordinate of first vertex                 |
-| 4                | z            | float    | z-coordinate of first vertex                 |
-| 4                | x            | float    | x-coordinate of second vertex                |
-| ...              |              |          |                                              |
-| 4                | red          | float    | red component of the first vertex            |
-| 4                | green        | float    | green component of the first vertex          |
-| 4                | blue         | float    | blue component of the first vertex           |
-| 4                | red          | float    | red component of the second vertex           |
-| ...              |              |          |                                              |
+| **size [bytes]** | **name**     | **type** | **description**                     |
+|------------------|--------------|----------|-------------------------------------|
+| 4                | nrOfVertices | uint32   | number of vertices                  |
+| 4                | nrOfColors   | uint32   | number of colors                    |
+| 4                | x            | float    | x-coordinate of first vertex        |
+| 4                | y            | float    | y-coordinate of first vertex        |
+| 4                | z            | float    | z-coordinate of first vertex        |
+| 4                | x            | float    | x-coordinate of second vertex       |
+| ...              |              |          |                                     |
+| 4                | red          | float    | red component of the first vertex   |
+| 4                | green        | float    | green component of the first vertex |
+| 4                | blue         | float    | blue component of the first vertex  |
+| 4                | red          | float    | red component of the second vertex  |
+| ...              |              |          |                                     |
 
 
 #### DataType Mesh (3)
@@ -206,20 +207,20 @@ mesh block must be added.
 
 | **size [bytes]** | **name**       | **type** | **description**                                                  |
 |------------------|----------------|----------|------------------------------------------------------------------|
-| 2                | lod            | uint16_t | level of detail for the given geometry                           |
-| 2                | maxLod         | uint16_t | maximal level of detail for given geometry                       |
-| 4                | nrOfVtxCoords  | uint32_t | number of vertex coordinates                                     |
-| 4                | nrOfNorCoords  | uint32_t | number of normal coordinates (can be zero)                       |
-| 4                | nrOfTexCoords  | uint32_t | number of texture coordinates (can be zero)                      |
-| 4                | nrOfVtxColors  | uint32_t | number of vertex colors (can be zero)                            |
-| 4                | nrTriangles    | uint32_t | number of triangles                                              |
-| 4                | startVtxCoords | uint32_t | start vertex coordinate block (relative to mesh block start)     |
-| 4                | startNorCoords | uint32_t | start vertex normals block (relative to mesh block start)        |
-| 4                | startTexCoords | uint32_t | start of texture coordinate block (relative to mesh block start) |
-| 4                | startVtxColors | uint32_t | start of colors block (relative to mesh block start)             |
-| 4                | startTriangles | uint32_t | start triangle block for vertices (relative to mesh block start) |
-| 8                | materialId     | uint64_t | id which refers to the corresponding material block in this file |
-| 2                | string size    | uint16_t | size of the following string name                                |
+| 2                | lod            | uint16   | level of detail for the given geometry                           |
+| 2                | maxLod         | uint16   | maximal level of detail for given geometry                       |
+| 4                | nrOfVtxCoords  | uint32   | number of vertex coordinates                                     |
+| 4                | nrOfNorCoords  | uint32   | number of normal coordinates (can be zero)                       |
+| 4                | nrOfTexCoords  | uint32   | number of texture coordinates (can be zero)                      |
+| 4                | nrOfVtxColors  | uint32   | number of vertex colors (can be zero)                            |
+| 4                | nrTriangles    | uint32   | number of triangles                                              |
+| 4                | startVtxCoords | uint32   | start vertex coordinate block (relative to mesh block start)     |
+| 4                | startNorCoords | uint32   | start vertex normals block (relative to mesh block start)        |
+| 4                | startTexCoords | uint32   | start of texture coordinate block (relative to mesh block start) |
+| 4                | startVtxColors | uint32   | start of colors block (relative to mesh block start)             |
+| 4                | startTriangles | uint32   | start triangle block for vertices (relative to mesh block start) |
+| 8                | materialId     | uint64   | id which refers to the corresponding material block in this file |
+| 2                | string size    | uint16   | size of the following string name                                |
 | 74               | name           | string   | name of the mesh (this is user-readable)                         |
 
 It is assumed that the mesh data is vertex-oriented, so that additional properties such as color, normals, or
@@ -278,10 +279,10 @@ coordinates are inline with the vertex coordinates. One index refers to the same
 
 | **size [bytes]** | **name** | **type** | **description**                     |
 |------------------|----------|----------|-------------------------------------|
-| 4                | v0       | uint32_t | first index of the first triangle   |
-| 4                | v1       | uint32_t | second index of the  first triangle |
-| 4                | v2       | uint32_t | third index of the first triangle   |
-| 4                | v0       | uint32_t | first index of the second triangle  |
+| 4                | v0       | uint32   | first index of the first triangle   |
+| 4                | v1       | uint32   | second index of the  first triangle |
+| 4                | v2       | uint32   | third index of the first triangle   |
+| 4                | v0       | uint32   | first index of the second triangle  |
 | ...              |          |          |                                     |
 
 #### DataType Image (4)
@@ -292,7 +293,7 @@ this block (compression + data_size).
 
 | **size [bytes]** | **name**    | **type** | **description**                        |
 |------------------|-------------|----------|----------------------------------------|
-| 4                | compression | uint32_t | id for supported compression algorithm |
+| 4                | compression | uint32   | id for supported compression algorithm |
 |                  | data        | bytes    | data of the file content               |
 
 ##### Supported compression
@@ -312,20 +313,20 @@ The standard material block is used to set the material for the geometry specifi
 | 4                | Ka red       | float    | RED component for ambient color                         |
 | 4                | Ka green     | float    | GREEN component for ambient color                       |
 | 4                | Ka blue      | float    | BLUE component for ambient color                        |
-| 8                | Ka textureId | uint64_t | dataId of the referenced texture for ambient component  |
+| 8                | Ka textureId | uint64   | dataId of the referenced texture for ambient component  |
 | 4                | Kd red       | float    | RED component for diffuse color                         |
 | 4                | Kd green     | float    | GREEN component for diffuse color                       |
 | 4                | Kd blue      | float    | BLUE component for diffuse color                        |
-| 8                | Kd textureId | uint64_t | dataId of the referenced texture for diffuse component  |
+| 8                | Kd textureId | uint64   | dataId of the referenced texture for diffuse component  |
 | 4                | Ks red       | float    | RED component for specular color                        |
 | 4                | Ks green     | float    | GREEN component for specular color                      |
 | 4                | Ks blue      | float    | BLUE component for specular color                       |
-| 8                | Ks textureId | uint64_t | dataId of the referenced texture for specular component |
+| 8                | Ks textureId | uint64   | dataId of the referenced texture for specular component |
 | 4                | Ns           | float    | specular exponent                                       |
 | 4                | alpha        | float    | alpha between 0..1, 1 means full opaque                 |
 
 If no texture is available/set, then the `textureId` is set to `0x7fffffffffffffffL` value.
-The Ns value specifies the specular exponent for the current material. A high exponent 
+The Ns value specifies the specular exponent for the current material. A high exponent
 results in a tight, concentrated highlight.  Ns values normally range from 0 to 1000.
 
 The material values can be used in combination with different shaders, and therefore the render result may vary. Most
@@ -342,17 +343,17 @@ height 1m).
 
 | **size [bytes]** | **name**         | **type** | **description**                                             |
 |------------------|------------------|----------|-------------------------------------------------------------|
-| 4                | numberOfMappings | uint32_t | stores the number of people to geometry information mapping |
-| 8                | numberOfEvents   | uint64_t | stores the total number of simulation events                |
+| 4                | numberOfMappings | uint32   | stores the number of people to geometry information mapping |
+| 8                | numberOfEvents   | uint64   | stores the total number of simulation events                |
 
 ##### PersonToMesh block
 
 | **size [bytes]** | **name** | **type** | **description**                                                          |
 |------------------|----------|----------|--------------------------------------------------------------------------|
-| 8                | personId | uint64_t | personId in the simulation event block                                   |
-| 8                | meshId   | uint64_t | meshId pointing to a valid mesh information (stored in a different file) |
-| 8                | personId | uint64_t | personId in the simulation event block                                   |
-| 8                | meshId   | uint64_t | meshId pointing to a valid mesh information (stored in a different file) |
+| 8                | personId | uint64   | personId in the simulation event block                                   |
+| 8                | meshId   | uint64   | meshId pointing to a valid mesh information (stored in a different file) |
+| 8                | personId | uint64   | personId in the simulation event block                                   |
+| 8                | meshId   | uint64   | meshId pointing to a valid mesh information (stored in a different file) |
 | ...              |          |          |                                                                          |
 
 ##### SimulationEvents block
@@ -360,7 +361,7 @@ height 1m).
 | **size [bytes]** | **name**  | **type** | **description**                                              |
 |------------------|-----------|----------|--------------------------------------------------------------|
 | 4                | timestamp | float    | timestamp information represented by a float value (seconds) |
-| 8                | personId  | uint64_t | personId for this entry                                      |
+| 8                | personId  | uint64   | personId for this entry                                      |
 | 4                | x         | float    | x coordinate (meters)                                        |
 | 4                | y         | float    | y coordinate (meters)                                        |
 | 4                | z         | float    | z coordinate (meters)                                        |
@@ -375,11 +376,11 @@ The UnityPackage data block contains an arbitrary pre-prepared Unity package. An
 which can then directly be used by the Unity app to be included. The data block size in the header refers to the total
 size of this block plus the additional two fields. E.g.
 
-| **size [bytes]** | **name**        | **type**  | **description**                                              |
-|------------------|-----------------|-----------|--------------------------------------------------------------|
-| 2                | target platform | uint16_t  | target platform for the asset package                        |
-| 2                | unity version   | uint16_t  | Unity version that was used to build the assetbundle (at least 20180)    |
-|                  | data            | bytes     | data of the unity asset content                              |
+| **size [bytes]** | **name**        | **type** | **description**                                                       |
+|------------------|-----------------|----------|-----------------------------------------------------------------------|
+| 2                | target platform | uint16   | target platform for the asset package                                 |
+| 2                | unity version   | uint16   | Unity version that was used to build the assetbundle (at least 20180) |
+|                  | data            | bytes    | data of the unity asset content                                       |
 
 The current values for target platform are:
 
@@ -426,3 +427,23 @@ the scalar. The scale vector contains the scale values in each direction given i
 The `geometryId` can be zero which means that no geometry should be displayed. This indicates that
 the scenenode is an intermediate node in the scenegraph. All leafnodes in the scenegraph have to
 contain geometry information.
+
+#### Data Type Track (9)
+
+This data block can be used to describe a 3D track. A track is a sequence of a 3D position and orientation of
+an AR device. The orientation is stored as a normalized normal vector of the device's LookAt vector.
+The timestamp is using the UNIX time, the number of seconds elapsed since January 1, 1970 UTC.
+
+| **size [bytes]** | **name**   | **type** | **description**                    |
+|------------------|------------|----------|------------------------------------|
+| 4                | nrOfPoints | uint32   | number of points                   |
+| 8                | timestamp  | int64    | timestamp (UNIX time)              |
+| 4                | x          | float    | x-coordinate of first point        |
+| 4                | y          | float    | y-coordinate of first point        |
+| 4                | z          | float    | z-coordinate of first point        |
+| 4                | nx         | float    | x-coordinate of the first normal   |
+| 4                | ny         | float    | y-coordinate of the first normal   |
+| 4                | nz         | float    | z-coordinate of the first normal   |
+| 4                | confidence | float    | tracking confidence of first point |
+| 4                | x          | float    | x-coordinate of second point       |
+| ...              |            |          |                                    |
