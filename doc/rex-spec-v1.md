@@ -135,7 +135,7 @@ Total size of the header is **16 bytes**.
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
 
-*Italic* data blocks are deprecated and are not used anymore!
+*Italic* data blocks are deprecated and are not used anymore! The C# checkmark refers to reading only.
 
 #### DataType LineSet (0)
 
