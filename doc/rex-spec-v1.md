@@ -119,18 +119,18 @@ The currently supported data block types are as follows. Please make sure that t
 
 Total size of the header is **16 bytes**.
 
-| **Id** | **Type**         | **Description**                                                       | **C**              | **Go**             | **C#** |
-|--------|------------------|-----------------------------------------------------------------------|--------------------|--------------------|--------|
-| 0      | LineSet          | A list of vertices which get connected by line segments               | :heavy_check_mark: | :heavy_check_mark: |        |
-| 1      | Text             | A position information and the actual text                            | :heavy_check_mark: | :x:                |        |
-| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)         | :heavy_check_mark: | :heavy_check_mark: |        |
-| 3      | Mesh             | A triangle mesh datastructure                                         | :heavy_check_mark: | :heavy_check_mark: |        |
-| 4      | Image            | A single of arbitrary format can be stored in this block              | :heavy_check_mark: | :heavy_check_mark: |        |
-| 5      | MaterialStandard | A standard (mesh) material definition                                 | :heavy_check_mark: | :heavy_check_mark: |        |
-| 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates         | :x:                | :x:                |        |
-| 7      | UnityPackage     | Stores a valid unity package (asset bundle)                           | :heavy_check_mark: | :x:                |        |
-| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph     | :x:                | :heavy_check_mark: |        |
-| 9      | Track            | A track definition contains a list of points and their normal vectors | :x:                | :x:                |        |
+| **Id** | **Type**         | **Description**                                                   | **C**              | **Go**             | **C#** |
+|--------|------------------|-------------------------------------------------------------------|--------------------|--------------------|--------|
+| 0      | LineSet          | A list of vertices which get connected by line segments           | :heavy_check_mark: | :heavy_check_mark: |        |
+| 1      | Text             | A position information and the actual text                        | :heavy_check_mark: | :x:                |        |
+| 2      | PointList        | A list of 3D points with color information (e.g. point cloud)     | :heavy_check_mark: | :heavy_check_mark: |        |
+| 3      | Mesh             | A triangle mesh datastructure                                     | :heavy_check_mark: | :heavy_check_mark: |        |
+| 4      | Image            | A single of arbitrary format can be stored in this block          | :heavy_check_mark: | :heavy_check_mark: |        |
+| 5      | MaterialStandard | A standard (mesh) material definition                             | :heavy_check_mark: | :heavy_check_mark: |        |
+| 6      | PeopleSimulation | Stores people simulation data timestamp and x/y/z coordinates     | :x:                | :x:                |        |
+| 7      | UnityPackage     | Stores a valid unity package (asset bundle)                       | :heavy_check_mark: | :x:                |        |
+| 8      | SceneNode        | A wrapper around a data block which can be used in the scenegraph | :x:                | :heavy_check_mark: |        |
+| 9      | Track            | A track is a tracked position and orientation of an AR device     | :x:                | :x:                |        |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
@@ -430,8 +430,9 @@ contain geometry information.
 
 #### Data Type Track (9)
 
-This data block can be used to describe a 3D track. A track is a container for 3D points, their
-normal vectors and their confidences.
+This data block can be used to describe a 3D track. A track is a sequence of a 3D position and orientation of
+an AR device. The orientation is stored as a normalized normal vector of the device's LookAt vector.
+The timestamp is using the UNIX time, the number of seconds elapsed since January 1, 1970 UTC.
 
 | **size [bytes]** | **name**   | **type** | **description**                    |
 |------------------|------------|----------|------------------------------------|
