@@ -26,6 +26,5 @@
 #include "rex-block-mesh.h"
 #include "rex-block-pointlist.h"
 #include "rex-block-text.h"
-#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "rex-header.h"

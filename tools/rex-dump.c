@@ -92,12 +92,6 @@ int main (int argc, char **argv)
         {
             FREE (block.data);
         }
-        else if (block.type == UnityPackage)
-        {
-            struct rex_unitypackage *unity = block.data;
-            FREE (unity->data);
-            FREE (block.data);
-        }
     }
     FREE (buf);
     return 0;

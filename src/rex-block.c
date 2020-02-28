@@ -23,7 +23,6 @@
 #include "rex-block-mesh.h"
 #include "rex-block-pointlist.h"
 #include "rex-block-text.h"
-#include "rex-block-unitypackage.h"
 #include "rex-block.h"
 #include "status.h"
 #include "util.h"
@@ -99,14 +98,6 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
             warn ("PeopleSimulation is not yet implemented");
             return  data_start + block->sz;
             break;
-        case UnityPackage:
-            {
-                struct rex_unitypackage *unity = malloc (sizeof (struct rex_unitypackage));
-                unity->sz = block->sz - sizeof (uint16_t) - sizeof (uint16_t);
-                ptr = rex_block_read_unitypackage (ptr, unity);
-                block->data = unity;
-                break;
-            }
         default:
             warn ("Not supported REX block, skipping.");
             return  data_start + block->sz;

@@ -20,7 +20,7 @@
 #include "rex.h"
 
 static const char *rex_data_types[]
-    = { "LineSet", "Text", "PointList", "Mesh", "Image", "MaterialStandard", "PeopleSimulation", "UnityPackage" };
+    = { "LineSet", "Text", "PointList", "Mesh", "Image", "MaterialStandard", "PeopleSimulation" };
 
 static const char *rex_image_types[] = { "Raw", "Jpg", "Png" };
 
@@ -181,15 +181,6 @@ int main (int argc, char **argv)
             printf ("compression %31s\n", rex_image_types[img->compression]);
             printf ("image size  %31ld\n", block.sz - sizeof (uint32_t));
             FREE (img->data);
-            FREE (block.data);
-        }
-        else if (block.type == UnityPackage)
-        {
-            struct rex_unitypackage *unity = block.data;
-            printf ("target platform  %26d\n", unity->target_platform);
-            printf ("unity version    %26d\n", unity->unity_version);
-            printf ("package size     %26ld\n", block.sz - sizeof (uint16_t) - sizeof (uint16_t));
-            FREE (unity->data);
             FREE (block.data);
         }
     }

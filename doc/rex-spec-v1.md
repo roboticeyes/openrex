@@ -7,7 +7,7 @@ The Robotic Eyes eXplorer data format (rex) is designed to store REX-relevant in
 optimize the data transfer between a mobile client and a server.  The suffix of the rex file is chosen to be **.rex**.
 
 The rex format can store up to 2^16 different data blocks (65535), where one specific data block stores a certain type
-of data. This data can vary from geospatial data to simulation or any binary-typed data.
+of data. This data can vary from geospatial data to 3D meshes or any binary-typed data.
 
 The rex format stores all the information in binary representation (big endian). This allows for optimized data storage
 and performant read/write operations. For instance, reading an OBJ file takes 20x more time than reading the same data
@@ -122,20 +122,16 @@ Total size of the header is **16 bytes**.
 | **Id**   | **Type**           | **Description**                                                     | **C**                | **Go**               | **C#**             |
 | -------- | ------------------ | ------------------------------------------------------------------- | -------------------- | -------------------- | --------           |
 | 0        | LineSet            | A list of vertices which get connected by line segments             | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
-| 1        | Text               | A position information and the actual text                          | :heavy_check_mark:   | :x:                  | :heavy_check_mark: |
+| 1        | Text               | A position information and the actual text                          | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
 | 2        | PointList          | A list of 3D points with color information (e.g. point cloud)       | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
 | 3        | Mesh               | A triangle mesh datastructure                                       | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
 | 4        | Image              | A single of arbitrary format can be stored in this block            | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
 | 5        | MaterialStandard   | A standard (mesh) material definition                               | :heavy_check_mark:   | :heavy_check_mark:   | :heavy_check_mark: |
-| 6        | *PeopleSimulation* | *Stores people simulation data timestamp and x/y/z coordinates*     | :x:                  | :x:                  | :x:                |
-| 7        | *UnityPackage*     | *Stores a valid unity package (asset bundle)*                       | :heavy_check_mark:   | :x:                  | :x:                |
-| 8        | SceneNode          | A wrapper around a data block which can be used in the scenegraph   | :x:                  | :heavy_check_mark:   | :x:                |
-| 9        | Track              | A track is a tracked position and orientation of an AR device       | :x:                  | :x:                  | :x:                |
+| 6        | SceneNode          | A wrapper around a data block which can be used in the scenegraph   | :x:                  | :heavy_check_mark:   | :x:                |
+| 7        | Track              | A track is a tracked position and orientation of an AR device       | :x:                  | :heavy_check_mark:   | :x:                |
 
 Please note that some of the data types offer a LOD (level-of-detail) information. This value
 can be interpreted as 0 being the highest level. As data type we use 32bit for better memory alignment.
-
-*Italic* data blocks are deprecated and are not used anymore! The C# checkmark refers to reading only.
 
 #### DataType LineSet (0)
 
@@ -332,68 +328,7 @@ results in a tight, concentrated highlight.  Ns values normally range from 0 to 
 The material values can be used in combination with different shaders, and therefore the render result may vary. Most
 shaders and software packages treat the diffuse color information as most dominating.
 
-#### DataType PeopleSimulation - deprecated (6)
-
-##### PeopleSimulation header
-
-The simulation contains of two different blocks. The first block stores the mapping between every person ID to its
-geometric information stored in a different REX file. For every ID, a texture mapping is expected. If no information is
-available, the visualization component will pick a standard representation (e.g. a simple cylinder with radius 10cm and
-height 1m).
-
-| **size [bytes]** | **name**         | **type** | **description**                                             |
-|------------------|------------------|----------|-------------------------------------------------------------|
-| 4                | numberOfMappings | uint32   | stores the number of people to geometry information mapping |
-| 8                | numberOfEvents   | uint64   | stores the total number of simulation events                |
-
-##### PersonToMesh block
-
-| **size [bytes]** | **name** | **type** | **description**                                                          |
-|------------------|----------|----------|--------------------------------------------------------------------------|
-| 8                | personId | uint64   | personId in the simulation event block                                   |
-| 8                | meshId   | uint64   | meshId pointing to a valid mesh information (stored in a different file) |
-| 8                | personId | uint64   | personId in the simulation event block                                   |
-| 8                | meshId   | uint64   | meshId pointing to a valid mesh information (stored in a different file) |
-| ...              |          |          |                                                                          |
-
-##### SimulationEvents block
-
-| **size [bytes]** | **name**  | **type** | **description**                                              |
-|------------------|-----------|----------|--------------------------------------------------------------|
-| 4                | timestamp | float    | timestamp information represented by a float value (seconds) |
-| 8                | personId  | uint64   | personId for this entry                                      |
-| 4                | x         | float    | x coordinate (meters)                                        |
-| 4                | y         | float    | y coordinate (meters)                                        |
-| 4                | z         | float    | z coordinate (meters)                                        |
-| 4                | flag      | int      | can be used for internal flagging                            |
-| 4                | density   | float    | density information (typically between 0..1)                 |
-| ...              |           |          |                                                              |
-
-
-#### DataType UnityPackage - deprecated (7)
-
-The UnityPackage data block contains an arbitrary pre-prepared Unity package. An example is to store animation data
-which can then directly be used by the Unity app to be included. The data block size in the header refers to the total
-size of this block plus the additional two fields. E.g.
-
-| **size [bytes]** | **name**        | **type** | **description**                                                       |
-|------------------|-----------------|----------|-----------------------------------------------------------------------|
-| 2                | target platform | uint16   | target platform for the asset package                                 |
-| 2                | unity version   | uint16   | Unity version that was used to build the assetbundle (at least 20180) |
-|                  | data            | bytes    | data of the unity asset content                                       |
-
-The current values for target platform are:
-
-| **value** | **platform** |
-|-----------|--------------|
-| 0         | Android      |
-| 1         | iOS          |
-| 2         | WSA          |
-
-Please note that the **UnityPackage is only supported by REX Holo**. Android and iOS cannot be used because
-of some Unity bugs in the asset handling.
-
-#### DataType SceneNode (8)
+#### DataType SceneNode (6)
 
 This data block can be used to describe scene node which is embedded into a scene graph.
 The scene node wraps a specific data block and puts its information into the specified
@@ -428,11 +363,12 @@ The `geometryId` can be zero which means that no geometry should be displayed. T
 the scenenode is an intermediate node in the scenegraph. All leafnodes in the scenegraph have to
 contain geometry information.
 
-#### Data Type Track (9)
+#### Data Type Track (7)
 
 This data block can be used to describe a 3D track. A track is a sequence of a 3D position and orientation of
 an AR device. The orientation is stored as a normalized normal vector of the device's LookAt vector.
-The timestamp is using the UNIX time, the number of seconds elapsed since January 1, 1970 UTC.
+The LookAt vector is pointing from the center of the device in the direction of the camera
+(outward). The timestamp is using the UNIX time, the number of seconds elapsed since January 1, 1970 UTC.
 
 | **size [bytes]** | **name**   | **type** | **description**                    |
 |------------------|------------|----------|------------------------------------|

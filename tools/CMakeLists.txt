@@ -14,7 +14,6 @@ add_executable(rex-geojson rex-geojson.c cJSON.c)
 add_executable(rex-las rex-las.c)
 add_executable(rex-gen rex-gen.c)
 add_executable(rex-text rex-text.c)
-add_executable(rex-asset rex-asset.c)
 
 if(UNIX)
 	set(MLIB m)
@@ -29,7 +28,6 @@ if (STATICLIBS)
   target_link_libraries(rex-las openrex-static ${MLIB})
   target_link_libraries(rex-gen openrex-static)
   target_link_libraries(rex-text openrex-static)
-  target_link_libraries(rex-asset openrex-static)
 else()
   target_link_libraries(rex-dump openrex)
   target_link_libraries(rex-extrude rextension openrex ${MLIB})
@@ -38,9 +36,8 @@ else()
   target_link_libraries(rex-las openrex ${MLIB})
   target_link_libraries(rex-gen openrex)
   target_link_libraries(rex-text openrex)
-  target_link_libraries(rex-asset openrex)
 endif()
 
-install( TARGETS rex-extrude rex-dump rex-info rex-gen rex-asset rex-las rex-text rex-geojson
+install( TARGETS rex-extrude rex-dump rex-info rex-gen rex-las rex-text rex-geojson
     RUNTIME DESTINATION bin
     )
