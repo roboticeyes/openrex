@@ -27,6 +27,10 @@
 
 #include "status.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define LEN(x) (sizeof (x) / sizeof *(x))
 
 /**
@@ -118,3 +122,7 @@ if (buf == NULL) \
  * Path separator which handles the platform
  */
 char separator();
+
+#ifdef __cplusplus
+}
+#endif
