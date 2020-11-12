@@ -21,6 +21,16 @@ endif()
 
 add_definitions(-DVERSION=\"${VERSION}\")
 
+if (OPENREX_STATIC_BUILD)
+
+    file(GLOB SOURCES ./src/*.c)
+    file(GLOB HEADERS ./src/*.h)
+
+    add_library(openrex STATIC ${SOURCES} ${HEADERS})
+    set_target_properties(openrex PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+else()
+
 include(CMakeOptions.txt)
 
 # Testing
@@ -70,3 +80,6 @@ message (STATUS "Summary build options:
     Build viewer: ${VIEWER}
     Build importer: ${IMPORTER}
     ")
+
+endif()
+
