@@ -70,6 +70,9 @@ is welcome. To enable the importer use
 ```
 cmake -DIMPORTER=on ..
 ```
+### Unity Package
+
+We provide a package for Unity to read/write .rex files. See https://github.com/roboticeyes/upm-rex-rexfile-io 
 
 ## Source code formatting
 
