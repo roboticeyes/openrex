@@ -50,8 +50,8 @@ enum rex_block_type
     Mesh             = 3,
     Image            = 4,
     MaterialStandard = 5,
-    PeopleSimulation = 6,
-    UnityPackage     = 7
+    SceneNode        = 6,
+    Track            = 7
 };
 
 /**
