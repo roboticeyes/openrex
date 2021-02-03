@@ -134,7 +134,7 @@ uint8_t *rex_block_read_mesh (uint8_t *ptr, struct rex_mesh *mesh)
 
     uint16_t sz; // not used anymore since string is fixed size
     rexcpy (&sz, ptr, sizeof (uint16_t));
-    rexcpy (mesh->name, ptr, 74);
+    rexcpy (mesh->name, ptr, REX_MESH_NAME_MAX_SIZE);
 
     // read positions
     if (mesh->nr_vertices)

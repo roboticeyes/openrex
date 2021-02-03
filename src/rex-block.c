@@ -22,7 +22,9 @@
 #include "rex-block-material.h"
 #include "rex-block-mesh.h"
 #include "rex-block-pointlist.h"
+#include "rex-block-scenenode.h"
 #include "rex-block-text.h"
+#include "rex-block-track.h"
 #include "rex-block.h"
 #include "status.h"
 #include "util.h"
@@ -94,10 +96,20 @@ uint8_t *rex_block_read (uint8_t *ptr, struct rex_block *block)
                 block->data = mat;
                 break;
             }
-        case PeopleSimulation:
-            warn ("PeopleSimulation is not yet implemented");
-            return  data_start + block->sz;
-            break;
+        case SceneNode:
+            {
+                struct rex_scenenode *node = malloc(sizeof(struct rex_scenenode));
+                ptr = rex_block_read_scenenode(ptr, node);
+                block->data = node;
+                break;
+            }
+        case Track:
+            {
+                struct rex_track *track = malloc(sizeof(struct rex_track));
+                ptr = rex_block_read_track(ptr, track);
+                block->data = track;
+                break;
+            }
         default:
             warn ("Not supported REX block, skipping.");
             return  data_start + block->sz;
