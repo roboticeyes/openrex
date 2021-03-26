@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.10.0)
+
 project(libopenrex)
 set(MAJOR_VERSION 0)
 set(MINOR_VERSION 1)
@@ -13,7 +15,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "")
    set(CMAKE_BUILD_TYPE     RelWithDebInfo)
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "")
 set(CMAKE_COLOR_MAKEFILE ON)
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 if(UNIX)
 	add_definitions(-D_POSIX_C_SOURCE=200809L -pedantic -std=c11 -Wall -Wno-format-truncation -fPIC)
